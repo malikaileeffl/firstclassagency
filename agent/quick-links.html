@@ -22,11 +22,18 @@
   <nav class="nav" aria-label="Primary">
     <a href="dashboard.html">Dashboard</a>
     <a href="training.html">Training</a>
-    <a href="documents.html">Documents</a>
-    <a href="announcements.html">Announcements</a>
+    <a href="quick-links.html" class="active">Quick Links</a>
+    <a href="promotion.html">Promotion</a>
+    <a href="resources.html">Resources</a>
+    <a href="carriers.html">Carriers</a>
+    <a href="portals.html">Portals</a>
     <a href="https://app.firstclassagency.info/login" target="_blank" rel="noopener noreferrer">Leads Center <span style="font-size:0.7em;opacity:0.65;margin-left:2px;">↗</span></a>
   </nav>
   <div class="nav-cta">
+    <span class="user-chip" data-user-chip style="display:none;">
+      <span class="user-avatar" data-user-initial>—</span>
+      <span class="user-name">Hi, <strong data-user-name>—</strong></span>
+    </span>
     <a href="#" data-logout class="btn btn--ghost">Sign out</a>
     <button class="nav-toggle" aria-label="Open menu">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
@@ -37,8 +44,6 @@
 <nav class="mobile-nav" aria-label="Mobile">
   <a href="dashboard.html">Dashboard</a>
   <a href="training.html">Training</a>
-  <a href="documents.html">Documents</a>
-  <a href="announcements.html">Announcements</a>
   <a href="quick-links.html">Quick Links</a>
   <a href="promotion.html">Promotion & Comp</a>
   <a href="resources.html">Agent Resources</a>
@@ -57,14 +62,6 @@
     <a href="training.html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
       Training
-    </a>
-    <a href="documents.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3v5h5"/><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
-      Documents
-    </a>
-    <a href="announcements.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l18-7v16L3 13z"/><path d="M11 14v4a2 2 0 0 1-4 0v-3"/></svg>
-      Announcements
     </a>
     <a href="quick-links.html" class="active">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
@@ -213,6 +210,7 @@
   </section>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/main.js"></script>
 <script src="../assets/js/agent-auth.js"></script>
 </body>

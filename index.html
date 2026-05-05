@@ -37,25 +37,56 @@
         </svg>
         Secure agent access
       </span>
-      <h1>Welcome back.</h1>
-      <p class="gate-sub">Enter your agent password to access training, documents, and announcements.</p>
+      <h1 id="gate-heading">Welcome back.</h1>
+      <p class="gate-sub" id="gate-sub">Sign in with your agent account, or create one if you're new.</p>
     </div>
 
-    <form id="gate-form" class="form" autocomplete="off">
+    <div class="auth-tabs" role="tablist">
+      <button class="auth-tab active" data-tab="signin" type="button" role="tab">Sign in</button>
+      <button class="auth-tab" data-tab="signup" type="button" role="tab">Create account</button>
+    </div>
+
+    <!-- SIGN IN -->
+    <form id="signin-form" class="form" autocomplete="on">
       <div class="field">
-        <label for="gate-pwd">Agent password</label>
-        <input class="input" id="gate-pwd" name="password" type="password" required autocomplete="off" autofocus />
+        <label for="signin-email">Email</label>
+        <input class="input" id="signin-email" name="email" type="email" required autocomplete="email" />
       </div>
-      <p id="gate-err" class="err">That password didn't match. Try again.</p>
-      <button class="btn btn--primary full-width btn--lg" type="submit">Enter agent portal <span class="arrow">→</span></button>
+      <div class="field">
+        <label for="signin-password">Password</label>
+        <input class="input" id="signin-password" name="password" type="password" required autocomplete="current-password" minlength="6" />
+      </div>
+      <p id="signin-err" class="err"></p>
+      <button id="signin-btn" class="btn btn--primary full-width btn--lg" type="submit">Sign in <span class="arrow">→</span></button>
+    </form>
+
+    <!-- CREATE ACCOUNT -->
+    <form id="signup-form" class="form hidden" autocomplete="on">
+      <div class="field">
+        <label for="signup-name">Full name</label>
+        <input class="input" id="signup-name" name="fullName" type="text" required autocomplete="name" />
+      </div>
+      <div class="field">
+        <label for="signup-email">Email</label>
+        <input class="input" id="signup-email" name="email" type="email" required autocomplete="email" />
+      </div>
+      <div class="field">
+        <label for="signup-password">Password</label>
+        <input class="input" id="signup-password" name="password" type="password" required autocomplete="new-password" minlength="6" />
+        <span class="help">Minimum 6 characters.</span>
+      </div>
+      <p id="signup-err" class="err"></p>
+      <p id="signup-ok" class="ok"></p>
+      <button id="signup-btn" class="btn btn--primary full-width btn--lg" type="submit">Create account <span class="arrow">→</span></button>
     </form>
 
     <p style="font-size:0.85rem;color:var(--text-3);text-align:center;">
-      Forgot the password? Ask your mentor or email <a href="mailto:hello@firstclassagency.com" style="color:var(--accent-bright);">hello@firstclassagency.com</a>.
+      Trouble signing in? Email <a href="mailto:hello@firstclassagency.com" style="color:var(--accent-bright);">hello@firstclassagency.com</a>.
     </p>
   </div>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/js/main.js"></script>
 <script src="assets/js/gate-particles.js"></script>
 <script src="assets/js/agent-auth.js"></script>

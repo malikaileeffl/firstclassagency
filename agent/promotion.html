@@ -22,11 +22,18 @@
   <nav class="nav" aria-label="Primary">
     <a href="dashboard.html">Dashboard</a>
     <a href="training.html">Training</a>
-    <a href="documents.html">Documents</a>
-    <a href="announcements.html">Announcements</a>
+    <a href="quick-links.html">Quick Links</a>
+    <a href="promotion.html" class="active">Promotion</a>
+    <a href="resources.html">Resources</a>
+    <a href="carriers.html">Carriers</a>
+    <a href="portals.html">Portals</a>
     <a href="https://app.firstclassagency.info/login" target="_blank" rel="noopener noreferrer">Leads Center <span style="font-size:0.7em;opacity:0.65;margin-left:2px;">↗</span></a>
   </nav>
   <div class="nav-cta">
+    <span class="user-chip" data-user-chip style="display:none;">
+      <span class="user-avatar" data-user-initial>—</span>
+      <span class="user-name">Hi, <strong data-user-name>—</strong></span>
+    </span>
     <a href="#" data-logout class="btn btn--ghost">Sign out</a>
     <button class="nav-toggle" aria-label="Open menu">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
@@ -37,8 +44,6 @@
 <nav class="mobile-nav" aria-label="Mobile">
   <a href="dashboard.html">Dashboard</a>
   <a href="training.html">Training</a>
-  <a href="documents.html">Documents</a>
-  <a href="announcements.html">Announcements</a>
   <a href="quick-links.html">Quick Links</a>
   <a href="promotion.html">Promotion & Comp</a>
   <a href="resources.html">Agent Resources</a>
@@ -57,14 +62,6 @@
     <a href="training.html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
       Training
-    </a>
-    <a href="documents.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3v5h5"/><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
-      Documents
-    </a>
-    <a href="announcements.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l18-7v16L3 13z"/><path d="M11 14v4a2 2 0 0 1-4 0v-3"/></svg>
-      Announcements
     </a>
     <a href="quick-links.html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
@@ -100,20 +97,121 @@
       </div>
     </div>
 
-    <div class="reveal" style="padding-right:var(--gutter);">
-      <div class="card" style="padding:clamp(48px,6vw,80px) clamp(28px,4vw,56px);text-align:center;display:grid;gap:18px;justify-items:center;position:relative;overflow:hidden;">
-        <div style="position:absolute;inset:0;background:radial-gradient(500px 240px at 50% 0%,rgba(0,120,171,0.18),transparent 70%);pointer-events:none;"></div>
-        <div class="icon-tile" style="width:60px;height:60px;border-radius:18px;position:relative;">
-          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+    <p style="color:var(--text-3);font-size:0.92rem;margin:-6px 0 32px;padding-right:var(--gutter);max-width:60ch;">Earn more. Promote up. Build a team. Here's exactly how it works.</p>
+
+    <div class="reveal" style="padding-right:var(--gutter);margin-bottom:32px;">
+      <img
+        src="../assets/img/agency-record.jpg"
+        alt="Agency record — November 2025: $98,732, Hayden Keltner"
+        loading="lazy"
+        style="width:100%;height:auto;display:block;border-radius:var(--r-lg);border:1px solid var(--border);box-shadow:var(--shadow-md);"
+      />
+    </div>
+
+    <h2 class="list-section-head">Monthly producer bonus</h2>
+    <p style="color:var(--text-3);font-size:0.9rem;margin:-6px 0 18px;padding-right:var(--gutter);max-width:60ch;">Based on monthly issue paid life volume.</p>
+    <div class="bonus-grid reveal-stagger">
+      <div class="bonus-tier"><span class="tier-label">$20K in life</span><span class="tier-amount">$650</span></div>
+      <div class="bonus-tier"><span class="tier-label">$30K in life</span><span class="tier-amount">$1,200</span></div>
+      <div class="bonus-tier"><span class="tier-label">$40K in life</span><span class="tier-amount">$1,600</span></div>
+      <div class="bonus-tier"><span class="tier-label">$50K in life</span><span class="tier-amount">$2,000</span></div>
+      <div class="bonus-tier"><span class="tier-label">$75K in life</span><span class="tier-amount">$4,000</span></div>
+      <div class="bonus-tier"><span class="tier-label">$100K in life</span><span class="tier-amount">$8,000</span></div>
+      <div class="bonus-tier"><span class="tier-label">$125K in life</span><span class="tier-amount">$10,000</span></div>
+      <div class="bonus-tier"><span class="tier-label">$150K in life</span><span class="tier-amount">$15,000</span></div>
+      <div class="bonus-tier"><span class="tier-label">$200K in life</span><span class="tier-amount">$20,000</span></div>
+    </div>
+
+    <h2 class="list-section-head">The bonuses, explained</h2>
+    <div class="grid cols-3 reveal-stagger" style="padding-right:var(--gutter);margin-bottom:32px;">
+      <div class="card" style="padding:24px;">
+        <div class="icon-tile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         </div>
-        <span class="eyebrow" style="position:relative;">Coming soon</span>
-        <h2 style="font-size:clamp(1.5rem,2.4vw,2rem);max-width:22ch;position:relative;">Compensation grid, override structure, and the promotion ladder live here.</h2>
-        <p style="font-size:0.92rem;color:var(--text-3);position:relative;max-width:48ch;margin:4px auto 0;">Send the comp doc and I'll structure it.</p>
+        <h3 class="mt-16">Production bonus</h3>
+        <p class="mt-8" style="color:var(--text-2);font-size:0.92rem;">Based on the life annualized premium you generate in a given month. Hit a tier above, the bonus is yours.</p>
+      </div>
+      <div class="card" style="padding:24px;">
+        <div class="icon-tile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="20.59 13.41 13.42 20.58 6.71 13.87 13.88 6.7 20.59 13.41 z"/><line x1="9" y1="3" x2="6" y2="6"/><line x1="3" y1="3" x2="9" y2="9"/></svg>
+        </div>
+        <h3 class="mt-16">Leads voucher bonus</h3>
+        <p class="mt-8" style="color:var(--text-2);font-size:0.92rem;">Receive 25% of your production bonus back as lead voucher credit — fuel for the next month's pipeline.</p>
+      </div>
+      <div class="card" style="padding:24px;">
+        <div class="icon-tile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        </div>
+        <h3 class="mt-16">Writer increase bonus</h3>
+        <ul style="display:grid;gap:8px;margin:14px 0 0;padding:0;list-style:none;color:var(--text-2);font-size:0.9rem;">
+          <li>1 writer + $10K team increase → <strong style="color:var(--accent-bright);">$500 cash</strong></li>
+          <li>2 writers + $25K team increase → <strong style="color:var(--accent-bright);">$750 cash</strong></li>
+          <li>3 writers + $50K team increase → <strong style="color:var(--accent-bright);">$1,000 cash</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <h2 class="list-section-head">Builder contracts</h2>
+    <p style="color:var(--text-3);font-size:0.9rem;margin:-6px 0 18px;padding-right:var(--gutter);max-width:60ch;">For team builders. Earn override on personal and team production.</p>
+    <div class="contract-grid reveal-stagger">
+      <div class="contract-tier"><div class="tier-pct">145%</div><div class="tier-req">$2,000,000</div><div class="tier-sublabel">Builder contract</div></div>
+      <div class="contract-tier"><div class="tier-pct">135%</div><div class="tier-req">$1,500,000</div><div class="tier-sublabel">Builder contract</div></div>
+      <div class="contract-tier"><div class="tier-pct">130%</div><div class="tier-req">$1,000,000</div><div class="tier-sublabel">Builder contract</div></div>
+      <div class="contract-tier"><div class="tier-pct">125%</div><div class="tier-req">$600,000</div><div class="tier-sublabel">Builder contract</div></div>
+      <div class="contract-tier"><div class="tier-pct">120%</div><div class="tier-req">$300,000</div><div class="tier-sublabel">Builder contract</div></div>
+      <div class="contract-tier"><div class="tier-pct">115%</div><div class="tier-req">$150,000</div><div class="tier-sublabel">Builder contract</div></div>
+    </div>
+
+    <h2 class="list-section-head">Producer contracts</h2>
+    <p style="color:var(--text-3);font-size:0.9rem;margin:-6px 0 18px;padding-right:var(--gutter);max-width:60ch;">For individual producers. Hit production milestones to climb the ladder.</p>
+    <div class="contract-grid reveal-stagger">
+      <div class="contract-tier"><div class="tier-pct">110%</div><div class="tier-req">$50,000</div><div class="tier-sublabel">Producer</div></div>
+      <div class="contract-tier"><div class="tier-pct">105%</div><div class="tier-req">$35,000</div><div class="tier-sublabel">Producer</div></div>
+      <div class="contract-tier"><div class="tier-pct">100%</div><div class="tier-req">$25,000</div><div class="tier-sublabel">Producer</div></div>
+      <div class="contract-tier"><div class="tier-pct">95%</div><div class="tier-req">$20,000</div><div class="tier-sublabel">Producer</div></div>
+      <div class="contract-tier"><div class="tier-pct">90%</div><div class="tier-req">$15,000</div><div class="tier-sublabel">Producer</div></div>
+      <div class="contract-tier"><div class="tier-pct">85%</div><div class="tier-req">New agent</div><div class="tier-sublabel">Starting tier</div></div>
+    </div>
+
+    <h2 class="list-section-head">Qualification rules</h2>
+    <div class="reveal" style="padding-right:var(--gutter);margin-bottom:18px;">
+      <div class="card highlight" style="padding:22px 26px;">
+        <p style="color:var(--text);font-size:0.95rem;line-height:1.55;"><strong>To qualify for a new contract level:</strong> hit the required production for two consecutive months. Re-qualify one month out of every four following your promotion or you'll move down one level.</p>
+      </div>
+    </div>
+
+    <h3 class="list-section-head" style="font-size:0.78rem;margin-top:22px;">Producer contract guidelines</h3>
+    <div class="grid cols-3 reveal-stagger" style="padding-right:var(--gutter);margin-bottom:24px;">
+      <div class="card" style="padding:22px;">
+        <span class="eyebrow">First two months</span>
+        <h3 class="mt-16" style="font-size:1.05rem;">Lead assistance & training</h3>
+        <p class="mt-8" style="color:var(--text-2);font-size:0.9rem;">Focus on lead assistance and training. These months don't count toward production milestones.</p>
+      </div>
+      <div class="card highlight" style="padding:22px;">
+        <span class="eyebrow">90-day rule</span>
+        <h3 class="mt-16" style="font-size:1.05rem;">$20K minimum by month 3</h3>
+        <p class="mt-8" style="color:var(--text-2);font-size:0.9rem;">All team members must issue at least $20,000 in monthly revenue by the end of their third month. Failure to meet this standard results in dismissal.</p>
+      </div>
+      <div class="card" style="padding:22px;">
+        <span class="eyebrow">Month 3 onward</span>
+        <h3 class="mt-16" style="font-size:1.05rem;">Production tracking begins</h3>
+        <p class="mt-8" style="color:var(--text-2);font-size:0.9rem;">Once you've begun purchasing leads, your production is officially tracked and eligible for promotion.</p>
+      </div>
+    </div>
+
+    <h3 class="list-section-head" style="font-size:0.78rem;margin-top:6px;">Builder contract guidelines</h3>
+    <div class="reveal" style="padding-right:var(--gutter);">
+      <div class="card" style="padding:22px 26px;">
+        <ul style="display:grid;gap:10px;margin:0;padding-left:18px;color:var(--text-2);font-size:0.92rem;line-height:1.55;">
+          <li>$80K max monthly personal production qualifies toward a builder contract.</li>
+          <li>To qualify for the 120% builder tier, you must take over contracting admin tasks.</li>
+        </ul>
       </div>
     </div>
   </section>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/main.js"></script>
 <script src="../assets/js/agent-auth.js"></script>
 </body>
