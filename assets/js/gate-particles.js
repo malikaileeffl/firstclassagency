@@ -1,12 +1,10 @@
-/* Gate page particle network — adapted from AetherFlow.
-   Brand colors: #0078ab (accent) and #1aa3df (accent-bright).
-   Honors prefers-reduced-motion. */
+/* Gate page particle network — reads theme colors from CSS vars so it
+   works in both light and dark modes. Honors prefers-reduced-motion. */
 
 (() => {
   const canvas = document.getElementById('gate-canvas');
   if (!canvas) return;
 
-  // Respect reduced-motion preference
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     canvas.style.display = 'none';
     return;
@@ -17,10 +15,21 @@
   let particles = [];
   const mouse = { x: null, y: null, radius: 200 };
 
-  // Brand colors
-  const PARTICLE_FILL = 'rgba(26, 163, 223, 0.85)';     // accent-bright
-  const LINE_COLOR_DEFAULT = 'rgba(0, 120, 171, '; // accent — opacity appended
-  const LINE_COLOR_NEAR_MOUSE = 'rgba(255, 255, 255, ';
+  // Live theme color cache (refreshed on theme change)
+  let colors = readThemeColors();
+
+  function readThemeColors() {
+    const cs = getComputedStyle(document.documentElement);
+    return {
+      fill: (cs.getPropertyValue('--particle-fill') || 'rgba(26,163,223,0.85)').trim(),
+      lineRgb: (cs.getPropertyValue('--particle-line-rgb') || '0, 120, 171').trim(),
+      nearRgb: (cs.getPropertyValue('--particle-near-rgb') || '255, 255, 255').trim(),
+    };
+  }
+
+  document.addEventListener('fca:theme-changed', () => {
+    colors = readThemeColors();
+  });
 
   class Particle {
     constructor(x, y, dx, dy, size) {
@@ -31,14 +40,13 @@
     draw() {
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fillStyle = PARTICLE_FILL;
+      ctx.fillStyle = colors.fill;
       ctx.fill();
     }
     update() {
       if (this.x > canvas.width || this.x < 0) this.dx = -this.dx;
       if (this.y > canvas.height || this.y < 0) this.dy = -this.dy;
 
-      // Repel from cursor
       if (mouse.x !== null && mouse.y !== null) {
         const dx = mouse.x - this.x;
         const dy = mouse.y - this.y;
@@ -85,17 +93,14 @@
         const distSq = ddx * ddx + ddy * ddy;
         if (distSq < (canvas.width / 7) * (canvas.height / 7)) {
           const opacity = 1 - distSq / 20000;
-
-          // Brighter (white) when the segment is near the cursor
-          let prefix = LINE_COLOR_DEFAULT;
+          let rgb = colors.lineRgb;
           if (mouse.x !== null) {
             const dxA = particles[a].x - mouse.x;
             const dyA = particles[a].y - mouse.y;
             const distA = Math.sqrt(dxA * dxA + dyA * dyA);
-            if (distA < mouse.radius) prefix = LINE_COLOR_NEAR_MOUSE;
+            if (distA < mouse.radius) rgb = colors.nearRgb;
           }
-
-          ctx.strokeStyle = `${prefix}${opacity})`;
+          ctx.strokeStyle = `rgba(${rgb}, ${opacity})`;
           ctx.lineWidth = 1;
           ctx.beginPath();
           ctx.moveTo(particles[a].x, particles[a].y);
@@ -108,7 +113,6 @@
 
   function animate() {
     animationFrameId = requestAnimationFrame(animate);
-    // Transparent clear lets the page background gradient show through
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (let i = 0; i < particles.length; i++) particles[i].update();
     connect();
@@ -124,7 +128,6 @@
   resize();
   animate();
 
-  // Pause animation when tab is hidden to save cycles
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       cancelAnimationFrame(animationFrameId);

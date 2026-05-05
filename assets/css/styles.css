@@ -3,8 +3,9 @@
    Brand: #0078ab (accent), #1e1e1e (dark), #ffffff
    ========================================================================== */
 
-:root {
-  /* color */
+:root,
+[data-theme="dark"] {
+  /* color — dark theme (default) */
   --bg: #0d0d0e;
   --bg-1: #1e1e1e;
   --bg-2: #161617;
@@ -23,6 +24,65 @@
   --text-3: rgba(255, 255, 255, 0.5);
   --text-4: rgba(255, 255, 255, 0.32);
 
+  /* themed surfaces and gradients */
+  --body-gradient:
+    radial-gradient(1200px 600px at 80% -10%, rgba(0, 120, 171, 0.25), transparent 60%),
+    radial-gradient(900px 500px at -10% 30%, rgba(0, 120, 171, 0.12), transparent 60%),
+    linear-gradient(180deg, #0d0d0e 0%, #131314 60%, #1a1a1b 100%);
+  --gradient-num: linear-gradient(180deg, #ffffff, var(--accent-bright));
+  --gradient-num-soft: linear-gradient(180deg, #ffffff, #b6dceb);
+  --gradient-text-hero: linear-gradient(120deg, #ffffff 0%, #cfeaf6 50%, var(--accent-bright) 100%);
+  --gradient-gate-h1: linear-gradient(180deg, #ffffff 0%, #b6dceb 100%);
+  --header-bg: rgba(20, 20, 22, 0.65);
+  --header-bg-scrolled: rgba(15, 15, 17, 0.85);
+  --gate-card-bg: rgba(20, 20, 22, 0.55);
+  --placeholder-bg: linear-gradient(135deg, #15151a 0%, #0c0c0f 100%);
+  --particle-fill: rgba(26, 163, 223, 0.85);
+  --particle-line-rgb: 0, 120, 171;
+  --particle-near-rgb: 255, 255, 255;
+}
+
+[data-theme="light"] {
+  --bg: #f4f6f9;
+  --bg-1: #ffffff;
+  --bg-2: #eef0f4;
+  --surface: rgba(13, 18, 25, 0.04);
+  --surface-hover: rgba(13, 18, 25, 0.07);
+  --border: rgba(13, 18, 25, 0.10);
+  --border-strong: rgba(13, 18, 25, 0.18);
+
+  --accent: #0078ab;
+  --accent-bright: #006a98;
+  --accent-glow: rgba(0, 120, 171, 0.30);
+  --accent-soft: rgba(0, 120, 171, 0.08);
+
+  --text: #0d1219;
+  --text-2: rgba(13, 18, 25, 0.72);
+  --text-3: rgba(13, 18, 25, 0.55);
+  --text-4: rgba(13, 18, 25, 0.36);
+
+  --body-gradient:
+    radial-gradient(1200px 600px at 80% -10%, rgba(0, 120, 171, 0.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 30%, rgba(0, 120, 171, 0.05), transparent 60%),
+    linear-gradient(180deg, #f7f8fa 0%, #eef0f4 60%, #e6e9ef 100%);
+  --gradient-num: linear-gradient(180deg, #0d1219, var(--accent));
+  --gradient-num-soft: linear-gradient(180deg, #0d1219, #2c5d7c);
+  --gradient-text-hero: linear-gradient(120deg, #0d1219 0%, #154860 50%, var(--accent) 100%);
+  --gradient-gate-h1: linear-gradient(180deg, #0d1219 0%, var(--accent) 100%);
+  --header-bg: rgba(255, 255, 255, 0.7);
+  --header-bg-scrolled: rgba(255, 255, 255, 0.92);
+  --gate-card-bg: rgba(255, 255, 255, 0.82);
+  --placeholder-bg: linear-gradient(135deg, #ffffff 0%, #eef0f4 100%);
+  --particle-fill: rgba(0, 120, 171, 0.7);
+  --particle-line-rgb: 0, 120, 171;
+  --particle-near-rgb: 13, 18, 25;
+}
+
+[data-theme="light"] body {
+  color-scheme: light;
+}
+
+:root {
   /* type */
   --font-sans: "Inter", "Inter Placeholder", -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -81,13 +141,11 @@ body {
   line-height: 1.55;
   color: var(--text);
   background: var(--bg);
-  background-image:
-    radial-gradient(1200px 600px at 80% -10%, rgba(0, 120, 171, 0.25), transparent 60%),
-    radial-gradient(900px 500px at -10% 30%, rgba(0, 120, 171, 0.12), transparent 60%),
-    linear-gradient(180deg, #0d0d0e 0%, #131314 60%, #1a1a1b 100%);
+  background-image: var(--body-gradient);
   background-attachment: fixed;
   min-height: 100vh;
   overflow-x: hidden;
+  transition: background 320ms cubic-bezier(0.2, 0.7, 0.1, 1), color 320ms cubic-bezier(0.2, 0.7, 0.1, 1);
 }
 
 img,
@@ -191,7 +249,7 @@ p {
 }
 
 .gradient-text {
-  background: linear-gradient(120deg, #ffffff 0%, #cfeaf6 50%, var(--accent-bright) 100%);
+  background: var(--gradient-text-hero);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -273,7 +331,7 @@ p {
   justify-content: space-between;
   gap: 32px;
   padding: 12px 16px 12px 20px;
-  background: rgba(20, 20, 22, 0.65);
+  background: var(--header-bg);
   backdrop-filter: blur(24px) saturate(140%);
   -webkit-backdrop-filter: blur(24px) saturate(140%);
   border: 1px solid var(--border);
@@ -285,7 +343,7 @@ p {
 }
 
 .site-header.scrolled {
-  background: rgba(15, 15, 17, 0.85);
+  background: var(--header-bg-scrolled);
   border-color: var(--border-strong);
   box-shadow: var(--shadow-md);
 }
@@ -556,7 +614,7 @@ p {
   font-weight: 600;
   letter-spacing: -0.03em;
   line-height: 1;
-  background: linear-gradient(180deg, #fff, #b6dceb);
+  background: var(--gradient-num-soft);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -1111,7 +1169,7 @@ p {
 .gate-card {
   width: 100%;
   max-width: 480px;
-  background: rgba(20, 20, 22, 0.55);
+  background: var(--gate-card-bg);
   backdrop-filter: blur(22px) saturate(140%);
   -webkit-backdrop-filter: blur(22px) saturate(140%);
   border: 1px solid var(--border-strong);
@@ -1167,7 +1225,7 @@ p {
 .gate h1 {
   font-size: clamp(2.25rem, 4.5vw, 3rem);
   letter-spacing: -0.035em;
-  background: linear-gradient(180deg, #ffffff 0%, #b6dceb 100%);
+  background: var(--gradient-gate-h1);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -1243,17 +1301,23 @@ p {
 
 .gate .ok.show { display: block; }
 
-/* "Hi, Malikai" chip in the header */
+/* User menu — chip + dropdown */
+.user-menu {
+  position: relative;
+  display: inline-block;
+}
+
 .user-chip {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 12px 4px 4px;
+  padding: 4px 10px 4px 4px;
   border-radius: var(--r-pill);
   background: var(--surface);
   border: 1px solid var(--border);
   font-size: 0.85rem;
   color: var(--text-2);
+  cursor: pointer;
   transition: border-color var(--dur-1) var(--ease),
     background var(--dur-1) var(--ease);
 }
@@ -1287,10 +1351,231 @@ p {
   font-weight: 500;
 }
 
+.user-chip .caret {
+  width: 12px;
+  height: 12px;
+  color: var(--text-3);
+  transition: transform var(--dur-1) var(--ease);
+}
+
+.user-menu.open .user-chip .caret {
+  transform: rotate(180deg);
+}
+
 @media (max-width: 720px) {
   .user-chip .user-name { display: none; }
-  .user-chip { padding: 4px; }
+  .user-chip { padding: 4px 6px 4px 4px; }
 }
+
+.user-menu-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 220px;
+  background: var(--bg-1);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-lg);
+  padding: 6px;
+  display: none;
+  z-index: 200;
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+}
+
+.user-menu.open .user-menu-dropdown {
+  display: block;
+  animation: dropFade 180ms var(--ease-out);
+}
+
+@keyframes dropFade {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.user-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--r-sm);
+  font-size: 0.9rem;
+  color: var(--text);
+  text-decoration: none;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--dur-1) var(--ease);
+}
+
+.user-menu-item:hover { background: var(--surface); }
+
+.user-menu-item svg {
+  width: 16px;
+  height: 16px;
+  color: var(--text-3);
+  flex-shrink: 0;
+}
+
+.user-menu-item:hover svg { color: var(--accent-bright); }
+
+.user-menu-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
+
+/* Animated theme toggle (sun ↔ moon) */
+.theme-toggle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: var(--text);
+  transition: background var(--dur-1) var(--ease),
+    border-color var(--dur-1) var(--ease),
+    transform var(--dur-1) var(--ease);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+  background: var(--surface-hover);
+  border-color: rgba(0, 120, 171, 0.4);
+}
+
+.theme-toggle:active { transform: scale(0.95); }
+
+.theme-toggle svg { width: 20px; height: 20px; overflow: visible; }
+
+.theme-toggle .sun-icon,
+.theme-toggle .moon-icon {
+  transform-origin: center;
+  transition: opacity 0.45s var(--ease-out), transform 0.45s var(--ease-out);
+}
+
+[data-theme="dark"] .theme-toggle .sun-icon {
+  opacity: 0;
+  transform: scale(0) rotate(-90deg);
+}
+[data-theme="dark"] .theme-toggle .moon-icon {
+  opacity: 1;
+  transform: scale(1) rotate(0);
+}
+
+[data-theme="light"] .theme-toggle .sun-icon {
+  opacity: 1;
+  transform: scale(1) rotate(0);
+}
+[data-theme="light"] .theme-toggle .moon-icon {
+  opacity: 0;
+  transform: scale(0) rotate(90deg);
+}
+
+/* Account settings page */
+.account-grid {
+  display: grid;
+  gap: 16px;
+  padding-right: var(--gutter);
+  max-width: 720px;
+}
+
+.account-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 28px;
+}
+
+.account-card .card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.account-card .card-head h2 {
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.account-card .card-head .card-sub {
+  font-size: 0.85rem;
+  color: var(--text-3);
+  margin-top: 4px;
+}
+
+.account-profile-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.account-avatar-lg {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-bright));
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1.6rem;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(0, 120, 171, 0.4);
+}
+
+.account-profile-meta {
+  display: grid;
+  gap: 4px;
+}
+
+.account-profile-meta .name { font-weight: 500; font-size: 1.05rem; }
+.account-profile-meta .email { font-size: 0.88rem; color: var(--text-3); }
+.account-profile-meta .since { font-size: 0.78rem; color: var(--text-3); margin-top: 4px; font-family: var(--font-mono); letter-spacing: 0.04em; text-transform: uppercase; }
+
+.account-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.appearance-options {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+}
+
+.appearance-options .meta { flex: 1; }
+.appearance-options .label { font-weight: 500; }
+.appearance-options .sub { font-size: 0.82rem; color: var(--text-3); margin-top: 2px; }
+
+/* small status pill for save confirmations */
+.save-status {
+  display: none;
+  font-size: 0.85rem;
+  color: #6ed3a0;
+}
+.save-status.show { display: inline; }
+.save-status.error { color: #ff8b8b; }
 
 /* ==========================================================================
    agent hub layout
@@ -1422,7 +1707,7 @@ p {
   font-weight: 600;
   letter-spacing: -0.025em;
   margin-top: 6px;
-  background: linear-gradient(180deg, #fff, #b6dceb);
+  background: var(--gradient-num-soft);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -1614,7 +1899,7 @@ p {
   font-weight: 700;
   font-size: 1.35rem;
   letter-spacing: -0.025em;
-  background: linear-gradient(180deg, #ffffff 0%, var(--accent-bright) 100%);
+  background: var(--gradient-num);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -1669,7 +1954,7 @@ p {
   font-weight: 700;
   font-size: clamp(1.7rem, 2.6vw, 2.25rem);
   letter-spacing: -0.035em;
-  background: linear-gradient(180deg, #ffffff 0%, var(--accent-bright) 100%);
+  background: var(--gradient-num);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -1948,7 +2233,7 @@ p {
 .placeholder-frame {
   aspect-ratio: 16 / 10;
   border-radius: var(--r-md);
-  background: linear-gradient(135deg, #15151a 0%, #0c0c0f 100%);
+  background: var(--placeholder-bg);
   border: 1px dashed var(--border-strong);
   display: grid;
   place-items: center;

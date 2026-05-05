@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Training — Agent portal</title>
+<title>Account settings — Agent portal</title>
 <meta name="robots" content="noindex,nofollow" />
 <meta name="theme-color" content="#0d0d0e" />
 <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
@@ -64,7 +64,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>
       Dashboard
     </a>
-    <a href="training.html" class="active">
+    <a href="training.html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
       Training
     </a>
@@ -97,40 +97,120 @@
   <section class="hub-main">
     <div class="hub-head">
       <div>
-        <span class="eyebrow">Training library</span>
-        <h1 class="mt-8">Build your skill stack.</h1>
+        <span class="eyebrow">Account</span>
+        <h1 class="mt-8">Settings</h1>
       </div>
     </div>
 
-    <div class="video-list reveal-stagger">
+    <div class="account-grid">
 
-      <a class="video-link" href="https://youtu.be/lEb5UqPopnc" target="_blank" rel="noopener">
-        <div class="play-tile">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polygon points="10,8 16,12 10,16" fill="currentColor" stroke="none"/></svg>
+      <!-- PROFILE -->
+      <div class="account-card reveal">
+        <div class="card-head">
+          <div>
+            <h2>Profile</h2>
+            <div class="card-sub">Your name and account details.</div>
+          </div>
         </div>
-        <div class="v-meta">
-          <span class="eyebrow">Video · YouTube</span>
-          <h3>Script Overview</h3>
-          <p>Walk-through of the script — watch this before your first dial session.</p>
-        </div>
-        <span class="btn btn--primary watch-btn">Watch <span class="arrow">→</span></span>
-      </a>
 
-      <a class="video-link" href="https://youtu.be/XmhOD4cFOwI" target="_blank" rel="noopener">
-        <div class="play-tile">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polygon points="10,8 16,12 10,16" fill="currentColor" stroke="none"/></svg>
+        <div class="account-profile-row">
+          <div class="account-avatar-lg" data-user-initial>—</div>
+          <div class="account-profile-meta">
+            <span class="name" data-user-fullname>—</span>
+            <span class="email" data-user-email>—</span>
+            <span class="since" data-user-since>—</span>
+          </div>
         </div>
-        <div class="v-meta">
-          <span class="eyebrow">Video · YouTube</span>
-          <h3>Americo Application Tutorial</h3>
-          <p>Step-by-step walk-through of submitting an Americo application, end to end.</p>
+
+        <form id="profile-form" class="form" autocomplete="off">
+          <div class="field">
+            <label for="profile-name">Full name</label>
+            <input class="input" id="profile-name" name="fullName" type="text" required autocomplete="name" />
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <input class="input" type="email" data-user-email-input disabled />
+            <span class="help">Email can't be changed from here. Reach out to your admin if it needs to update.</span>
+          </div>
+          <div class="account-actions">
+            <button class="btn btn--primary" type="submit" id="profile-save-btn">Save changes</button>
+            <span id="profile-status" class="save-status"></span>
+          </div>
+        </form>
+      </div>
+
+      <!-- SECURITY -->
+      <div class="account-card reveal">
+        <div class="card-head">
+          <div>
+            <h2>Security</h2>
+            <div class="card-sub">Set a new password. Minimum 6 characters.</div>
+          </div>
         </div>
-        <span class="btn btn--primary watch-btn">Watch <span class="arrow">→</span></span>
-      </a>
+
+        <form id="password-form" class="form" autocomplete="off">
+          <div class="field">
+            <label for="password-new">New password</label>
+            <input class="input" id="password-new" name="password" type="password" required autocomplete="new-password" minlength="6" />
+          </div>
+          <div class="field">
+            <label for="password-confirm">Confirm new password</label>
+            <input class="input" id="password-confirm" name="passwordConfirm" type="password" required autocomplete="new-password" minlength="6" />
+          </div>
+          <div class="account-actions">
+            <button class="btn btn--primary" type="submit" id="password-save-btn">Update password</button>
+            <span id="password-status" class="save-status"></span>
+          </div>
+        </form>
+      </div>
+
+      <!-- APPEARANCE -->
+      <div class="account-card reveal">
+        <div class="card-head">
+          <div>
+            <h2>Appearance</h2>
+            <div class="card-sub">Switch between dark and light themes. Saved on this device.</div>
+          </div>
+        </div>
+
+        <div class="appearance-options">
+          <div class="meta">
+            <div class="label">Theme</div>
+            <div class="sub" data-theme-label>Dark mode</div>
+          </div>
+          <button class="theme-toggle" id="theme-toggle-btn" aria-label="Toggle theme">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <g class="sun-icon">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+              </g>
+              <g class="moon-icon">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor"/>
+              </g>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- DANGER -->
+      <div class="account-card reveal">
+        <div class="card-head">
+          <div>
+            <h2>Sign out</h2>
+            <div class="card-sub">End your session on this device.</div>
+          </div>
+          <button class="btn btn--ghost" data-logout type="button">Sign out</button>
+        </div>
+      </div>
 
     </div>
-
-    <p class="help mt-32" style="padding-right:var(--gutter);max-width:60ch;">More videos are being recorded. Until then, the daily 9 AM ET training calls are where the real reps happen — full schedule lives on the <a href="dashboard.html" style="color:var(--accent-bright);">dashboard</a>.</p>
   </section>
 </main>
 
