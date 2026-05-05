@@ -72,10 +72,13 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
     const fullName = getFullName(user);
     const firstName = fullName.split(' ')[0];
     const initial = firstName.charAt(0).toUpperCase();
+    const avatarUrl = user?.user_metadata?.avatar_url;
 
     document.querySelectorAll('[data-user-name]').forEach((el) => { el.textContent = firstName; });
     document.querySelectorAll('[data-user-fullname]').forEach((el) => { el.textContent = fullName; });
-    document.querySelectorAll('[data-user-initial]').forEach((el) => { el.textContent = initial; });
+    document.querySelectorAll('[data-user-initial]').forEach((el) => {
+      applyAvatar(el, avatarUrl, initial);
+    });
     document.querySelectorAll('[data-user-greeting]').forEach((el) => {
       el.textContent = `Welcome back, ${firstName}`;
     });
@@ -90,6 +93,27 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
     });
 
     document.querySelectorAll('[data-user-chip]').forEach((el) => { el.style.display = ''; });
+  }
+
+  function applyAvatar(el, avatarUrl, initial) {
+    el.innerHTML = '';
+    el.classList.remove('avatar-with-image');
+    if (avatarUrl) {
+      const img = document.createElement('img');
+      img.src = avatarUrl;
+      img.alt = '';
+      img.draggable = false;
+      img.onerror = () => {
+        // Image failed (deleted, broken URL) — fall back to initial
+        el.innerHTML = '';
+        el.classList.remove('avatar-with-image');
+        el.textContent = initial;
+      };
+      el.appendChild(img);
+      el.classList.add('avatar-with-image');
+    } else {
+      el.textContent = initial;
+    }
   }
 
   function wireUserMenu() {
@@ -121,6 +145,9 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
   }
 
   function wireAccountPage(sb, user) {
+    // Avatar upload + remove
+    wireAvatarControl(sb, user);
+
     // Pre-fill name input
     const fullName = getFullName(user);
     const nameInput = document.getElementById('profile-name');
@@ -202,6 +229,158 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
     el.classList.add('show');
     clearTimeout(el._t);
     el._t = setTimeout(() => el.classList.remove('show'), 3000);
+  }
+
+  // ---------- AVATAR UPLOAD ----------
+
+  function wireAvatarControl(sb, initialUser) {
+    const uploadBtn = document.getElementById('avatar-upload-btn');
+    const removeBtn = document.getElementById('avatar-remove-btn');
+    const fileInput = document.getElementById('avatar-input');
+    const status = document.getElementById('avatar-status');
+
+    if (!uploadBtn || !fileInput) return;
+
+    let currentUser = initialUser;
+
+    function refreshRemoveBtn() {
+      if (!removeBtn) return;
+      removeBtn.style.display = currentUser?.user_metadata?.avatar_url ? '' : 'none';
+    }
+    refreshRemoveBtn();
+
+    uploadBtn.addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', async (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        showStatus(status, 'Please select an image (JPG, PNG, or WEBP).', true);
+        fileInput.value = '';
+        return;
+      }
+      if (file.size > 8 * 1024 * 1024) {
+        showStatus(status, 'Image too large. Max 8 MB.', true);
+        fileInput.value = '';
+        return;
+      }
+
+      uploadBtn.disabled = true;
+      if (removeBtn) removeBtn.disabled = true;
+      const original = uploadBtn.textContent;
+      uploadBtn.textContent = 'Uploading…';
+      status.classList.remove('show', 'error');
+
+      try {
+        await uploadAvatar(sb, currentUser, file);
+        const { data: { user: refreshed } } = await sb.auth.getUser();
+        if (refreshed) {
+          currentUser = refreshed;
+          populateUser(refreshed);
+          refreshRemoveBtn();
+        }
+        showStatus(status, 'Photo updated.');
+      } catch (err) {
+        showStatus(status, friendlyAvatarError(err), true);
+      } finally {
+        uploadBtn.disabled = false;
+        if (removeBtn) removeBtn.disabled = false;
+        uploadBtn.textContent = original;
+        fileInput.value = '';
+      }
+    });
+
+    if (removeBtn) {
+      removeBtn.addEventListener('click', async () => {
+        removeBtn.disabled = true;
+        uploadBtn.disabled = true;
+        const original = removeBtn.textContent;
+        removeBtn.textContent = 'Removing…';
+        status.classList.remove('show', 'error');
+
+        try {
+          await sb.auth.updateUser({ data: { avatar_url: null } });
+          const { data: { user: refreshed } } = await sb.auth.getUser();
+          if (refreshed) {
+            currentUser = refreshed;
+            populateUser(refreshed);
+            refreshRemoveBtn();
+          }
+          showStatus(status, 'Photo removed.');
+        } catch (err) {
+          showStatus(status, friendlyAvatarError(err), true);
+        } finally {
+          uploadBtn.disabled = false;
+          removeBtn.disabled = false;
+          removeBtn.textContent = original;
+        }
+      });
+    }
+  }
+
+  async function uploadAvatar(sb, user, file) {
+    const blob = await resizeToSquare(file, 256);
+    const fileName = `${user.id}/${Date.now()}.jpg`;
+
+    const { error: uploadError } = await sb.storage
+      .from('avatars')
+      .upload(fileName, blob, { contentType: 'image/jpeg', upsert: false });
+    if (uploadError) throw uploadError;
+
+    const { data: { publicUrl } } = sb.storage.from('avatars').getPublicUrl(fileName);
+
+    const { error: updateError } = await sb.auth.updateUser({
+      data: { avatar_url: publicUrl },
+    });
+    if (updateError) throw updateError;
+
+    return publicUrl;
+  }
+
+  function resizeToSquare(file, dim) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error('Could not read file.'));
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onerror = () => reject(new Error('Could not load image.'));
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = dim;
+          canvas.height = dim;
+          const ctx = canvas.getContext('2d');
+          // Center-crop to square
+          const sqSize = Math.min(img.width, img.height);
+          const sx = (img.width - sqSize) / 2;
+          const sy = (img.height - sqSize) / 2;
+          ctx.drawImage(img, sx, sy, sqSize, sqSize, 0, 0, dim, dim);
+          canvas.toBlob(
+            (blob) => {
+              if (blob) resolve(blob);
+              else reject(new Error('Could not encode image.'));
+            },
+            'image/jpeg',
+            0.9
+          );
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function friendlyAvatarError(err) {
+    const msg = (err && (err.message || err.error_description)) || '';
+    const m = msg.toLowerCase();
+    if (m.includes('bucket not found')) {
+      return 'Avatar storage isn\'t set up yet. Create a bucket called "avatars" in Supabase.';
+    }
+    if (m.includes('row-level security') || m.includes('not allowed') || m.includes('unauthorized')) {
+      return 'Storage permissions block this upload. Bucket needs to be set to public.';
+    }
+    if (m.includes('exceeded')) return 'Storage quota reached. Reach out to your admin.';
+    return msg || 'Upload failed. Please try again.';
   }
 
   function wireGate(sb) {

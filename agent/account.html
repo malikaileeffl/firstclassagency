@@ -104,6 +104,26 @@
 
     <div class="account-grid">
 
+      <!-- PROFILE PICTURE -->
+      <div class="account-card reveal">
+        <div class="card-head">
+          <div>
+            <h2>Profile picture</h2>
+            <div class="card-sub">Square photo. JPG or PNG. We auto-resize to 256×256.</div>
+          </div>
+        </div>
+
+        <div class="avatar-control">
+          <div class="account-avatar-lg" data-user-initial id="avatar-preview">—</div>
+          <div class="avatar-actions">
+            <button class="btn btn--primary" id="avatar-upload-btn" type="button">Upload photo</button>
+            <button class="btn btn--ghost" id="avatar-remove-btn" type="button" style="display:none;">Remove</button>
+            <input type="file" id="avatar-input" accept="image/png,image/jpeg,image/webp" style="display:none;" />
+          </div>
+        </div>
+        <p id="avatar-status" class="save-status mt-16" style="margin-top:14px;"></p>
+      </div>
+
       <!-- PROFILE -->
       <div class="account-card reveal">
         <div class="card-head">

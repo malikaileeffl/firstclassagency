@@ -1577,6 +1577,41 @@ p {
 .save-status.show { display: inline; }
 .save-status.error { color: #ff8b8b; }
 
+/* Avatar — supports both initial fallback and uploaded image */
+.user-avatar.avatar-with-image,
+.account-avatar-lg.avatar-with-image {
+  background: var(--bg-2);
+  padding: 0;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.user-avatar img,
+.account-avatar-lg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Avatar control on the account page */
+.avatar-control {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+
+.avatar-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 200px;
+}
+
 /* ==========================================================================
    agent hub layout
    ========================================================================== */
