@@ -2266,7 +2266,7 @@ p {
 }
 
 .placeholder-frame {
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 16 / 9;
   border-radius: var(--r-md);
   background: var(--placeholder-bg);
   border: 1px dashed var(--border-strong);
