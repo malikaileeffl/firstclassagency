@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Announcements & Calendar — Agent portal</title>
+<meta name="robots" content="noindex,nofollow" />
+<meta name="theme-color" content="#0d0d0e" />
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <a href="dashboard.html" class="brand">
+    <img class="brand-logo" src="../assets/img/logo.png" alt="First Class Agency" />
+    <span>First Class · Agent</span>
+  </a>
+  <nav class="nav" aria-label="Primary">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="training.html">Training</a>
+    <a href="documents.html">Documents</a>
+    <a href="announcements.html">Announcements</a>
+    <a href="https://app.firstclassagency.info/login" target="_blank" rel="noopener noreferrer">Leads Center <span style="font-size:0.7em;opacity:0.65;margin-left:2px;">↗</span></a>
+  </nav>
+  <div class="nav-cta">
+    <a href="#" data-logout class="btn btn--ghost">Sign out</a>
+    <button class="nav-toggle" aria-label="Open menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</header>
+
+<nav class="mobile-nav" aria-label="Mobile">
+  <a href="dashboard.html">Dashboard</a>
+  <a href="training.html">Training</a>
+  <a href="documents.html">Documents</a>
+  <a href="announcements.html">Announcements</a>
+  <a href="https://app.firstclassagency.info/login" target="_blank" rel="noopener noreferrer">Leads Center ↗</a>
+  <a href="#" data-logout class="btn btn--ghost mt-16">Sign out</a>
+</nav>
+
+<main class="container hub-shell">
+  <aside class="hub-side" aria-label="Agent navigation">
+        <a href="dashboard.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>
+          Dashboard
+        </a>
+        <a href="training.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          Training
+        </a>
+        <a href="documents.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3v5h5"/><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+          Documents
+        </a>
+        <a href="announcements.html" class="active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l18-7v16L3 13z"/><path d="M11 14v4a2 2 0 0 1-4 0v-3"/></svg>
+          Announcements
+        </a>
+        <a href="quick-links.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          Quick Links
+        </a>
+        <a href="promotion.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+          Promotion & Comp
+        </a>
+        <a href="resources.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          Agent Resources
+        </a>
+        <a href="carriers.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Carrier Contacts
+        </a>
+        <a href="portals.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20"/><path d="M6 7h.01"/></svg>
+          E-apps & Portals
+        </a>
+        <a href="https://app.firstclassagency.info/login" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4h6v6"/><path d="M18 4l-9 9"/><path d="M18 11v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h7"/></svg>
+          Leads Center
+        </a>
+      </aside>
+
+  <section class="hub-main">
+    <div class="hub-head">
+      <div>
+        <span class="eyebrow">Calendar</span>
+        <h1 class="mt-8">What's happening this week.</h1>
+      </div>
+    </div>
+
+    <h2 style="font-size:1.1rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--text-3);margin-bottom:14px;font-family:var(--font-mono);font-weight:500;">This week's training calls</h2>
+    <p style="color:var(--text-3);font-size:0.92rem;margin:-6px 0 18px;padding-right:var(--gutter);">Be there. Get better. Win. — every call is 9:00 AM ET on Zoom.</p>
+    <div class="cal reveal-stagger">
+
+      <div class="cal-row">
+        <div class="cal-date">
+          <span class="day">04</span>
+          <span class="mon">May</span>
+        </div>
+        <div>
+          <div class="cal-title" style="font-weight:500;">Team Call</div>
+          <div style="font-size:0.85rem;color:var(--text-3);">Mon · 9:00 AM ET · Zoom · with Drew Smith</div>
+        </div>
+        <a class="btn btn--ghost cal-cta" href="https://us05web.zoom.us/j/81495699957?pwd=arX0o5IF2SrbYNbOmOq3Yktk0aT8yu.1" target="_blank" rel="noopener">Join Zoom</a>
+      </div>
+
+      <div class="cal-row">
+        <div class="cal-date">
+          <span class="day">05</span>
+          <span class="mon">May</span>
+        </div>
+        <div>
+          <div class="cal-title" style="font-weight:500;">Back on the Books</div>
+          <div style="font-size:0.85rem;color:var(--text-3);">Tue · 9:00 AM ET · Zoom · with Hayden Keltner</div>
+        </div>
+        <a class="btn btn--ghost cal-cta" href="https://us05web.zoom.us/j/81495699957?pwd=arX0o5IF2SrbYNbOmOq3Yktk0aT8yu.1" target="_blank" rel="noopener">Join Zoom</a>
+      </div>
+
+      <div class="cal-row">
+        <div class="cal-date">
+          <span class="day">06</span>
+          <span class="mon">May</span>
+        </div>
+        <div>
+          <div class="cal-title" style="font-weight:500;">Handling Objections</div>
+          <div style="font-size:0.85rem;color:var(--text-3);">Wed · 9:00 AM ET · Zoom · with Colby Whittaker</div>
+        </div>
+        <a class="btn btn--ghost cal-cta" href="https://us05web.zoom.us/j/81495699957?pwd=arX0o5IF2SrbYNbOmOq3Yktk0aT8yu.1" target="_blank" rel="noopener">Join Zoom</a>
+      </div>
+
+      <div class="cal-row">
+        <div class="cal-date">
+          <span class="day">07</span>
+          <span class="mon">May</span>
+        </div>
+        <div>
+          <div class="cal-title" style="font-weight:500;">Locking Down the Close</div>
+          <div style="font-size:0.85rem;color:var(--text-3);">Thu · 9:00 AM ET · Zoom · with Garrett Sekelsky</div>
+        </div>
+        <a class="btn btn--ghost cal-cta" href="https://us05web.zoom.us/j/81495699957?pwd=arX0o5IF2SrbYNbOmOq3Yktk0aT8yu.1" target="_blank" rel="noopener">Join Zoom</a>
+      </div>
+
+      <div class="cal-row">
+        <div class="cal-date">
+          <span class="day">08</span>
+          <span class="mon">May</span>
+        </div>
+        <div>
+          <div class="cal-title" style="font-weight:500;">Growing Online</div>
+          <div style="font-size:0.85rem;color:var(--text-3);">Fri · 9:00 AM ET · Zoom · with Malikai Lee</div>
+        </div>
+        <a class="btn btn--ghost cal-cta" href="https://us05web.zoom.us/j/81495699957?pwd=arX0o5IF2SrbYNbOmOq3Yktk0aT8yu.1" target="_blank" rel="noopener">Join Zoom</a>
+      </div>
+
+    </div>
+
+    <script>
+    /* Auto-roll calendar dates each week and highlight today's row.
+       If today is Mon-Fri: shows this week's dates, badges today's row.
+       If today is Sat/Sun: shows next week's dates, no row badged. */
+    (() => {
+      const rows = document.querySelectorAll('.cal-row');
+      if (!rows.length) return;
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const now = new Date();
+      const dow = now.getDay(); // 0 = Sun ... 6 = Sat
+      let mondayOffset;
+      if (dow === 0) mondayOffset = 1;        // Sun → next Mon
+      else if (dow === 6) mondayOffset = 2;   // Sat → next Mon
+      else mondayOffset = 1 - dow;            // Mon..Fri → this week's Mon
+      const monday = new Date(now);
+      monday.setDate(now.getDate() + mondayOffset);
+      const todayIdx = (dow >= 1 && dow <= 5) ? dow - 1 : -1;
+
+      rows.forEach((row, i) => {
+        if (i > 4) return;
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+
+        const dayEl = row.querySelector('.day');
+        const monEl = row.querySelector('.mon');
+        if (dayEl) dayEl.textContent = String(d.getDate()).padStart(2, '0');
+        if (monEl) monEl.textContent = months[d.getMonth()];
+
+        if (i === todayIdx) {
+          const title = row.querySelector('.cal-title');
+          if (title && !title.querySelector('.today-badge')) {
+            const badge = document.createElement('span');
+            badge.className = 'today-badge';
+            badge.textContent = 'Today';
+            title.appendChild(badge);
+          }
+          const btn = row.querySelector('.cal-cta');
+          if (btn) {
+            btn.classList.remove('btn--ghost');
+            btn.classList.add('btn--primary');
+            btn.innerHTML = 'Join Zoom <span class="arrow">→</span>';
+          }
+        }
+      });
+    })();
+    </script>
+
+  </section>
+</main>
+
+<script src="../assets/js/main.js"></script>
+<script src="../assets/js/agent-auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Agent portal — First Class Agency</title>
+<meta name="description" content="Agent portal for First Class Agency. Login required." />
+<meta name="robots" content="noindex,nofollow" />
+<meta name="theme-color" content="#0d0d0e" />
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+
+<!-- particle network background -->
+<canvas id="gate-canvas" class="gate-canvas" aria-hidden="true"></canvas>
+
+<header class="site-header">
+  <a href="index.html" class="brand">
+    <img class="brand-logo" src="assets/img/logo.png" alt="First Class Agency" />
+    <span>First Class Agency</span>
+  </a>
+  <div class="nav-cta">
+    <span class="btn btn--quiet" style="cursor:default;">Agent portal</span>
+  </div>
+</header>
+
+<main class="gate">
+  <div class="gate-card reveal in">
+    <div class="gate-intro">
+      <span class="zap-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor" stroke="none"/>
+        </svg>
+        Secure agent access
+      </span>
+      <h1>Welcome back.</h1>
+      <p class="gate-sub">Enter your agent password to access training, documents, and announcements.</p>
+    </div>
+
+    <form id="gate-form" class="form" autocomplete="off">
+      <div class="field">
+        <label for="gate-pwd">Agent password</label>
+        <input class="input" id="gate-pwd" name="password" type="password" required autocomplete="off" autofocus />
+      </div>
+      <p id="gate-err" class="err">That password didn't match. Try again.</p>
+      <button class="btn btn--primary full-width btn--lg" type="submit">Enter agent portal <span class="arrow">→</span></button>
+    </form>
+
+    <p style="font-size:0.85rem;color:var(--text-3);text-align:center;">
+      Forgot the password? Ask your mentor or email <a href="mailto:hello@firstclassagency.com" style="color:var(--accent-bright);">hello@firstclassagency.com</a>.
+    </p>
+  </div>
+</main>
+
+<script src="assets/js/main.js"></script>
+<script src="assets/js/gate-particles.js"></script>
+<script src="assets/js/agent-auth.js"></script>
+</body>
+</html>
