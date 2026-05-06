@@ -2674,18 +2674,72 @@ p {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--r-lg);
-  padding: 22px 20px 18px;
+  padding: 24px 22px 20px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   position: relative;
   overflow: hidden;
-  aspect-ratio: 1 / 1;
+  min-height: 300px;
   transition:
     background var(--dur-2) var(--ease),
     border-color var(--dur-2) var(--ease),
     color var(--dur-2) var(--ease),
-    box-shadow var(--dur-2) var(--ease);
+    box-shadow var(--dur-2) var(--ease),
+    transform var(--dur-2) var(--ease);
+}
+.week-card-clickable {
+  cursor: pointer;
+}
+.week-card-clickable:hover {
+  border-color: var(--accent-bright);
+  box-shadow: 0 8px 24px -10px rgba(0, 120, 171, 0.45);
+  transform: translateY(-2px);
+}
+.week-card-clickable:focus-visible {
+  outline: 2px solid var(--accent-bright);
+  outline-offset: 2px;
+}
+.week-card-clickable::after {
+  /* subtle corner glint to read as "expandable" */
+  content: '';
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 20px;
+  height: 20px;
+  background:
+    linear-gradient(135deg, transparent 50%, rgba(0, 120, 171, 0.45) 50%);
+  border-radius: 4px;
+  opacity: 0.45;
+  transition: opacity var(--dur-2) var(--ease);
+  pointer-events: none;
+}
+.week-card-clickable:hover::after { opacity: 0.85; }
+.week-card.week-card-complete::after,
+.weeks-grid.all-complete .week-card::after {
+  background: linear-gradient(135deg, transparent 50%, rgba(255, 255, 255, 0.45) 50%);
+}
+
+.week-card-expand {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+  font-weight: 700;
+  margin-top: auto;
+  margin-bottom: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: color var(--dur-2) var(--ease);
+}
+.week-card.week-card-complete .week-card-expand {
+  color: rgba(255, 255, 255, 0.85);
+}
+.weeks-grid.all-complete .week-card .week-card-expand {
+  color: rgba(255, 255, 255, 0.9) !important;
 }
 .week-card-eyebrow {
   font-family: var(--font-mono);
@@ -2796,6 +2850,150 @@ p {
 }
 .weeks-progress-summary.all-complete .ws-count {
   color: #22c55e !important;
+}
+
+/* Week details modal (tap a week card to open) */
+.week-modal[hidden] { display: none; }
+.week-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.week-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 12, 18, 0.7);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: cm-fade 0.25s ease-out;
+  cursor: pointer;
+}
+.week-modal-content {
+  position: relative;
+  background: linear-gradient(160deg, #1a1d22 0%, #0d0f12 100%);
+  border: 1px solid rgba(0, 120, 171, 0.32);
+  border-radius: 18px;
+  padding: 36px 36px 28px;
+  max-width: 540px;
+  width: 100%;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+  animation: cm-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+[data-theme="light"] .week-modal-content {
+  background: linear-gradient(160deg, #ffffff 0%, #f4f7fa 100%);
+  border-color: rgba(0, 120, 171, 0.4);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.18);
+}
+.week-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background var(--dur-2) var(--ease), color var(--dur-2) var(--ease);
+}
+.week-modal-close:hover {
+  background: var(--accent-soft);
+  color: var(--accent-bright);
+}
+.week-modal-close svg { width: 16px; height: 16px; }
+.week-modal-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+  display: inline-block;
+  margin-bottom: 8px;
+}
+.week-modal-title {
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin: 0 0 22px;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.week-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.wm-section { display: grid; gap: 6px; }
+.wm-section[hidden] { display: none; }
+.wm-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  font-weight: 600;
+}
+.wm-value {
+  margin: 0;
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1.45;
+}
+.wm-tasks {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.wm-tasks li {
+  position: relative;
+  padding-left: 26px;
+  color: var(--text);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+.wm-tasks li::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 7px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0090ce 0%, #005d85 100%);
+  box-shadow: 0 0 0 3px rgba(0, 120, 171, 0.18);
+}
+.week-modal-actions {
+  margin-top: 26px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+}
+.wm-mark { font-size: 0.95rem; }
+.wm-mark.completed,
+.wm-mark:disabled {
+  background: var(--surface-hover);
+  border-color: var(--border);
+  color: var(--text-3);
+  cursor: default;
+}
+
+@media (max-width: 600px) {
+  .week-modal-content {
+    padding: 28px 22px 22px;
+  }
+  .week-modal-title { font-size: 1.4rem; }
 }
 
 /* Particle burst on click */
