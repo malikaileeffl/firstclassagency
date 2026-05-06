@@ -227,19 +227,18 @@
   </section>
 </main>
 
-<!-- 8/8 celebration modal -->
+<!-- 8/8 celebration modal — sticky, only path forward is the Calendly link -->
 <div class="celebration-modal" id="celebration-modal" hidden>
-  <div class="celebration-backdrop" data-close-modal></div>
+  <div class="celebration-backdrop"></div>
   <div class="celebration-content" role="dialog" aria-modal="true" aria-labelledby="cm-title">
     <div class="celebration-confetti" aria-hidden="true"></div>
     <span class="celebration-eyebrow">Onboarding complete</span>
     <h2 id="cm-title">You hit the standard.</h2>
-    <p>You've finished all eight weeks of onboarding. Time to lock in your goals and expectations with the team.</p>
-    <a href="https://calendly.com/firstclassagency/onboarding-graduation" target="_blank" rel="noopener" class="btn btn--primary celebration-cta">
+    <p>You've finished all eight weeks of onboarding. Lock in your goals and expectations with the team — schedule your meeting now.</p>
+    <a id="celebration-cta-link" href="https://calendly.com/firstclassagency/onboarding-graduation" target="_blank" rel="noopener" class="btn btn--primary celebration-cta">
       Schedule with the managers
       <span class="arrow">→</span>
     </a>
-    <button class="btn btn--ghost celebration-dismiss" type="button" data-close-modal>I'll do this later</button>
   </div>
 </div>
 
@@ -279,8 +278,11 @@
       btn.setAttribute('aria-pressed', done ? 'true' : 'false');
     });
     const count = completedWeeks.size;
+    const allDone = count >= TOTAL_WEEKS;
     document.getElementById('ws-count').textContent = `${count} of ${TOTAL_WEEKS} complete`;
     document.getElementById('ws-bar-fill').style.width = `${(count / TOTAL_WEEKS) * 100}%`;
+    document.getElementById('weeks-grid').classList.toggle('all-complete', allDone);
+    document.getElementById('weeks-summary').classList.toggle('all-complete', allDone);
   }
 
   function wireButtons() {
@@ -374,11 +376,12 @@
     }
   }
 
+  // The only way out of the celebration modal is to click the Calendly CTA.
+  // Clicking it opens the link in a new tab AND closes the modal so they can
+  // continue using the page once they've scheduled.
   document.addEventListener('click', (e) => {
-    if (e.target.closest('[data-close-modal]')) hideCelebration();
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') hideCelebration();
+    const cta = e.target.closest('#celebration-cta-link');
+    if (cta) hideCelebration();
   });
 })();
 </script>
