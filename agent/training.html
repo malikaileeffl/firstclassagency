@@ -107,226 +107,92 @@
       </div>
     </div>
 
-    <h2 class="list-section-head" style="margin-top:0;">Your onboarding roadmap <span class="roadmap-draft-tag">Draft</span></h2>
-    <p style="color:var(--text-3);font-size:0.92rem;margin:-6px 0 18px;padding-right:var(--gutter);max-width:60ch;">Milestones from licensed to producing. Final benchmarks are being locked in by leadership — what's below is a working draft.</p>
+    <h2 class="list-section-head" style="margin-top:0;">Your 8-week onboarding <span class="roadmap-draft-tag">Draft</span></h2>
+    <p style="color:var(--text-3);font-size:0.92rem;margin:-6px 0 22px;padding-right:var(--gutter);max-width:60ch;">Eight weeks from licensed to standard. Mark each week complete as you finish it. Content for each phase is being finalized — leadership will fill it in shortly.</p>
 
-    <div class="journey-map reveal-stagger" aria-label="9-step onboarding journey">
-      <svg class="journey-svg" viewBox="0 0 1600 1000" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-hidden="true">
-        <defs>
-          <linearGradient id="roadFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#0090ce"/>
-            <stop offset="100%" stop-color="#005d85"/>
-          </linearGradient>
-          <linearGradient id="rocketBody" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#ffffff"/>
-            <stop offset="100%" stop-color="#cfe6f1"/>
-          </linearGradient>
-          <radialGradient id="rocketFlame" cx="0.5" cy="0" r="1">
-            <stop offset="0%" stop-color="#ffd86b"/>
-            <stop offset="60%" stop-color="#ff8a3c"/>
-            <stop offset="100%" stop-color="#ff5a1f" stop-opacity="0"/>
-          </radialGradient>
-          <filter id="pinShadow" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity="0.25"/>
-          </filter>
-          <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.18"/>
-          </filter>
-        </defs>
-
-        <!-- decorative clouds -->
-        <g class="jm-clouds">
-          <g transform="translate(220,140)">
-            <ellipse cx="0" cy="0" rx="56" ry="18" fill="currentColor" opacity="0.16"/>
-            <ellipse cx="-30" cy="-8" rx="26" ry="14" fill="currentColor" opacity="0.16"/>
-            <ellipse cx="22" cy="-6" rx="22" ry="12" fill="currentColor" opacity="0.16"/>
-          </g>
-          <g transform="translate(900,160)">
-            <ellipse cx="0" cy="0" rx="64" ry="20" fill="currentColor" opacity="0.13"/>
-            <ellipse cx="-32" cy="-10" rx="28" ry="14" fill="currentColor" opacity="0.13"/>
-            <ellipse cx="28" cy="-8" rx="24" ry="12" fill="currentColor" opacity="0.13"/>
-          </g>
-          <g transform="translate(1320,860)">
-            <ellipse cx="0" cy="0" rx="50" ry="16" fill="currentColor" opacity="0.13"/>
-            <ellipse cx="-24" cy="-7" rx="22" ry="12" fill="currentColor" opacity="0.13"/>
-            <ellipse cx="20" cy="-5" rx="18" ry="10" fill="currentColor" opacity="0.13"/>
-          </g>
-        </g>
-
-        <!-- main road: dark outer stroke + blue gradient + white dashed centerline -->
-        <path d="M 70 720
-                 L 135 715
-                 C 200 715, 215 480, 285 485
-                 C 350 490, 370 690, 440 692
-                 C 535 695, 525 365, 615 370
-                 C 695 374, 680 755, 760 750
-                 C 845 745, 860 460, 920 470
-                 C 985 480, 1000 685, 1080 678
-                 C 1170 670, 1165 405, 1245 400
-                 C 1330 395, 1385 360, 1480 320"
-              fill="none" stroke="#003e58" stroke-width="78" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/>
-        <path d="M 70 720
-                 L 135 715
-                 C 200 715, 215 480, 285 485
-                 C 350 490, 370 690, 440 692
-                 C 535 695, 525 365, 615 370
-                 C 695 374, 680 755, 760 750
-                 C 845 745, 860 460, 920 470
-                 C 985 480, 1000 685, 1080 678
-                 C 1170 670, 1165 405, 1245 400
-                 C 1330 395, 1385 360, 1480 320"
-              fill="none" stroke="url(#roadFill)" stroke-width="64" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M 70 720
-                 L 135 715
-                 C 200 715, 215 480, 285 485
-                 C 350 490, 370 690, 440 692
-                 C 535 695, 525 365, 615 370
-                 C 695 374, 680 755, 760 750
-                 C 845 745, 860 460, 920 470
-                 C 985 480, 1000 685, 1080 678
-                 C 1170 670, 1165 405, 1245 400
-                 C 1330 395, 1385 360, 1480 320"
-              fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-dasharray="14 18" opacity="0.85"/>
-
-        <!-- START badge -->
-        <g transform="translate(70,720)" filter="url(#softShadow)">
-          <circle cx="0" cy="0" r="42" fill="#1e1e1e" stroke="#0078ab" stroke-width="3"/>
-          <text x="0" y="6" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="700" letter-spacing="2">START</text>
-        </g>
-
-        <!-- 1 (shallow valley) -->
-        <g class="jm-pin" data-step="1" transform="translate(135,715)">
-          <circle r="38" fill="#ffffff" stroke="#0078ab" stroke-width="6" filter="url(#pinShadow)"/>
-          <text y="11" text-anchor="middle" fill="#0078ab" font-family="Inter, system-ui, sans-serif" font-weight="800" font-size="32">1</text>
-        </g>
-        <text class="jm-label jm-label-below" x="135" y="810" text-anchor="middle">
-          <tspan x="135" dy="0" class="jm-title">Pass exam &amp; apply</tspan>
-          <tspan x="135" dy="26" class="jm-desc">Get your state license</tspan>
-        </text>
-
-        <!-- 2 (low peak) -->
-        <g class="jm-pin" data-step="2" transform="translate(285,485)">
-          <circle r="38" fill="#ffffff" stroke="#0078ab" stroke-width="6" filter="url(#pinShadow)"/>
-          <text y="11" text-anchor="middle" fill="#0078ab" font-family="Inter, system-ui, sans-serif" font-weight="800" font-size="32">2</text>
-        </g>
-        <text class="jm-label jm-label-above" x="285" y="395" text-anchor="middle">
-          <tspan x="285" dy="0" class="jm-title">Join the team chat</tspan>
-          <tspan x="285" dy="26" class="jm-desc">Discord + GroupMe</tspan>
-        </text>
-
-        <!-- 3 (mid valley) -->
-        <g class="jm-pin" data-step="3" transform="translate(440,692)">
-          <circle r="38" fill="#ffffff" stroke="#0078ab" stroke-width="6" filter="url(#pinShadow)"/>
-          <text y="11" text-anchor="middle" fill="#0078ab" font-family="Inter, system-ui, sans-serif" font-weight="800" font-size="32">3</text>
-        </g>
-        <text class="jm-label jm-label-below" x="440" y="785" text-anchor="middle">
-          <tspan x="440" dy="0" class="jm-title">Complete boot camp</tspan>
-          <tspan x="440" dy="26" class="jm-desc">Onboarding videos</tspan>
-        </text>
-
-        <!-- 4 (high peak) -->
-        <g class="jm-pin" data-step="4" transform="translate(615,370)">
-          <circle r="38" fill="#ffffff" stroke="#0078ab" stroke-width="6" filter="url(#pinShadow)"/>
-          <text y="11" text-anchor="middle" fill="#0078ab" font-family="Inter, system-ui, sans-serif" font-weight="800" font-size="32">4</text>
-        </g>
-        <text class="jm-label jm-label-above" x="615" y="280" text-anchor="middle">
-          <tspan x="615" dy="0" class="jm-title">Study the script</tspan>
-          <tspan x="615" dy="26" class="jm-desc">Daily 9 AM training calls</tspan>
-        </text>
-
-        <!-- 5 (deep valley) -->
-        <g class="jm-pin" data-step="5" transform="translate(760,750)">
-          <circle r="38" fill="#ffffff" stroke="#0078ab" stroke-width="6" filter="url(#pinShadow)"/>
-          <text y="11" text-anchor="middle" fill="#0078ab" font-family="Inter, system-ui, sans-serif" font-weight="800" font-size="32">5</text>
-        </g>
-        <text class="jm-label jm-label-below" x="760" y="845" text-anchor="middle">
-          <tspan x="760" dy="0" class="jm-title">Complete contracting</tspan>
-          <tspan x="760" dy="26" class="jm-desc">Appointed with carriers</tspan>
-        </text>
-
-        <!-- 6 (mid peak) -->
-        <g class="jm-pin" data-step="6" transform="translate(920,470)">
-          <circle r="38" fill="#ffffff" stroke="#0078ab" stroke-width="6" filter="url(#pinShadow)"/>
-          <text y="11" text-anchor="middle" fill="#0078ab" font-family="Inter, system-ui, sans-serif" font-weight="800" font-size="32">6</text>
-        </g>
-        <text class="jm-label jm-label-above" x="920" y="380" text-anchor="middle">
-          <tspan x="920" dy="0" class="jm-title">Track your activity</tspan>
-          <tspan x="920" dy="26" class="jm-desc">Dial Tracker every day</tspan>
-        </text>
-
-        <!-- 7 (mid valley) -->
-        <g class="jm-pin" data-step="7" transform="translate(1080,678)">
-          <circle r="38" fill="#ffffff" stroke="#0078ab" stroke-width="6" filter="url(#pinShadow)"/>
-          <text y="11" text-anchor="middle" fill="#0078ab" font-family="Inter, system-ui, sans-serif" font-weight="800" font-size="32">7</text>
-        </g>
-        <text class="jm-label jm-label-below" x="1080" y="775" text-anchor="middle">
-          <tspan x="1080" dy="0" class="jm-title">First 48 challenge</tspan>
-          <tspan x="1080" dy="26" class="jm-desc">Issue your first policy</tspan>
-        </text>
-
-        <!-- 8 (high-mid peak) -->
-        <g class="jm-pin" data-step="8" transform="translate(1245,400)">
-          <circle r="38" fill="#ffffff" stroke="#0078ab" stroke-width="6" filter="url(#pinShadow)"/>
-          <text y="11" text-anchor="middle" fill="#0078ab" font-family="Inter, system-ui, sans-serif" font-weight="800" font-size="32">8</text>
-        </g>
-        <text class="jm-label jm-label-above" x="1245" y="310" text-anchor="middle">
-          <tspan x="1245" dy="0" class="jm-title">Learn as you earn</tspan>
-          <tspan x="1245" dy="26" class="jm-desc">Build steady production</tspan>
-        </text>
-
-        <!-- 9 (final, raised) -->
-        <g class="jm-pin jm-pin-final" data-step="9" transform="translate(1480,320)">
-          <circle r="46" fill="#0078ab" stroke="#ffffff" stroke-width="6" filter="url(#pinShadow)"/>
-          <text y="13" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-weight="800" font-size="32">9</text>
-        </g>
-        <text class="jm-label jm-label-above jm-label-final" x="1480" y="220" text-anchor="middle">
-          <tspan x="1480" dy="0" class="jm-title">$15K IP by month three</tspan>
-          <tspan x="1480" dy="26" class="jm-desc">Hit the standard. You're in.</tspan>
-        </text>
-
-        <!-- rocket lifted clear above the final label so the text stays readable -->
-        <g transform="translate(1500,90) rotate(30)" filter="url(#softShadow)">
-          <ellipse cx="0" cy="62" rx="16" ry="48" fill="url(#rocketFlame)" opacity="0.95"/>
-          <path d="M 0 -56
-                   C 16 -42, 20 -16, 20 8
-                   L 20 30
-                   L -20 30
-                   L -20 8
-                   C -20 -16, -16 -42, 0 -56 Z"
-                fill="url(#rocketBody)" stroke="#0078ab" stroke-width="2.5"/>
-          <circle cx="0" cy="-14" r="8" fill="#0078ab" stroke="#ffffff" stroke-width="2"/>
-          <path d="M -20 14 L -36 36 L -20 30 Z" fill="#0078ab"/>
-          <path d="M 20 14 L 36 36 L 20 30 Z" fill="#0078ab"/>
-        </g>
-      </svg>
-
-      <!-- mobile-only stacked cards (hidden on desktop) -->
-      <div class="journey-stack" aria-hidden="false">
-        <div class="journey-stack-row"><span class="num">1</span><div><strong>Pass exam &amp; apply</strong><span>Get your state license</span></div></div>
-        <div class="journey-stack-row"><span class="num">2</span><div><strong>Join the team chat</strong><span>Discord + GroupMe</span></div></div>
-        <div class="journey-stack-row"><span class="num">3</span><div><strong>Complete boot camp</strong><span>Onboarding videos</span></div></div>
-        <div class="journey-stack-row"><span class="num">4</span><div><strong>Study the script</strong><span>Daily 9 AM training calls</span></div></div>
-        <div class="journey-stack-row"><span class="num">5</span><div><strong>Complete contracting</strong><span>Get appointed with carriers</span></div></div>
-        <div class="journey-stack-row"><span class="num">6</span><div><strong>Track your activity</strong><span>Dial Tracker every day</span></div></div>
-        <div class="journey-stack-row"><span class="num">7</span><div><strong>First 48 challenge</strong><span>Issue your first policy</span></div></div>
-        <div class="journey-stack-row"><span class="num">8</span><div><strong>Learn as you earn</strong><span>Build steady production</span></div></div>
-        <div class="journey-stack-row jm-stack-final"><span class="num">9</span><div><strong>$15K IP by month three</strong><span>Hit the standard. You're in.</span></div></div>
+    <div class="weeks-progress-summary" id="weeks-summary" style="display:none;">
+      <div class="ws-text">
+        <span class="ws-label">Onboarding progress</span>
+        <span class="ws-count" id="ws-count">0 of 8 complete</span>
       </div>
+      <div class="ws-bar"><div class="ws-bar-fill" id="ws-bar-fill" style="width:0%"></div></div>
     </div>
 
-    <!-- onboarding action card (populated from Supabase) -->
-    <div id="onboarding-action" class="onboarding-action" style="display:none;">
-      <div class="oa-meta">
-        <span class="oa-eyebrow" id="oa-eyebrow">Loading…</span>
-        <h3 class="oa-title" id="oa-title">—</h3>
-        <p class="oa-desc" id="oa-desc">—</p>
-        <div class="oa-progress">
-          <div class="oa-progress-bar"><div class="oa-progress-fill" id="oa-progress-fill" style="width:0%"></div></div>
-          <span class="oa-progress-label" id="oa-progress-label">0 of 9 complete</span>
-        </div>
-      </div>
-      <button class="btn btn--primary oa-btn" id="oa-advance" type="button">Mark complete <span class="arrow">→</span></button>
+    <div class="weeks-grid" id="weeks-grid">
+      <article class="week-card" data-week="1">
+        <span class="week-card-eyebrow">Week 1</span>
+        <h3 class="week-card-title">Coming soon</h3>
+        <p class="week-card-body">Phase content will be filled in by leadership.</p>
+        <button class="week-card-btn" type="button" data-mark-week="1" aria-pressed="false">
+          <span class="check-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <span class="btn-label">Mark complete</span>
+        </button>
+      </article>
+      <article class="week-card" data-week="2">
+        <span class="week-card-eyebrow">Week 2</span>
+        <h3 class="week-card-title">Coming soon</h3>
+        <p class="week-card-body">Phase content will be filled in by leadership.</p>
+        <button class="week-card-btn" type="button" data-mark-week="2" aria-pressed="false">
+          <span class="check-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <span class="btn-label">Mark complete</span>
+        </button>
+      </article>
+      <article class="week-card" data-week="3">
+        <span class="week-card-eyebrow">Week 3</span>
+        <h3 class="week-card-title">Coming soon</h3>
+        <p class="week-card-body">Phase content will be filled in by leadership.</p>
+        <button class="week-card-btn" type="button" data-mark-week="3" aria-pressed="false">
+          <span class="check-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <span class="btn-label">Mark complete</span>
+        </button>
+      </article>
+      <article class="week-card" data-week="4">
+        <span class="week-card-eyebrow">Week 4</span>
+        <h3 class="week-card-title">Coming soon</h3>
+        <p class="week-card-body">Phase content will be filled in by leadership.</p>
+        <button class="week-card-btn" type="button" data-mark-week="4" aria-pressed="false">
+          <span class="check-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <span class="btn-label">Mark complete</span>
+        </button>
+      </article>
+      <article class="week-card" data-week="5">
+        <span class="week-card-eyebrow">Week 5</span>
+        <h3 class="week-card-title">Coming soon</h3>
+        <p class="week-card-body">Phase content will be filled in by leadership.</p>
+        <button class="week-card-btn" type="button" data-mark-week="5" aria-pressed="false">
+          <span class="check-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <span class="btn-label">Mark complete</span>
+        </button>
+      </article>
+      <article class="week-card" data-week="6">
+        <span class="week-card-eyebrow">Week 6</span>
+        <h3 class="week-card-title">Coming soon</h3>
+        <p class="week-card-body">Phase content will be filled in by leadership.</p>
+        <button class="week-card-btn" type="button" data-mark-week="6" aria-pressed="false">
+          <span class="check-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <span class="btn-label">Mark complete</span>
+        </button>
+      </article>
+      <article class="week-card" data-week="7">
+        <span class="week-card-eyebrow">Week 7</span>
+        <h3 class="week-card-title">Coming soon</h3>
+        <p class="week-card-body">Phase content will be filled in by leadership.</p>
+        <button class="week-card-btn" type="button" data-mark-week="7" aria-pressed="false">
+          <span class="check-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <span class="btn-label">Mark complete</span>
+        </button>
+      </article>
+      <article class="week-card" data-week="8">
+        <span class="week-card-eyebrow">Week 8</span>
+        <h3 class="week-card-title">Coming soon</h3>
+        <p class="week-card-body">Phase content will be filled in by leadership.</p>
+        <button class="week-card-btn" type="button" data-mark-week="8" aria-pressed="false">
+          <span class="check-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <span class="btn-label">Mark complete</span>
+        </button>
+      </article>
     </div>
+
 
     <h2 class="list-section-head">Training videos</h2>
     <div class="video-list reveal-stagger">
@@ -361,28 +227,33 @@
   </section>
 </main>
 
+<!-- 8/8 celebration modal -->
+<div class="celebration-modal" id="celebration-modal" hidden>
+  <div class="celebration-backdrop" data-close-modal></div>
+  <div class="celebration-content" role="dialog" aria-modal="true" aria-labelledby="cm-title">
+    <div class="celebration-confetti" aria-hidden="true"></div>
+    <span class="celebration-eyebrow">Onboarding complete</span>
+    <h2 id="cm-title">You hit the standard.</h2>
+    <p>You've finished all eight weeks of onboarding. Time to lock in your goals and expectations with the team.</p>
+    <a href="https://calendly.com/firstclassagency/onboarding-graduation" target="_blank" rel="noopener" class="btn btn--primary celebration-cta">
+      Schedule with the managers
+      <span class="arrow">→</span>
+    </a>
+    <button class="btn btn--ghost celebration-dismiss" type="button" data-close-modal>I'll do this later</button>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/main.js"></script>
 <script src="../assets/js/agent-auth.js"></script>
 <script>
 (function() {
-  const STEPS = [
-    { num: 1, title: 'Pass exam & apply',    desc: 'Get your state license' },
-    { num: 2, title: 'Join the team chat',   desc: 'Discord + GroupMe' },
-    { num: 3, title: 'Complete boot camp',   desc: 'Onboarding videos' },
-    { num: 4, title: 'Study the script',     desc: 'Daily 9 AM training calls' },
-    { num: 5, title: 'Complete contracting', desc: 'Get appointed with carriers' },
-    { num: 6, title: 'Track your activity',  desc: 'Dial Tracker every day' },
-    { num: 7, title: 'First 48 challenge',   desc: 'Issue your first policy' },
-    { num: 8, title: 'Learn as you earn',    desc: 'Build steady production' },
-    { num: 9, title: '$15K IP by month three', desc: "Hit the standard. You're in." },
-  ];
+  const TOTAL_WEEKS = 8;
+  let completedWeeks = new Set();
+  let initialized = false;
 
   document.addEventListener('fca:auth-ready', async () => {
     if (!window.fcAuth) return;
-    const card = document.getElementById('onboarding-action');
-    if (!card) return;
-
     let progress;
     try {
       progress = await window.fcAuth.getProgress();
@@ -390,69 +261,125 @@
       console.error('[training] progress load failed', e);
       return;
     }
-    renderProgress(progress.current_step || 0);
-    card.style.display = '';
+    completedWeeks = new Set(progress.completed_weeks || []);
+    initialized = true;
+    document.getElementById('weeks-summary').style.display = '';
+    renderProgress();
+    wireButtons();
   });
 
-  function renderProgress(currentStep) {
-    // pin coloring on SVG
-    document.querySelectorAll('.jm-pin').forEach((g) => {
-      const step = parseInt(g.dataset.step, 10);
-      g.classList.remove('pin-done', 'pin-next');
-      if (step <= currentStep) g.classList.add('pin-done');
-      else if (step === currentStep + 1) g.classList.add('pin-next');
+  function renderProgress() {
+    document.querySelectorAll('.week-card').forEach((card) => {
+      const week = parseInt(card.dataset.week, 10);
+      const done = completedWeeks.has(week);
+      card.classList.toggle('week-card-complete', done);
+      const btn = card.querySelector('.week-card-btn');
+      btn.classList.toggle('completed', done);
+      btn.querySelector('.btn-label').textContent = done ? 'Completed' : 'Mark complete';
+      btn.setAttribute('aria-pressed', done ? 'true' : 'false');
     });
-    // mobile stack
-    document.querySelectorAll('.journey-stack-row').forEach((row, i) => {
-      const step = i + 1;
-      row.classList.remove('stack-done', 'stack-next');
-      if (step <= currentStep) row.classList.add('stack-done');
-      else if (step === currentStep + 1) row.classList.add('stack-next');
-    });
-
-    const eyebrow = document.getElementById('oa-eyebrow');
-    const title   = document.getElementById('oa-title');
-    const desc    = document.getElementById('oa-desc');
-    const btn     = document.getElementById('oa-advance');
-    const fill    = document.getElementById('oa-progress-fill');
-    const label   = document.getElementById('oa-progress-label');
-    const card    = document.getElementById('onboarding-action');
-
-    fill.style.width = `${(currentStep / 9) * 100}%`;
-    label.textContent = `${currentStep} of 9 complete`;
-
-    if (currentStep >= 9) {
-      card.classList.add('onboarding-complete');
-      eyebrow.textContent = 'Onboarding complete';
-      title.textContent = "You hit the standard.";
-      desc.textContent = "Welcome to the team. Keep stacking issued premium.";
-      btn.style.display = 'none';
-      return;
-    }
-
-    card.classList.remove('onboarding-complete');
-    btn.style.display = '';
-    const next = STEPS[currentStep]; // currentStep=0 → STEPS[0] = step 1
-    eyebrow.textContent = `Next up · Step ${next.num} of 9`;
-    title.textContent = next.title;
-    desc.textContent = next.desc;
-    btn.innerHTML = `Mark step ${next.num} complete <span class="arrow">→</span>`;
-    btn.disabled = false;
-    btn.onclick = async () => {
-      btn.disabled = true;
-      const original = btn.innerHTML;
-      btn.innerHTML = 'Saving…';
-      try {
-        const updated = await window.fcAuth.advanceProgress();
-        renderProgress(updated.current_step);
-      } catch (e) {
-        console.error(e);
-        btn.innerHTML = original;
-        btn.disabled = false;
-        alert('Could not save progress. Please try again.');
-      }
-    };
+    const count = completedWeeks.size;
+    document.getElementById('ws-count').textContent = `${count} of ${TOTAL_WEEKS} complete`;
+    document.getElementById('ws-bar-fill').style.width = `${(count / TOTAL_WEEKS) * 100}%`;
   }
+
+  function wireButtons() {
+    document.querySelectorAll('.week-card-btn').forEach((btn) => {
+      const week = parseInt(btn.dataset.markWeek, 10);
+      btn.addEventListener('click', async () => {
+        if (completedWeeks.has(week) || btn.disabled) return;
+        btn.disabled = true;
+
+        emitParticles(btn);
+
+        const before = completedWeeks.size;
+        completedWeeks.add(week);
+        renderProgress();
+
+        try {
+          await window.fcAuth.markWeek(week);
+          if (before < TOTAL_WEEKS && completedWeeks.size >= TOTAL_WEEKS) {
+            setTimeout(showCelebration, 700);
+          }
+        } catch (e) {
+          console.error(e);
+          completedWeeks.delete(week);
+          renderProgress();
+          alert('Could not save. Please try again.');
+        } finally {
+          btn.disabled = false;
+        }
+      });
+    });
+  }
+
+  function emitParticles(originEl) {
+    const rect = originEl.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const burst = document.createElement('div');
+    burst.className = 'particle-burst';
+    burst.style.left = cx + 'px';
+    burst.style.top = cy + 'px';
+    document.body.appendChild(burst);
+
+    const colors = ['#0078ab', '#0090ce', '#00b4f0', '#ffffff'];
+    const N = 32;
+    for (let i = 0; i < N; i++) {
+      const p = document.createElement('span');
+      p.className = 'particle';
+      const angle = (i / N) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+      const dist = 60 + Math.random() * 90;
+      const size = 5 + Math.random() * 6;
+      p.style.setProperty('--dx', (Math.cos(angle) * dist).toFixed(1) + 'px');
+      p.style.setProperty('--dy', (Math.sin(angle) * dist).toFixed(1) + 'px');
+      p.style.background = colors[Math.floor(Math.random() * colors.length)];
+      p.style.width = size + 'px';
+      p.style.height = size + 'px';
+      p.style.animationDelay = Math.floor(Math.random() * 90) + 'ms';
+      burst.appendChild(p);
+    }
+    setTimeout(() => burst.remove(), 1300);
+  }
+
+  function showCelebration() {
+    const modal = document.getElementById('celebration-modal');
+    if (!modal) return;
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    fireConfetti(modal.querySelector('.celebration-confetti'));
+  }
+
+  function hideCelebration() {
+    const modal = document.getElementById('celebration-modal');
+    if (!modal) return;
+    modal.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  function fireConfetti(container) {
+    if (!container) return;
+    container.innerHTML = '';
+    const N = 90;
+    const colors = ['#0078ab', '#0090ce', '#00b4f0', '#ffffff', '#cfe6f1'];
+    for (let i = 0; i < N; i++) {
+      const c = document.createElement('span');
+      c.className = 'confetti-piece';
+      c.style.left = Math.random() * 100 + '%';
+      c.style.background = colors[Math.floor(Math.random() * colors.length)];
+      c.style.animationDelay = Math.floor(Math.random() * 1500) + 'ms';
+      c.style.animationDuration = (2400 + Math.floor(Math.random() * 1800)) + 'ms';
+      c.style.setProperty('--rot', Math.floor(Math.random() * 720) + 'deg');
+      container.appendChild(c);
+    }
+  }
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('[data-close-modal]')) hideCelebration();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') hideCelebration();
+  });
 })();
 </script>
 </body>

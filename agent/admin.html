@@ -137,11 +137,11 @@
         <thead>
           <tr>
             <th>Agent</th>
-            <th>Step</th>
+            <th>Weeks</th>
             <th>Progress</th>
             <th id="th-manager">Manager</th>
             <th>Last advanced</th>
-            <th>Override</th>
+            <th>Override (toggle weeks)</th>
           </tr>
         </thead>
         <tbody id="admin-tbody"></tbody>
@@ -162,21 +162,9 @@
 <script src="../assets/js/agent-auth.js"></script>
 <script>
 (function() {
-  const STEP_LABELS = [
-    'Not started',
-    'Pass exam & apply',
-    'Join the team chat',
-    'Complete boot camp',
-    'Study the script',
-    'Complete contracting',
-    'Track your activity',
-    'First 48 challenge',
-    'Learn as you earn',
-    '$15K IP by month three',
-  ];
-
+  const TOTAL_WEEKS = 8;
   let isSuperAdmin = false;
-  let adminCandidates = []; // for super-admin manager dropdowns
+  let adminCandidates = [];
 
   document.addEventListener('fca:auth-ready', async (e) => {
     const { isAdmin, isSuperAdmin: superFlag } = e.detail;
@@ -187,18 +175,17 @@
     }
     isSuperAdmin = !!superFlag;
 
-    // Adjust heading + scope note based on role
     const heading = document.getElementById('admin-heading');
     const eyebrow = document.getElementById('admin-eyebrow');
     const note = document.getElementById('admin-scope-note');
     if (isSuperAdmin) {
       eyebrow.textContent = 'Admin · All agents';
       heading.textContent = 'Onboarding overview.';
-      note.textContent = "You're a super admin — you see every agent across the org. Use the Manager dropdown to assign each agent to their team lead.";
+      note.textContent = "You're a super admin — you see every agent across the org. Use the Manager dropdown to assign each agent to their team lead. Toggle individual weeks to override progress.";
     } else {
       eyebrow.textContent = 'Admin · Your team';
       heading.textContent = 'Your team.';
-      note.textContent = 'Track where each of your direct reports stands in the 9-step roadmap. Use the Override dropdown to correct a step.';
+      note.textContent = 'Track where each of your direct reports stands in the 8-week onboarding. Toggle individual weeks to override progress.';
     }
 
     try {
@@ -229,18 +216,18 @@
         ? 'No agents yet.'
         : "No direct reports yet. The super admin can assign agents to your team from their admin view.";
       tiles.style.display = '';
-      document.getElementById('tile-total').textContent = '0';
-      document.getElementById('tile-started').textContent = '0';
-      document.getElementById('tile-active').textContent = '0';
-      document.getElementById('tile-complete').textContent = '0';
+      ['tile-total','tile-started','tile-active','tile-complete'].forEach(id => {
+        document.getElementById(id).textContent = '0';
+      });
       return;
     }
 
     team.forEach((row) => {
-      const step = row.progress.current_step || 0;
-      if (step > 0) started++;
-      if (step >= 1 && step < 9) active++;
-      if (step >= 9) complete++;
+      const weeks = (row.progress.completed_weeks || []).slice().sort((a,b) => a-b);
+      const count = weeks.length;
+      if (count > 0) started++;
+      if (count >= 1 && count < TOTAL_WEEKS) active++;
+      if (count >= TOTAL_WEEKS) complete++;
 
       const tr = document.createElement('tr');
       tr.dataset.userId = row.id;
@@ -255,6 +242,7 @@
         : `<span class="admin-avatar">${escapeText(initial)}</span>`;
 
       const managerCell = renderManagerCell(row);
+      const togglesHtml = renderTogglesCell(row.id, weeks);
 
       tr.innerHTML = `
         <td class="admin-cell-agent">
@@ -265,21 +253,15 @@
           </div>
         </td>
         <td class="admin-cell-step">
-          <span class="admin-step-num">${step}<span class="admin-step-of">/9</span></span>
-          <span class="admin-step-label">${escapeText(STEP_LABELS[step] || '—')}</span>
+          <span class="admin-step-num">${count}<span class="admin-step-of">/${TOTAL_WEEKS}</span></span>
+          <span class="admin-step-label">${count === 0 ? 'Not started' : (count >= TOTAL_WEEKS ? 'Hit the standard' : `Weeks ${weeks.join(', ')}`)}</span>
         </td>
         <td class="admin-cell-progress">
-          <div class="admin-bar"><div class="admin-bar-fill" style="width:${(step/9)*100}%"></div></div>
+          <div class="admin-bar"><div class="admin-bar-fill" style="width:${(count/TOTAL_WEEKS)*100}%"></div></div>
         </td>
         <td class="admin-cell-manager">${managerCell}</td>
         <td class="admin-cell-time">${lastAdv}</td>
-        <td class="admin-cell-override">
-          <select class="admin-step-select" data-user-id="${escapeAttr(row.id)}">
-            ${[0,1,2,3,4,5,6,7,8,9].map((s) =>
-              `<option value="${s}"${s === step ? ' selected' : ''}>${s}</option>`
-            ).join('')}
-          </select>
-        </td>
+        <td class="admin-cell-override">${togglesHtml}</td>
       `;
       tbody.appendChild(tr);
     });
@@ -293,26 +275,30 @@
     tiles.style.display = '';
     wrap.style.display = '';
 
-    tbody.querySelectorAll('.admin-step-select').forEach((sel) => {
-      sel.addEventListener('change', async () => {
-        const uid = sel.dataset.userId;
-        const newStep = parseInt(sel.value, 10);
-        const original = sel.dataset.previous || sel.options[Array.from(sel.options).findIndex((o) => o.defaultSelected)]?.value || '0';
-        sel.disabled = true;
+    // Wire week toggle buttons
+    tbody.querySelectorAll('.week-toggle').forEach((toggle) => {
+      toggle.addEventListener('click', async () => {
+        const tr = toggle.closest('tr');
+        const uid = tr.dataset.userId;
+        const week = parseInt(toggle.dataset.week, 10);
+        const wasActive = toggle.classList.contains('active');
+        const currentWeeks = Array.from(tr.querySelectorAll('.week-toggle.active'))
+          .map((b) => parseInt(b.dataset.week, 10));
+        const newSet = new Set(currentWeeks);
+        if (wasActive) newSet.delete(week);
+        else newSet.add(week);
+        const newWeeks = Array.from(newSet).sort((a,b) => a-b);
+
+        toggle.disabled = true;
         try {
-          await window.fcAuth.setStep(uid, newStep);
-          const tr = sel.closest('tr');
-          tr.querySelector('.admin-step-num').innerHTML = `${newStep}<span class="admin-step-of">/9</span>`;
-          tr.querySelector('.admin-step-label').textContent = STEP_LABELS[newStep] || '—';
-          tr.querySelector('.admin-bar-fill').style.width = `${(newStep/9)*100}%`;
-          tr.querySelector('.admin-cell-time').textContent = 'just now';
-          sel.dataset.previous = String(newStep);
+          await window.fcAuth.setWeeks(uid, newWeeks);
+          toggle.classList.toggle('active');
+          updateRowSummary(tr, newWeeks);
         } catch (err) {
           console.error(err);
-          alert('Failed to update step. ' + (err.message || ''));
-          sel.value = original;
+          alert('Failed to update. ' + (err.message || ''));
         } finally {
-          sel.disabled = false;
+          toggle.disabled = false;
         }
       });
     });
@@ -338,13 +324,31 @@
     });
   }
 
+  function renderTogglesCell(userId, weeks) {
+    const set = new Set(weeks);
+    const buttons = [];
+    for (let w = 1; w <= TOTAL_WEEKS; w++) {
+      const active = set.has(w);
+      buttons.push(`<button type="button" class="week-toggle${active ? ' active' : ''}" data-week="${w}" aria-pressed="${active}" title="Toggle week ${w}">${w}</button>`);
+    }
+    return `<div class="weeks-toggles">${buttons.join('')}</div>`;
+  }
+
+  function updateRowSummary(tr, newWeeks) {
+    const count = newWeeks.length;
+    tr.querySelector('.admin-step-num').innerHTML = `${count}<span class="admin-step-of">/${TOTAL_WEEKS}</span>`;
+    const label = count === 0 ? 'Not started' : (count >= TOTAL_WEEKS ? 'Hit the standard' : `Weeks ${newWeeks.join(', ')}`);
+    tr.querySelector('.admin-step-label').textContent = label;
+    tr.querySelector('.admin-bar-fill').style.width = `${(count/TOTAL_WEEKS)*100}%`;
+    tr.querySelector('.admin-cell-time').textContent = 'just now';
+  }
+
   function renderManagerCell(row) {
     if (isSuperAdmin) {
-      // Render dropdown of admin candidates + "Unassigned"
       const currentMgr = row.manager_id || '';
       const opts = ['<option value="">— Unassigned —</option>'].concat(
         adminCandidates
-          .filter((c) => c.id !== row.id) // can't be your own manager
+          .filter((c) => c.id !== row.id)
           .map((c) => {
             const label = c.full_name || c.email || 'Unnamed';
             return `<option value="${escapeAttr(c.id)}"${c.id === currentMgr ? ' selected' : ''}>${escapeText(label)}</option>`;
@@ -352,7 +356,6 @@
       ).join('');
       return `<select class="admin-manager-select" data-user-id="${escapeAttr(row.id)}" data-previous="${escapeAttr(currentMgr)}">${opts}</select>`;
     }
-    // Regular admin sees text only
     const mgr = row.manager;
     if (!mgr) return '<span class="admin-manager-none">Unassigned</span>';
     return `<span class="admin-manager-name">${escapeText(mgr.full_name || mgr.email || '—')}</span>`;

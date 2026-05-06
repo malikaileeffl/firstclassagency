@@ -55,9 +55,10 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
     window.fcAuth.isSuperAdmin = isSuperAdmin;
     window.fcAuth.sb = sb;
     window.fcAuth.getProgress = () => getMyProgress(sb, user.id);
-    window.fcAuth.advanceProgress = () => advanceMyProgress(sb, user.id);
+    window.fcAuth.markWeek = (week) => markWeekComplete(sb, user.id, week);
+    window.fcAuth.unmarkWeek = (week) => unmarkWeekComplete(sb, user.id, week);
     window.fcAuth.listTeam = () => listTeamProgress(sb);
-    window.fcAuth.setStep = (uid, step) => setStepFor(sb, uid, step);
+    window.fcAuth.setWeeks = (uid, weeks) => setWeeksFor(sb, uid, weeks);
     window.fcAuth.listAdminCandidates = () => listAdminCandidates(sb);
     window.fcAuth.setManager = (uid, managerId) => setManagerFor(sb, uid, managerId);
 
@@ -518,57 +519,77 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
   async function getMyProgress(sb, userId) {
     const { data, error } = await sb
       .from('onboarding_progress')
-      .select('current_step, started_at, last_advanced_at')
+      .select('completed_weeks, started_at, last_advanced_at')
       .eq('user_id', userId)
       .maybeSingle();
     if (error) {
       console.warn('[FCA] progress lookup failed:', error.message);
-      return { current_step: 0 };
+      return { completed_weeks: [] };
     }
     if (!data) {
-      // No row yet — create one and return defaults
       const now = new Date().toISOString();
       const { error: insertErr } = await sb
         .from('onboarding_progress')
-        .insert({ user_id: userId, current_step: 0, started_at: now, last_advanced_at: now });
+        .insert({ user_id: userId, completed_weeks: [], started_at: now, last_advanced_at: now });
       if (insertErr) console.warn('[FCA] progress seed failed:', insertErr.message);
-      return { current_step: 0, started_at: now, last_advanced_at: now };
+      return { completed_weeks: [], started_at: now, last_advanced_at: now };
     }
-    return data;
+    // Normalize null/missing array to empty
+    return { ...data, completed_weeks: data.completed_weeks || [] };
   }
 
-  async function advanceMyProgress(sb, userId) {
+  async function markWeekComplete(sb, userId, week) {
+    const w = parseInt(week, 10);
+    if (!(w >= 1 && w <= 8)) throw new Error('Week must be 1..8');
     const current = await getMyProgress(sb, userId);
-    const next = Math.min(9, (current.current_step || 0) + 1);
+    const set = new Set(current.completed_weeks || []);
+    set.add(w);
+    const newWeeks = Array.from(set).sort((a, b) => a - b);
     const now = new Date().toISOString();
     const { error } = await sb
       .from('onboarding_progress')
       .upsert(
-        { user_id: userId, current_step: next, last_advanced_at: now },
+        { user_id: userId, completed_weeks: newWeeks, last_advanced_at: now },
         { onConflict: 'user_id' }
       );
     if (error) {
-      console.warn('[FCA] advance failed:', error.message);
+      console.warn('[FCA] mark week failed:', error.message);
       throw error;
     }
-    return { current_step: next, last_advanced_at: now };
+    return { completed_weeks: newWeeks, last_advanced_at: now };
+  }
+
+  async function unmarkWeekComplete(sb, userId, week) {
+    const w = parseInt(week, 10);
+    if (!(w >= 1 && w <= 8)) throw new Error('Week must be 1..8');
+    const current = await getMyProgress(sb, userId);
+    const set = new Set(current.completed_weeks || []);
+    set.delete(w);
+    const newWeeks = Array.from(set).sort((a, b) => a - b);
+    const now = new Date().toISOString();
+    const { error } = await sb
+      .from('onboarding_progress')
+      .upsert(
+        { user_id: userId, completed_weeks: newWeeks, last_advanced_at: now },
+        { onConflict: 'user_id' }
+      );
+    if (error) throw error;
+    return { completed_weeks: newWeeks, last_advanced_at: now };
   }
 
   async function listTeamProgress(sb) {
-    // Two queries: profiles + progress. Join client-side.
-    // RLS automatically scopes profiles + progress to what the caller can see.
     const [{ data: profiles, error: pErr }, { data: progress, error: gErr }] = await Promise.all([
       sb.from('profiles').select('id, full_name, email, avatar_url, created_at, manager_id').order('created_at', { ascending: true }),
-      sb.from('onboarding_progress').select('user_id, current_step, started_at, last_advanced_at'),
+      sb.from('onboarding_progress').select('user_id, completed_weeks, started_at, last_advanced_at'),
     ]);
     if (pErr) throw pErr;
     if (gErr) throw gErr;
-    const progressByUser = new Map((progress || []).map((p) => [p.user_id, p]));
+    const progressByUser = new Map((progress || []).map((p) => [p.user_id, { ...p, completed_weeks: p.completed_weeks || [] }]));
     const profileById = new Map((profiles || []).map((p) => [p.id, p]));
     return (profiles || []).map((p) => ({
       ...p,
       manager: p.manager_id ? (profileById.get(p.manager_id) || null) : null,
-      progress: progressByUser.get(p.id) || { current_step: 0, started_at: null, last_advanced_at: null },
+      progress: progressByUser.get(p.id) || { completed_weeks: [], started_at: null, last_advanced_at: null },
     }));
   }
 
@@ -599,17 +620,20 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
     return managerId || null;
   }
 
-  async function setStepFor(sb, userId, step) {
-    const clamped = Math.max(0, Math.min(9, parseInt(step, 10) || 0));
+  async function setWeeksFor(sb, userId, weeks) {
+    const sorted = [...new Set(weeks || [])]
+      .map((w) => parseInt(w, 10))
+      .filter((w) => w >= 1 && w <= 8)
+      .sort((a, b) => a - b);
     const now = new Date().toISOString();
     const { error } = await sb
       .from('onboarding_progress')
       .upsert(
-        { user_id: userId, current_step: clamped, last_advanced_at: now },
+        { user_id: userId, completed_weeks: sorted, last_advanced_at: now },
         { onConflict: 'user_id' }
       );
     if (error) throw error;
-    return clamped;
+    return sorted;
   }
 
   function friendlyError(msg) {
