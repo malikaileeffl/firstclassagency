@@ -163,6 +163,26 @@
 <script>
 (function() {
   const TOTAL_WEEKS = 8;
+  // Mirror of the training page's per-week task counts. When an admin toggles
+  // a week's complete state, we also rewrite task_progress so the agent's
+  // checklist matches what the admin sees here.
+  const WEEK_TASK_COUNTS = { 1: 6, 2: 5, 3: 3, 4: 4, 5: 3, 6: 3, 7: 4, 8: 6 };
+
+  function buildTaskProgress(weeks, existing) {
+    const out = { ...(existing || {}) };
+    // For each week 1..8: if completed, fill all task indexes; if not, clear.
+    for (let w = 1; w <= TOTAL_WEEKS; w++) {
+      const key = String(w);
+      const n = WEEK_TASK_COUNTS[w] || 0;
+      if (weeks.includes(w)) {
+        out[key] = Array.from({ length: n }, (_, i) => i);
+      } else {
+        delete out[key];
+      }
+    }
+    return out;
+  }
+
   let isSuperAdmin = false;
   let adminCandidates = [];
 
@@ -288,10 +308,11 @@
         if (wasActive) newSet.delete(week);
         else newSet.add(week);
         const newWeeks = Array.from(newSet).sort((a,b) => a-b);
+        const newTaskProgress = buildTaskProgress(newWeeks);
 
         toggle.disabled = true;
         try {
-          await window.fcAuth.setWeeks(uid, newWeeks);
+          await window.fcAuth.setWeeks(uid, newWeeks, newTaskProgress);
           toggle.classList.toggle('active');
           updateRowSummary(tr, newWeeks);
         } catch (err) {

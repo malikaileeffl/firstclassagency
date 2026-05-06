@@ -108,7 +108,7 @@
     </div>
 
     <h2 class="list-section-head" style="margin-top:0;">Your 8-week onboarding</h2>
-    <p style="color:var(--text-3);font-size:0.92rem;margin:-6px 0 22px;padding-right:var(--gutter);max-width:60ch;">Eight weeks from licensed to standard. <strong style="color:var(--text-2);">Tap any week</strong> to see the full goals, focus, and tasks — then mark it complete when you've finished.</p>
+    <p style="color:var(--text-3);font-size:0.92rem;margin:-6px 0 22px;padding-right:var(--gutter);max-width:60ch;">Eight weeks from licensed to standard. <strong style="color:var(--text-2);">Tap your current week</strong> to see what's required — check each task off as you finish it. The next week unlocks once every box is checked.</p>
 
     <div class="weeks-progress-summary" id="weeks-summary" style="display:none;">
       <div class="ws-text">
@@ -254,28 +254,25 @@
         <p class="wm-value" id="wm-focus">—</p>
       </section>
       <section class="wm-section" id="wm-tasks-section">
-        <span class="wm-label">This week you'll</span>
+        <span class="wm-label">Check each off as you complete it</span>
         <ul class="wm-tasks" id="wm-tasks"></ul>
       </section>
-    </div>
-    <div class="week-modal-actions">
-      <button class="btn btn--primary wm-mark" type="button" id="wm-mark-complete">Mark week complete</button>
+      <p class="wm-hint" id="wm-hint"></p>
     </div>
   </div>
 </div>
 
-<!-- 8/8 celebration modal — sticky, only path forward is the Calendly link -->
+<!-- 8/8 celebration modal — sticky, only path forward is to pick a manager -->
 <div class="celebration-modal" id="celebration-modal" hidden>
   <div class="celebration-backdrop"></div>
   <div class="celebration-content" role="dialog" aria-modal="true" aria-labelledby="cm-title">
     <div class="celebration-confetti" aria-hidden="true"></div>
     <span class="celebration-eyebrow">Onboarding complete</span>
     <h2 id="cm-title">You hit the standard.</h2>
-    <p>You've finished all eight weeks of onboarding. Lock in your goals and expectations with the team — schedule your meeting now.</p>
-    <a id="celebration-cta-link" href="https://calendly.com/firstclassagency/onboarding-graduation" target="_blank" rel="noopener" class="btn btn--primary celebration-cta">
-      Schedule with the managers
-      <span class="arrow">→</span>
-    </a>
+    <p>You've finished all eight weeks. Pick a manager below to lock in your goals, comp, and income plan.</p>
+    <div class="celebration-pickers" id="celebration-pickers" aria-live="polite">
+      <p class="celebration-loading">Loading managers…</p>
+    </div>
   </div>
 </div>
 
@@ -285,6 +282,11 @@
 <script>
 (function() {
   const TOTAL_WEEKS = 8;
+
+  const STD_TASKS = [
+    'Attend every training',
+    'Roleplay and recap with an Elite manager each night',
+  ];
 
   const WEEKS = [
     {
@@ -296,20 +298,22 @@
         'Learn how to navigate the website',
         'Get tapped into the GroupMe and Discord',
         'Acquire the script and watch the script video',
+        'Memorize the script',
+        'Contact Lily or Nadine to get contracted with carriers',
         'Receive expectations and standards from your manager',
       ],
     },
     {
       num: 2,
-      title: 'Three carriers + dial',
+      title: '3 carriers + Start Dialing',
       teaser: 'First carriers, first leads, first sales.',
       goal: '1–3 policies sold',
       focus: 'Work ethic',
       tasks: [
         'Have 3 carriers back',
         'Start dialing — first week of aged leads',
-        'Attend every training, roleplay, and recap with your manager daily',
         'Know how to write applications on your own',
+        ...STD_TASKS,
       ],
     },
     {
@@ -320,8 +324,7 @@
       focus: 'Tonality',
       tasks: [
         'Receive your first week of free First Class in-house leads',
-        'Attend every training',
-        'Roleplay and recap with your manager every night',
+        ...STD_TASKS,
       ],
     },
     {
@@ -332,9 +335,8 @@
       focus: 'Master the first 90 seconds of the script',
       tasks: [
         'Match lead spend with your manager',
-        'Attend every training',
-        'Roleplay and recap at end of day with your manager',
         'Hold 8+ state licenses (at least 2 per time zone)',
+        ...STD_TASKS,
       ],
     },
     {
@@ -345,26 +347,29 @@
       focus: 'Master all objections',
       tasks: [
         'Start buying your own leads',
+        ...STD_TASKS,
       ],
     },
     {
       num: 6,
-      title: 'Build the muscle',
+      title: '2nd week buying leads',
       teaser: 'Stay in the leads. Sharpen the toolkit.',
       goal: 'Submit $12K+ per week',
       focus: 'Be fluent in both the script and every e-app',
       tasks: [
         'Continue buying leads',
+        ...STD_TASKS,
       ],
     },
     {
       num: 7,
-      title: 'Scale up',
+      title: 'Increasing lead spend',
       teaser: 'Bigger lead spend. Bigger production.',
       goal: 'Submit $15K+ per week',
       tasks: [
         'Increase your lead spend',
         'Buy 20+ state licenses',
+        ...STD_TASKS,
       ],
     },
     {
@@ -377,13 +382,23 @@
         'Set your IP goal',
         'Set your compensation goal',
         'Set your income goal',
+        ...STD_TASKS,
       ],
     },
   ];
 
   const weekByNum = new Map(WEEKS.map((w) => [w.num, w]));
+
+  // Expose the task counts so admin.html can keep task_progress in sync
+  // when overriding completed weeks.
+  window.fcWeekTaskCounts = Object.fromEntries(
+    WEEKS.map((w) => [w.num, w.tasks.length])
+  );
+
   let completedWeeks = new Set();
+  let taskProgress = {};       // { "1": [0, 1, 2], ... }
   let activeModalWeek = null;
+  let saveQueue = Promise.resolve();
 
   document.addEventListener('fca:auth-ready', async () => {
     if (!window.fcAuth) return;
@@ -396,12 +411,40 @@
       return;
     }
     completedWeeks = new Set(progress.completed_weeks || []);
+    taskProgress = normalizeTaskProgress(progress.task_progress || {});
     document.getElementById('weeks-summary').style.display = '';
     renderProgress();
     wireCards();
     wireModalDismiss();
-    wireMarkInModal();
+
+    // Warm up the admin list so the celebration modal can render instantly.
+    if (window.fcAuth && window.fcAuth.listSchedulingAdmins) {
+      window.fcAuth.listSchedulingAdmins()
+        .then((arr) => { cachedAdmins = arr || []; })
+        .catch(() => { cachedAdmins = []; });
+    }
   });
+
+  function normalizeTaskProgress(raw) {
+    const out = {};
+    Object.keys(raw || {}).forEach((k) => {
+      const arr = raw[k];
+      if (Array.isArray(arr)) out[String(k)] = arr.slice();
+    });
+    return out;
+  }
+
+  function getCurrentWeek() {
+    for (let w = 1; w <= TOTAL_WEEKS; w++) {
+      if (!completedWeeks.has(w)) return w;
+    }
+    return TOTAL_WEEKS + 1; // all done
+  }
+
+  function isLocked(week) {
+    if (completedWeeks.has(week)) return false;
+    return week > getCurrentWeek();
+  }
 
   function populateCards() {
     document.querySelectorAll('.week-card').forEach((card) => {
@@ -410,78 +453,82 @@
       if (!data) return;
       card.querySelector('[data-week-title]').textContent = data.title;
       card.querySelector('[data-week-teaser]').textContent = data.teaser;
-      card.setAttribute('aria-label', `Week ${week}: ${data.title} — tap for details`);
+      // Lock badge — appended once
+      if (!card.querySelector('.week-card-lock')) {
+        const lock = document.createElement('div');
+        lock.className = 'week-card-lock';
+        lock.setAttribute('aria-hidden', 'true');
+        lock.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>Locked</span>';
+        card.appendChild(lock);
+      }
     });
   }
 
   function renderProgress() {
+    const current = getCurrentWeek();
     document.querySelectorAll('.week-card').forEach((card) => {
       const week = parseInt(card.dataset.week, 10);
       const done = completedWeeks.has(week);
+      const locked = isLocked(week);
+      const isCurrent = !done && !locked && week === current;
       card.classList.toggle('week-card-complete', done);
+      card.classList.toggle('week-card-locked', locked);
+      card.classList.toggle('week-card-current', isCurrent);
+
+      // Hide the per-card mark-complete button entirely; completion now
+      // happens via the in-modal checklist.
       const btn = card.querySelector('.week-card-btn');
-      btn.classList.toggle('completed', done);
-      btn.querySelector('.btn-label').textContent = done ? 'Completed' : 'Mark complete';
-      btn.setAttribute('aria-pressed', done ? 'true' : 'false');
+      if (btn) btn.style.display = 'none';
+
+      // Update the "Tap for details" hint to reflect status
+      const hint = card.querySelector('.week-card-expand');
+      if (hint) {
+        if (done) hint.textContent = 'Completed ✓';
+        else if (locked) hint.textContent = '';
+        else if (isCurrent) hint.innerHTML = 'Tap to start &rarr;';
+        else hint.innerHTML = 'Tap for details &rarr;';
+      }
+
+      if (locked) {
+        card.setAttribute('aria-label', `Week ${week} — locked. Complete the previous weeks first.`);
+        card.setAttribute('aria-disabled', 'true');
+        card.setAttribute('tabindex', '-1');
+      } else {
+        const data = weekByNum.get(week);
+        const lbl = data ? `Week ${week}: ${data.title} — tap for details` : `Week ${week}`;
+        card.setAttribute('aria-label', lbl);
+        card.removeAttribute('aria-disabled');
+        card.setAttribute('tabindex', '0');
+      }
     });
+
     const count = completedWeeks.size;
     const allDone = count >= TOTAL_WEEKS;
     document.getElementById('ws-count').textContent = `${count} of ${TOTAL_WEEKS} complete`;
     document.getElementById('ws-bar-fill').style.width = `${(count / TOTAL_WEEKS) * 100}%`;
     document.getElementById('weeks-grid').classList.toggle('all-complete', allDone);
     document.getElementById('weeks-summary').classList.toggle('all-complete', allDone);
-    if (activeModalWeek != null) {
-      updateModalMarkButton(activeModalWeek);
-    }
+
+    if (activeModalWeek != null) renderModalChecklistOnly(activeModalWeek);
   }
 
   function wireCards() {
     document.querySelectorAll('.week-card').forEach((card) => {
       const week = parseInt(card.dataset.week, 10);
-      card.addEventListener('click', (e) => {
-        if (e.target.closest('.week-card-btn')) return;
+      card.addEventListener('click', () => {
+        if (isLocked(week)) return;
         openWeekModal(week);
       });
       card.addEventListener('keydown', (e) => {
         if (e.key !== 'Enter' && e.key !== ' ') return;
-        if (e.target.closest('.week-card-btn')) return;
+        if (isLocked(week)) return;
         e.preventDefault();
         openWeekModal(week);
-      });
-
-      const btn = card.querySelector('.week-card-btn');
-      btn.addEventListener('click', async (e) => {
-        e.stopPropagation();
-        await markWeek(week, btn);
       });
     });
   }
 
-  async function markWeek(week, originBtn) {
-    if (completedWeeks.has(week)) return;
-    if (originBtn && originBtn.disabled) return;
-    if (originBtn) originBtn.disabled = true;
-
-    if (originBtn) emitParticles(originBtn);
-
-    const before = completedWeeks.size;
-    completedWeeks.add(week);
-    renderProgress();
-
-    try {
-      await window.fcAuth.markWeek(week);
-      if (before < TOTAL_WEEKS && completedWeeks.size >= TOTAL_WEEKS) {
-        setTimeout(showCelebration, 700);
-      }
-    } catch (e) {
-      console.error(e);
-      completedWeeks.delete(week);
-      renderProgress();
-      alert('Could not save. Please try again.');
-    } finally {
-      if (originBtn) originBtn.disabled = false;
-    }
-  }
+  // ---------- Modal: details + interactive checklist ----------
 
   function openWeekModal(week) {
     const data = weekByNum.get(week);
@@ -500,17 +547,120 @@
       focusSec.hidden = true;
     }
 
-    const tasksUl = document.getElementById('wm-tasks');
-    tasksUl.innerHTML = '';
-    (data.tasks || []).forEach((t) => {
-      const li = document.createElement('li');
-      li.textContent = t;
-      tasksUl.appendChild(li);
-    });
+    renderModalChecklist(week, data);
 
-    updateModalMarkButton(week);
     modal.hidden = false;
     document.body.style.overflow = 'hidden';
+  }
+
+  function renderModalChecklist(week, data) {
+    const ul = document.getElementById('wm-tasks');
+    ul.innerHTML = '';
+    const checked = new Set(taskProgress[String(week)] || []);
+    const isDone = completedWeeks.has(week);
+
+    data.tasks.forEach((t, idx) => {
+      const li = document.createElement('li');
+      li.className = 'wm-task';
+      const id = `wm-task-${week}-${idx}`;
+      li.innerHTML = `
+        <label for="${id}" class="wm-task-row">
+          <input type="checkbox" id="${id}" class="wm-task-check" data-task-index="${idx}" ${checked.has(idx) ? 'checked' : ''} ${isDone ? 'disabled' : ''}>
+          <span class="wm-task-box" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <span class="wm-task-label">${escapeText(t)}</span>
+        </label>
+      `;
+      ul.appendChild(li);
+    });
+
+    ul.querySelectorAll('.wm-task-check').forEach((input) => {
+      input.addEventListener('change', () => onTaskToggle(week, input));
+    });
+
+    updateModalHint(week, data);
+  }
+
+  function renderModalChecklistOnly(week) {
+    // Re-render checks if state changed elsewhere
+    const data = weekByNum.get(week);
+    if (!data) return;
+    const checked = new Set(taskProgress[String(week)] || []);
+    const isDone = completedWeeks.has(week);
+    document.querySelectorAll('#wm-tasks .wm-task-check').forEach((input) => {
+      const idx = parseInt(input.dataset.taskIndex, 10);
+      input.checked = checked.has(idx);
+      input.disabled = isDone;
+    });
+    updateModalHint(week, data);
+  }
+
+  function updateModalHint(week, data) {
+    const hint = document.getElementById('wm-hint');
+    if (!hint) return;
+    const checked = (taskProgress[String(week)] || []).length;
+    const total = data.tasks.length;
+    if (completedWeeks.has(week)) {
+      hint.innerHTML = '<strong>Week complete.</strong> All tasks signed off.';
+      hint.className = 'wm-hint wm-hint-done';
+    } else {
+      const left = total - checked;
+      hint.innerHTML = `<strong>${checked} of ${total} checked.</strong> ${left === 0 ? 'Saving…' : (left === 1 ? '1 task left to mark this week complete.' : `${left} tasks left to mark this week complete.`)}`;
+      hint.className = 'wm-hint';
+    }
+  }
+
+  async function onTaskToggle(week, input) {
+    const idx = parseInt(input.dataset.taskIndex, 10);
+    const data = weekByNum.get(week);
+    if (!data) return;
+
+    const key = String(week);
+    const set = new Set(taskProgress[key] || []);
+    if (input.checked) set.add(idx);
+    else set.delete(idx);
+    taskProgress[key] = Array.from(set).sort((a, b) => a - b);
+
+    const total = data.tasks.length;
+    const allChecked = taskProgress[key].length >= total;
+
+    if (allChecked) {
+      completedWeeks.add(week);
+    } else {
+      completedWeeks.delete(week);
+    }
+
+    renderProgress();
+    updateModalHint(week, data);
+
+    // Save (serialized)
+    saveQueue = saveQueue.then(async () => {
+      try {
+        await window.fcAuth.saveProgress(taskProgress, Array.from(completedWeeks));
+      } catch (e) {
+        console.error(e);
+      }
+    });
+
+    if (allChecked) {
+      // Particle burst from the input's wrapper
+      const row = input.closest('.wm-task-row');
+      if (row) emitParticles(row);
+
+      // Find the card to unlock the next one + visual flair
+      const card = document.querySelector(`.week-card[data-week="${week}"]`);
+      if (card) emitParticles(card);
+
+      // Close modal after a brief celebratory pause, then check for full-onboarding
+      const before = completedWeeks.size - 1; // we just added
+      setTimeout(() => {
+        closeWeekModal();
+        if (completedWeeks.size >= TOTAL_WEEKS && before < TOTAL_WEEKS) {
+          setTimeout(showCelebration, 500);
+        }
+      }, 700);
+    }
   }
 
   function closeWeekModal() {
@@ -518,48 +668,6 @@
     modal.hidden = true;
     document.body.style.overflow = '';
     activeModalWeek = null;
-  }
-
-  function updateModalMarkButton(week) {
-    const btn = document.getElementById('wm-mark-complete');
-    if (!btn) return;
-    const done = completedWeeks.has(week);
-    btn.disabled = done;
-    btn.textContent = done ? 'Already complete' : `Mark week ${week} complete`;
-    btn.classList.toggle('completed', done);
-  }
-
-  function wireMarkInModal() {
-    const btn = document.getElementById('wm-mark-complete');
-    btn.addEventListener('click', async () => {
-      if (activeModalWeek == null) return;
-      if (completedWeeks.has(activeModalWeek)) return;
-      const week = activeModalWeek;
-      btn.disabled = true;
-      btn.textContent = 'Saving…';
-      emitParticles(btn);
-
-      const before = completedWeeks.size;
-      completedWeeks.add(week);
-      renderProgress();
-
-      try {
-        await window.fcAuth.markWeek(week);
-        setTimeout(() => {
-          closeWeekModal();
-          if (before < TOTAL_WEEKS && completedWeeks.size >= TOTAL_WEEKS) {
-            setTimeout(showCelebration, 400);
-          }
-        }, 250);
-      } catch (e) {
-        console.error(e);
-        completedWeeks.delete(week);
-        renderProgress();
-        btn.disabled = false;
-        btn.textContent = `Mark week ${week} complete`;
-        alert('Could not save. Please try again.');
-      }
-    });
   }
 
   function wireModalDismiss() {
@@ -584,13 +692,13 @@
     document.body.appendChild(burst);
 
     const colors = ['#0078ab', '#0090ce', '#00b4f0', '#ffffff'];
-    const N = 32;
+    const N = 28;
     for (let i = 0; i < N; i++) {
       const p = document.createElement('span');
       p.className = 'particle';
       const angle = (i / N) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
-      const dist = 60 + Math.random() * 90;
-      const size = 5 + Math.random() * 6;
+      const dist = 50 + Math.random() * 80;
+      const size = 5 + Math.random() * 5;
       p.style.setProperty('--dx', (Math.cos(angle) * dist).toFixed(1) + 'px');
       p.style.setProperty('--dy', (Math.sin(angle) * dist).toFixed(1) + 'px');
       p.style.background = colors[Math.floor(Math.random() * colors.length)];
@@ -602,12 +710,50 @@
     setTimeout(() => burst.remove(), 1300);
   }
 
-  function showCelebration() {
+  let cachedAdmins = null;
+
+  async function showCelebration() {
     const modal = document.getElementById('celebration-modal');
     if (!modal) return;
     modal.hidden = false;
     document.body.style.overflow = 'hidden';
     fireConfetti(modal.querySelector('.celebration-confetti'));
+    renderAdminPickers();
+  }
+
+  async function renderAdminPickers() {
+    const wrap = document.getElementById('celebration-pickers');
+    if (!wrap) return;
+    if (cachedAdmins == null) {
+      try {
+        cachedAdmins = await window.fcAuth.listSchedulingAdmins();
+      } catch (e) {
+        console.error('[celebration] admin fetch failed', e);
+        cachedAdmins = [];
+      }
+    }
+    if (!cachedAdmins.length) {
+      wrap.innerHTML = `<p class="celebration-empty">No managers have set up scheduling yet. Reach out to leadership directly to book your kickoff call.</p>`;
+      return;
+    }
+    wrap.innerHTML = cachedAdmins.map((a) => {
+      const name = escapeText(a.full_name || a.email || 'Manager');
+      const initial = (a.full_name || a.email || '?').charAt(0).toUpperCase();
+      const avatar = a.avatar_url
+        ? `<span class="cm-pick-avatar avatar-with-image"><img src="${escapeAttr(a.avatar_url)}" alt=""></span>`
+        : `<span class="cm-pick-avatar">${escapeText(initial)}</span>`;
+      const roleLabel = a.role === 'super_admin' ? 'Lead manager' : 'Manager';
+      return `
+        <a class="cm-pick" href="${escapeAttr(a.calendly_url)}" target="_blank" rel="noopener" data-celebration-pick>
+          ${avatar}
+          <span class="cm-pick-meta">
+            <span class="cm-pick-name">${name}</span>
+            <span class="cm-pick-role">${roleLabel}</span>
+          </span>
+          <span class="cm-pick-cta">Schedule <span aria-hidden="true">→</span></span>
+        </a>
+      `;
+    }).join('');
   }
 
   function hideCelebration() {
@@ -634,10 +780,19 @@
     }
   }
 
+  // Picking any manager opens their Calendly in a new tab AND closes the modal.
   document.addEventListener('click', (e) => {
-    const cta = e.target.closest('#celebration-cta-link');
-    if (cta) hideCelebration();
+    if (e.target.closest('[data-celebration-pick]')) hideCelebration();
   });
+
+  function escapeText(s) {
+    const d = document.createElement('div');
+    d.textContent = s == null ? '' : String(s);
+    return d.innerHTML;
+  }
+  function escapeAttr(s) {
+    return escapeText(s).replace(/"/g, '&quot;');
+  }
 })();
 </script>
 </body>

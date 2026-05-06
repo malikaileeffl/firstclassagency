@@ -2852,6 +2852,93 @@ p {
   color: #22c55e !important;
 }
 
+/* Current-week highlight — pulse the active card so it reads as "next up" */
+.week-card.week-card-current {
+  border-color: var(--accent-bright);
+  box-shadow: 0 0 0 2px rgba(0, 144, 206, 0.35),
+              0 8px 28px -10px rgba(0, 144, 206, 0.55);
+}
+.week-card.week-card-current::before {
+  content: 'Current';
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #ffffff;
+  background: linear-gradient(135deg, #0090ce 0%, #005d85 100%);
+  padding: 4px 8px;
+  border-radius: 999px;
+  z-index: 2;
+  box-shadow: 0 4px 12px -2px rgba(0, 144, 206, 0.5);
+  animation: jm-pulse-r 1.8s ease-in-out infinite;
+}
+.week-card.week-card-current::after {
+  /* Hide the corner glint when the "Current" pill is showing */
+  display: none;
+}
+
+/* Locked state — blurred contents + lock overlay */
+.week-card.week-card-locked {
+  cursor: not-allowed;
+  border-color: var(--border);
+}
+.week-card.week-card-locked:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--border);
+}
+.week-card.week-card-locked > *:not(.week-card-lock):not(.week-card-eyebrow) {
+  filter: blur(8px);
+  opacity: 0.45;
+  pointer-events: none;
+  user-select: none;
+}
+.week-card.week-card-locked .week-card-eyebrow {
+  opacity: 0.55;
+}
+.week-card.week-card-locked::after {
+  display: none;
+}
+.week-card-lock {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 12, 18, 0.45);
+  border-radius: var(--r-lg);
+  z-index: 3;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.92);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 700;
+  pointer-events: none;
+}
+.week-card-lock svg {
+  width: 28px;
+  height: 28px;
+  stroke: rgba(255, 255, 255, 0.85);
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+}
+.week-card.week-card-locked .week-card-lock {
+  display: flex;
+}
+[data-theme="light"] .week-card-lock {
+  background: rgba(245, 247, 250, 0.85);
+  color: var(--text-2);
+}
+[data-theme="light"] .week-card-lock svg {
+  stroke: var(--text-2);
+}
+
 /* Week details modal (tap a week card to open) */
 .week-modal[hidden] { display: none; }
 .week-modal {
@@ -2953,41 +3040,104 @@ p {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
-.wm-tasks li {
+.wm-task { margin: 0; }
+.wm-task-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition:
+    background var(--dur-2) var(--ease),
+    border-color var(--dur-2) var(--ease);
+  user-select: none;
+}
+.wm-task-row:hover {
+  background: var(--surface-hover);
+  border-color: var(--border);
+}
+.wm-task-check {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+.wm-task-box {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 2px solid var(--border-strong);
+  background: var(--surface);
+  display: grid;
+  place-items: center;
+  margin-top: 1px;
+  transition:
+    background var(--dur-2) var(--ease),
+    border-color var(--dur-2) var(--ease),
+    transform var(--dur-2) var(--ease);
   position: relative;
-  padding-left: 26px;
+}
+.wm-task-box svg {
+  width: 14px;
+  height: 14px;
+  color: #ffffff;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.18s var(--ease), transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.wm-task-row:hover .wm-task-box {
+  border-color: var(--accent-bright);
+}
+.wm-task-check:checked + .wm-task-box {
+  background: linear-gradient(135deg, #0090ce 0%, #005d85 100%);
+  border-color: #0078ab;
+  box-shadow: 0 4px 12px -3px rgba(0, 144, 206, 0.55);
+}
+.wm-task-check:checked + .wm-task-box svg {
+  opacity: 1;
+  transform: scale(1);
+}
+.wm-task-check:focus-visible + .wm-task-box {
+  outline: 2px solid var(--accent-bright);
+  outline-offset: 2px;
+}
+.wm-task-check:disabled + .wm-task-box {
+  opacity: 0.7;
+}
+.wm-task-label {
   color: var(--text);
   font-size: 0.95rem;
   line-height: 1.45;
+  flex: 1;
 }
-.wm-tasks li::before {
-  content: '';
-  position: absolute;
-  left: 4px;
-  top: 7px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #0090ce 0%, #005d85 100%);
-  box-shadow: 0 0 0 3px rgba(0, 120, 171, 0.18);
-}
-.week-modal-actions {
-  margin-top: 26px;
-  padding-top: 18px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  justify-content: flex-end;
-}
-.wm-mark { font-size: 0.95rem; }
-.wm-mark.completed,
-.wm-mark:disabled {
-  background: var(--surface-hover);
-  border-color: var(--border);
+.wm-task-check:checked ~ .wm-task-label {
   color: var(--text-3);
-  cursor: default;
 }
+.wm-task-row:has(.wm-task-check:checked) {
+  background: rgba(0, 120, 171, 0.06);
+}
+
+.wm-hint {
+  margin: 14px 0 0;
+  padding: 12px 14px;
+  background: var(--accent-soft);
+  border: 1px solid rgba(0, 120, 171, 0.25);
+  border-radius: 10px;
+  font-size: 0.88rem;
+  color: var(--text-2);
+}
+.wm-hint strong { color: var(--accent-bright); }
+.wm-hint.wm-hint-done {
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.35);
+}
+.wm-hint.wm-hint-done strong { color: #22c55e; }
 
 @media (max-width: 600px) {
   .week-modal-content {
@@ -3102,6 +3252,101 @@ p {
   margin-right: auto;
   position: relative;
   z-index: 2;
+}
+
+/* Admin picker grid inside celebration modal */
+.celebration-pickers {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+.celebration-loading,
+.celebration-empty {
+  margin: 0;
+  padding: 14px 16px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-3);
+  font-size: 0.9rem;
+}
+.cm-pick {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  text-align: left;
+  transition: background var(--dur-2) var(--ease),
+    border-color var(--dur-2) var(--ease),
+    transform var(--dur-2) var(--ease);
+}
+.cm-pick:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent-bright);
+  transform: translateY(-1px);
+}
+.cm-pick-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent-bright);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.cm-pick-avatar.avatar-with-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.cm-pick-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+  min-width: 0;
+}
+.cm-pick-name {
+  color: var(--text);
+  font-weight: 600;
+  font-size: 1rem;
+}
+.cm-pick-role {
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.cm-pick-cta {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #ffffff;
+  background: linear-gradient(135deg, #0090ce 0%, #005d85 100%);
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px -2px rgba(0, 144, 206, 0.45);
 }
 
 /* Confetti rain inside the modal */

@@ -157,6 +157,11 @@
             <input class="input" type="email" data-user-email-input disabled />
             <span class="help">Email can't be changed from here. Reach out to your admin if it needs to update.</span>
           </div>
+          <div class="field" id="calendly-field" data-admin-only style="display:none;">
+            <label for="profile-calendly">Your Calendly URL</label>
+            <input class="input" id="profile-calendly" name="calendly_url" type="url" placeholder="https://calendly.com/your-handle/onboarding" autocomplete="off" />
+            <span class="help">Shown to agents on the celebration screen so they can book their kickoff call with you. Leave blank to opt out.</span>
+          </div>
           <div class="account-actions">
             <button class="btn btn--primary" type="submit" id="profile-save-btn">Save changes</button>
             <span id="profile-status" class="save-status"></span>

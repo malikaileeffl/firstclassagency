@@ -57,10 +57,13 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
     window.fcAuth.getProgress = () => getMyProgress(sb, user.id);
     window.fcAuth.markWeek = (week) => markWeekComplete(sb, user.id, week);
     window.fcAuth.unmarkWeek = (week) => unmarkWeekComplete(sb, user.id, week);
+    window.fcAuth.saveProgress = (taskProgress, completedWeeks) => savePartialProgress(sb, user.id, taskProgress, completedWeeks);
     window.fcAuth.listTeam = () => listTeamProgress(sb);
-    window.fcAuth.setWeeks = (uid, weeks) => setWeeksFor(sb, uid, weeks);
+    window.fcAuth.setWeeks = (uid, weeks, taskProgress) => setWeeksFor(sb, uid, weeks, taskProgress);
     window.fcAuth.listAdminCandidates = () => listAdminCandidates(sb);
     window.fcAuth.setManager = (uid, managerId) => setManagerFor(sb, uid, managerId);
+    window.fcAuth.listSchedulingAdmins = () => listSchedulingAdmins(sb);
+    window.fcAuth.setCalendlyUrl = (url) => setCalendlyUrl(sb, user.id, url);
 
     document.querySelectorAll('[data-admin-only]').forEach((el) => {
       el.style.display = isAdmin ? '' : 'none';
@@ -179,19 +182,43 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
     const nameInput = document.getElementById('profile-name');
     if (nameInput) nameInput.value = fullName;
 
+    // Pre-fill Calendly URL if user is admin (field is hidden for agents).
+    const calendlyInput = document.getElementById('profile-calendly');
+    if (calendlyInput) {
+      sb.from('profiles').select('calendly_url').eq('id', user.id).maybeSingle()
+        .then(({ data }) => {
+          if (data && data.calendly_url) calendlyInput.value = data.calendly_url;
+        })
+        .catch((e) => console.warn('[FCA] could not fetch calendly_url:', e.message));
+    }
+
     // Profile save
     const profileForm = document.getElementById('profile-form');
     if (profileForm) {
       profileForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const newName = nameInput.value.trim();
+        const newCalendly = calendlyInput ? calendlyInput.value.trim() : null;
         const status = document.getElementById('profile-status');
         const btn = document.getElementById('profile-save-btn');
         if (!newName) { showStatus(status, 'Name cannot be empty.', true); return; }
+        if (newCalendly && !/^https?:\/\//i.test(newCalendly)) {
+          showStatus(status, 'Calendly URL should start with https://', true);
+          return;
+        }
 
         btn.disabled = true; btn.textContent = 'Saving…';
         status.classList.remove('show', 'error');
         const { error } = await sb.auth.updateUser({ data: { full_name: newName } });
+        // Save Calendly URL to profile (only relevant for admins; harmless for others)
+        if (calendlyInput) {
+          try {
+            await setCalendlyUrl(sb, user.id, newCalendly);
+          } catch (calErr) {
+            // Non-fatal — name still saved. Surface a soft warning.
+            console.warn('[FCA] calendly save failed:', calErr.message);
+          }
+        }
         btn.disabled = false; btn.textContent = 'Save changes';
         if (error) {
           showStatus(status, error.message, true);
@@ -519,23 +546,50 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
   async function getMyProgress(sb, userId) {
     const { data, error } = await sb
       .from('onboarding_progress')
-      .select('completed_weeks, started_at, last_advanced_at')
+      .select('completed_weeks, task_progress, started_at, last_advanced_at')
       .eq('user_id', userId)
       .maybeSingle();
     if (error) {
       console.warn('[FCA] progress lookup failed:', error.message);
-      return { completed_weeks: [] };
+      return { completed_weeks: [], task_progress: {} };
     }
     if (!data) {
       const now = new Date().toISOString();
       const { error: insertErr } = await sb
         .from('onboarding_progress')
-        .insert({ user_id: userId, completed_weeks: [], started_at: now, last_advanced_at: now });
+        .insert({ user_id: userId, completed_weeks: [], task_progress: {}, started_at: now, last_advanced_at: now });
       if (insertErr) console.warn('[FCA] progress seed failed:', insertErr.message);
-      return { completed_weeks: [], started_at: now, last_advanced_at: now };
+      return { completed_weeks: [], task_progress: {}, started_at: now, last_advanced_at: now };
     }
-    // Normalize null/missing array to empty
-    return { ...data, completed_weeks: data.completed_weeks || [] };
+    return {
+      ...data,
+      completed_weeks: data.completed_weeks || [],
+      task_progress: data.task_progress || {},
+    };
+  }
+
+  async function savePartialProgress(sb, userId, taskProgress, completedWeeks) {
+    const sortedWeeks = [...new Set(completedWeeks || [])]
+      .map((w) => parseInt(w, 10))
+      .filter((w) => w >= 1 && w <= 8)
+      .sort((a, b) => a - b);
+    const now = new Date().toISOString();
+    const { error } = await sb
+      .from('onboarding_progress')
+      .upsert(
+        {
+          user_id: userId,
+          task_progress: taskProgress || {},
+          completed_weeks: sortedWeeks,
+          last_advanced_at: now,
+        },
+        { onConflict: 'user_id' }
+      );
+    if (error) {
+      console.warn('[FCA] save progress failed:', error.message);
+      throw error;
+    }
+    return { task_progress: taskProgress || {}, completed_weeks: sortedWeeks, last_advanced_at: now };
   }
 
   async function markWeekComplete(sb, userId, week) {
@@ -580,16 +634,20 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
   async function listTeamProgress(sb) {
     const [{ data: profiles, error: pErr }, { data: progress, error: gErr }] = await Promise.all([
       sb.from('profiles').select('id, full_name, email, avatar_url, created_at, manager_id').order('created_at', { ascending: true }),
-      sb.from('onboarding_progress').select('user_id, completed_weeks, started_at, last_advanced_at'),
+      sb.from('onboarding_progress').select('user_id, completed_weeks, task_progress, started_at, last_advanced_at'),
     ]);
     if (pErr) throw pErr;
     if (gErr) throw gErr;
-    const progressByUser = new Map((progress || []).map((p) => [p.user_id, { ...p, completed_weeks: p.completed_weeks || [] }]));
+    const progressByUser = new Map((progress || []).map((p) => [p.user_id, {
+      ...p,
+      completed_weeks: p.completed_weeks || [],
+      task_progress: p.task_progress || {},
+    }]));
     const profileById = new Map((profiles || []).map((p) => [p.id, p]));
     return (profiles || []).map((p) => ({
       ...p,
       manager: p.manager_id ? (profileById.get(p.manager_id) || null) : null,
-      progress: progressByUser.get(p.id) || { completed_weeks: [], started_at: null, last_advanced_at: null },
+      progress: progressByUser.get(p.id) || { completed_weeks: [], task_progress: {}, started_at: null, last_advanced_at: null },
     }));
   }
 
@@ -611,6 +669,48 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
     return profiles || [];
   }
 
+  async function listSchedulingAdmins(sb) {
+    // Returns admins (and super_admins) who have a non-empty Calendly URL.
+    // Used by the celebration modal so agents can pick a manager to schedule with.
+    const { data: roles, error: rErr } = await sb
+      .from('user_roles')
+      .select('user_id, role')
+      .in('role', ['admin', 'super_admin']);
+    if (rErr) {
+      console.warn('[FCA] role fetch failed:', rErr.message);
+      return [];
+    }
+    const ids = (roles || []).map((r) => r.user_id);
+    if (!ids.length) return [];
+    const { data: profiles, error: pErr } = await sb
+      .from('profiles')
+      .select('id, full_name, email, avatar_url, calendly_url')
+      .in('id', ids);
+    if (pErr) {
+      console.warn('[FCA] admin profile fetch failed:', pErr.message);
+      return [];
+    }
+    const roleByUser = new Map((roles || []).map((r) => [r.user_id, r.role]));
+    return (profiles || [])
+      .filter((p) => p.calendly_url && p.calendly_url.trim())
+      .map((p) => ({ ...p, role: roleByUser.get(p.id) || 'admin' }))
+      .sort((a, b) => {
+        // Super admins first, then alphabetical
+        if (a.role !== b.role) return a.role === 'super_admin' ? -1 : 1;
+        return (a.full_name || '').localeCompare(b.full_name || '');
+      });
+  }
+
+  async function setCalendlyUrl(sb, userId, url) {
+    const cleaned = (url || '').trim();
+    const { error } = await sb
+      .from('profiles')
+      .update({ calendly_url: cleaned || null })
+      .eq('id', userId);
+    if (error) throw error;
+    return cleaned || null;
+  }
+
   async function setManagerFor(sb, userId, managerId) {
     const { error } = await sb
       .from('profiles')
@@ -620,18 +720,23 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
     return managerId || null;
   }
 
-  async function setWeeksFor(sb, userId, weeks) {
+  async function setWeeksFor(sb, userId, weeks, taskProgress) {
     const sorted = [...new Set(weeks || [])]
       .map((w) => parseInt(w, 10))
       .filter((w) => w >= 1 && w <= 8)
       .sort((a, b) => a - b);
     const now = new Date().toISOString();
+    const payload = {
+      user_id: userId,
+      completed_weeks: sorted,
+      last_advanced_at: now,
+    };
+    if (taskProgress && typeof taskProgress === 'object') {
+      payload.task_progress = taskProgress;
+    }
     const { error } = await sb
       .from('onboarding_progress')
-      .upsert(
-        { user_id: userId, completed_weeks: sorted, last_advanced_at: now },
-        { onConflict: 'user_id' }
-      );
+      .upsert(payload, { onConflict: 'user_id' });
     if (error) throw error;
     return sorted;
   }
