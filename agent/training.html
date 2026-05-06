@@ -281,7 +281,7 @@
         </g>
         <text class="jm-label jm-label-above jm-label-final" x="1480" y="220" text-anchor="middle">
           <tspan x="1480" dy="0" class="jm-title">$15K IP by month three</tspan>
-          <tspan x="1480" dy="26" class="jm-desc">Hit the rule. You're in.</tspan>
+          <tspan x="1480" dy="26" class="jm-desc">Hit the standard. You're in.</tspan>
         </text>
 
         <!-- rocket lifted clear above the final label so the text stays readable -->
@@ -310,7 +310,7 @@
         <div class="journey-stack-row"><span class="num">6</span><div><strong>Track your activity</strong><span>Dial Tracker every day</span></div></div>
         <div class="journey-stack-row"><span class="num">7</span><div><strong>First 48 challenge</strong><span>Issue your first policy</span></div></div>
         <div class="journey-stack-row"><span class="num">8</span><div><strong>Learn as you earn</strong><span>Build steady production</span></div></div>
-        <div class="journey-stack-row jm-stack-final"><span class="num">9</span><div><strong>$15K IP by month three</strong><span>Hit the rule. You're in.</span></div></div>
+        <div class="journey-stack-row jm-stack-final"><span class="num">9</span><div><strong>$15K IP by month three</strong><span>Hit the standard. You're in.</span></div></div>
       </div>
     </div>
 
@@ -375,7 +375,7 @@
     { num: 6, title: 'Track your activity',  desc: 'Dial Tracker every day' },
     { num: 7, title: 'First 48 challenge',   desc: 'Issue your first policy' },
     { num: 8, title: 'Learn as you earn',    desc: 'Build steady production' },
-    { num: 9, title: '$15K IP by month three', desc: "Hit the rule. You're in." },
+    { num: 9, title: '$15K IP by month three', desc: "Hit the standard. You're in." },
   ];
 
   document.addEventListener('fca:auth-ready', async () => {
@@ -424,7 +424,7 @@
     if (currentStep >= 9) {
       card.classList.add('onboarding-complete');
       eyebrow.textContent = 'Onboarding complete';
-      title.textContent = "You hit the rule.";
+      title.textContent = "You hit the standard.";
       desc.textContent = "Welcome to the team. Keep stacking issued premium.";
       btn.style.display = 'none';
       return;
