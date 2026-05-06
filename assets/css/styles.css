@@ -2743,7 +2743,8 @@ p {
   color: var(--text-3);
   white-space: nowrap;
 }
-.admin-step-select {
+.admin-step-select,
+.admin-manager-select {
   background: var(--surface-hover);
   border: 1px solid var(--border);
   border-radius: var(--r-sm);
@@ -2753,8 +2754,18 @@ p {
   font-size: 0.9rem;
   cursor: pointer;
 }
-.admin-step-select:hover { border-color: var(--border-strong); }
-.admin-step-select:focus { outline: 2px solid var(--accent-bright); outline-offset: 2px; }
+.admin-step-select:hover,
+.admin-manager-select:hover { border-color: var(--border-strong); }
+.admin-step-select:focus,
+.admin-manager-select:focus { outline: 2px solid var(--accent-bright); outline-offset: 2px; }
+.admin-manager-select { font-family: inherit; max-width: 200px; }
+.admin-cell-manager { min-width: 160px; }
+.admin-manager-name { color: var(--text); font-size: 0.92rem; }
+.admin-manager-none {
+  color: var(--text-3);
+  font-style: italic;
+  font-size: 0.88rem;
+}
 
 .admin-empty {
   background: var(--surface);

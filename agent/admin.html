@@ -102,12 +102,12 @@
   <section class="hub-main">
     <div class="hub-head">
       <div>
-        <span class="eyebrow">Admin · Team progress</span>
-        <h1 class="mt-8">Onboarding overview.</h1>
+        <span class="eyebrow" id="admin-eyebrow">Admin · Team progress</span>
+        <h1 class="mt-8" id="admin-heading">Onboarding overview.</h1>
       </div>
     </div>
 
-    <p style="color:var(--text-3);font-size:0.92rem;margin:-6px 0 22px;padding-right:var(--gutter);max-width:60ch;">Track where every agent stands in the 9-step onboarding roadmap. Click a row to override an agent's step manually.</p>
+    <p id="admin-scope-note" style="color:var(--text-3);font-size:0.92rem;margin:-6px 0 22px;padding-right:var(--gutter);max-width:60ch;">Track where every agent stands in the 9-step onboarding roadmap. Override an agent's step manually using the dropdown.</p>
 
     <!-- summary tiles -->
     <div class="admin-tiles" id="admin-tiles" style="display:none;">
@@ -139,6 +139,7 @@
             <th>Agent</th>
             <th>Step</th>
             <th>Progress</th>
+            <th id="th-manager">Manager</th>
             <th>Last advanced</th>
             <th>Override</th>
           </tr>
@@ -174,21 +175,43 @@
     '$15K IP by month three',
   ];
 
+  let isSuperAdmin = false;
+  let adminCandidates = []; // for super-admin manager dropdowns
+
   document.addEventListener('fca:auth-ready', async (e) => {
-    const { isAdmin } = e.detail;
+    const { isAdmin, isSuperAdmin: superFlag } = e.detail;
     if (!isAdmin) {
       document.getElementById('admin-loading').style.display = 'none';
       document.getElementById('admin-denied').style.display = '';
       return;
     }
+    isSuperAdmin = !!superFlag;
+
+    // Adjust heading + scope note based on role
+    const heading = document.getElementById('admin-heading');
+    const eyebrow = document.getElementById('admin-eyebrow');
+    const note = document.getElementById('admin-scope-note');
+    if (isSuperAdmin) {
+      eyebrow.textContent = 'Admin · All agents';
+      heading.textContent = 'Onboarding overview.';
+      note.textContent = "You're a super admin — you see every agent across the org. Use the Manager dropdown to assign each agent to their team lead.";
+    } else {
+      eyebrow.textContent = 'Admin · Your team';
+      heading.textContent = 'Your team.';
+      note.textContent = 'Track where each of your direct reports stands in the 9-step roadmap. Use the Override dropdown to correct a step.';
+    }
 
     try {
-      const team = await window.fcAuth.listTeam();
+      const [team, candidates] = await Promise.all([
+        window.fcAuth.listTeam(),
+        isSuperAdmin ? window.fcAuth.listAdminCandidates() : Promise.resolve([]),
+      ]);
+      adminCandidates = candidates;
       renderTeam(team);
     } catch (err) {
       console.error(err);
       document.getElementById('admin-loading').textContent =
-        'Could not load team data. Make sure the Supabase setup script has been run.';
+        'Could not load team data. Make sure the Supabase setup scripts have been run.';
     }
   });
 
@@ -202,7 +225,14 @@
     tbody.innerHTML = '';
 
     if (!team.length) {
-      loading.textContent = 'No agents yet.';
+      loading.textContent = isSuperAdmin
+        ? 'No agents yet.'
+        : "No direct reports yet. The super admin can assign agents to your team from their admin view.";
+      tiles.style.display = '';
+      document.getElementById('tile-total').textContent = '0';
+      document.getElementById('tile-started').textContent = '0';
+      document.getElementById('tile-active').textContent = '0';
+      document.getElementById('tile-complete').textContent = '0';
       return;
     }
 
@@ -224,6 +254,8 @@
         ? `<span class="admin-avatar avatar-with-image"><img src="${escapeAttr(row.avatar_url)}" alt=""></span>`
         : `<span class="admin-avatar">${escapeText(initial)}</span>`;
 
+      const managerCell = renderManagerCell(row);
+
       tr.innerHTML = `
         <td class="admin-cell-agent">
           ${avatar}
@@ -239,6 +271,7 @@
         <td class="admin-cell-progress">
           <div class="admin-bar"><div class="admin-bar-fill" style="width:${(step/9)*100}%"></div></div>
         </td>
+        <td class="admin-cell-manager">${managerCell}</td>
         <td class="admin-cell-time">${lastAdv}</td>
         <td class="admin-cell-override">
           <select class="admin-step-select" data-user-id="${escapeAttr(row.id)}">
@@ -261,30 +294,68 @@
     wrap.style.display = '';
 
     tbody.querySelectorAll('.admin-step-select').forEach((sel) => {
-      sel.addEventListener('change', async (e) => {
+      sel.addEventListener('change', async () => {
         const uid = sel.dataset.userId;
         const newStep = parseInt(sel.value, 10);
         const original = sel.dataset.previous || sel.options[Array.from(sel.options).findIndex((o) => o.defaultSelected)]?.value || '0';
         sel.disabled = true;
         try {
           await window.fcAuth.setStep(uid, newStep);
-          // Refresh the row in place
           const tr = sel.closest('tr');
-          const stepNumEl = tr.querySelector('.admin-step-num');
-          stepNumEl.innerHTML = `${newStep}<span class="admin-step-of">/9</span>`;
+          tr.querySelector('.admin-step-num').innerHTML = `${newStep}<span class="admin-step-of">/9</span>`;
           tr.querySelector('.admin-step-label').textContent = STEP_LABELS[newStep] || '—';
           tr.querySelector('.admin-bar-fill').style.width = `${(newStep/9)*100}%`;
           tr.querySelector('.admin-cell-time').textContent = 'just now';
           sel.dataset.previous = String(newStep);
         } catch (err) {
           console.error(err);
-          alert('Failed to update. ' + (err.message || ''));
+          alert('Failed to update step. ' + (err.message || ''));
           sel.value = original;
         } finally {
           sel.disabled = false;
         }
       });
     });
+
+    // Manager dropdown handler (super admin only)
+    tbody.querySelectorAll('.admin-manager-select').forEach((sel) => {
+      sel.addEventListener('change', async () => {
+        const uid = sel.dataset.userId;
+        const newMgr = sel.value || null;
+        const original = sel.dataset.previous || '';
+        sel.disabled = true;
+        try {
+          await window.fcAuth.setManager(uid, newMgr);
+          sel.dataset.previous = newMgr || '';
+        } catch (err) {
+          console.error(err);
+          alert('Failed to set manager. ' + (err.message || ''));
+          sel.value = original;
+        } finally {
+          sel.disabled = false;
+        }
+      });
+    });
+  }
+
+  function renderManagerCell(row) {
+    if (isSuperAdmin) {
+      // Render dropdown of admin candidates + "Unassigned"
+      const currentMgr = row.manager_id || '';
+      const opts = ['<option value="">— Unassigned —</option>'].concat(
+        adminCandidates
+          .filter((c) => c.id !== row.id) // can't be your own manager
+          .map((c) => {
+            const label = c.full_name || c.email || 'Unnamed';
+            return `<option value="${escapeAttr(c.id)}"${c.id === currentMgr ? ' selected' : ''}>${escapeText(label)}</option>`;
+          })
+      ).join('');
+      return `<select class="admin-manager-select" data-user-id="${escapeAttr(row.id)}" data-previous="${escapeAttr(currentMgr)}">${opts}</select>`;
+    }
+    // Regular admin sees text only
+    const mgr = row.manager;
+    if (!mgr) return '<span class="admin-manager-none">Unassigned</span>';
+    return `<span class="admin-manager-name">${escapeText(mgr.full_name || mgr.email || '—')}</span>`;
   }
 
   function formatRelative(date) {

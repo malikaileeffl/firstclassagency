@@ -44,20 +44,29 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
     wireLogout(sb);
 
     // Resolve role + reveal admin-only UI
-    const isAdmin = await checkAdmin(sb, user.id);
+    const role = await checkRole(sb, user.id);
+    const isAdmin = role === 'admin' || role === 'super_admin';
+    const isSuperAdmin = role === 'super_admin';
+
     window.fcAuth = window.fcAuth || {};
     window.fcAuth.user = user;
+    window.fcAuth.role = role;
     window.fcAuth.isAdmin = isAdmin;
+    window.fcAuth.isSuperAdmin = isSuperAdmin;
     window.fcAuth.sb = sb;
     window.fcAuth.getProgress = () => getMyProgress(sb, user.id);
     window.fcAuth.advanceProgress = () => advanceMyProgress(sb, user.id);
     window.fcAuth.listTeam = () => listTeamProgress(sb);
     window.fcAuth.setStep = (uid, step) => setStepFor(sb, uid, step);
+    window.fcAuth.listAdminCandidates = () => listAdminCandidates(sb);
+    window.fcAuth.setManager = (uid, managerId) => setManagerFor(sb, uid, managerId);
 
     document.querySelectorAll('[data-admin-only]').forEach((el) => {
       el.style.display = isAdmin ? '' : 'none';
     });
-    document.dispatchEvent(new CustomEvent('fca:auth-ready', { detail: { user, isAdmin } }));
+    document.dispatchEvent(new CustomEvent('fca:auth-ready', {
+      detail: { user, isAdmin, isSuperAdmin, role }
+    }));
 
     if (isAccountPage) {
       wireAccountPage(sb, user);
@@ -493,7 +502,7 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
   // role + onboarding progress
   // -------------------------------------------------------------------------
 
-  async function checkAdmin(sb, userId) {
+  async function checkRole(sb, userId) {
     const { data, error } = await sb
       .from('user_roles')
       .select('role')
@@ -501,9 +510,9 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
       .maybeSingle();
     if (error) {
       console.warn('[FCA] role lookup failed:', error.message);
-      return false;
+      return 'agent';
     }
-    return !!data && data.role === 'admin';
+    return (data && data.role) || 'agent';
   }
 
   async function getMyProgress(sb, userId) {
@@ -547,17 +556,47 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
 
   async function listTeamProgress(sb) {
     // Two queries: profiles + progress. Join client-side.
+    // RLS automatically scopes profiles + progress to what the caller can see.
     const [{ data: profiles, error: pErr }, { data: progress, error: gErr }] = await Promise.all([
-      sb.from('profiles').select('id, full_name, email, avatar_url, created_at').order('created_at', { ascending: true }),
+      sb.from('profiles').select('id, full_name, email, avatar_url, created_at, manager_id').order('created_at', { ascending: true }),
       sb.from('onboarding_progress').select('user_id, current_step, started_at, last_advanced_at'),
     ]);
     if (pErr) throw pErr;
     if (gErr) throw gErr;
     const progressByUser = new Map((progress || []).map((p) => [p.user_id, p]));
+    const profileById = new Map((profiles || []).map((p) => [p.id, p]));
     return (profiles || []).map((p) => ({
       ...p,
+      manager: p.manager_id ? (profileById.get(p.manager_id) || null) : null,
       progress: progressByUser.get(p.id) || { current_step: 0, started_at: null, last_advanced_at: null },
     }));
+  }
+
+  async function listAdminCandidates(sb) {
+    // Returns profiles for users with role admin or super_admin.
+    // Used by super admin to populate the "manager" dropdown.
+    const { data: roles, error: rErr } = await sb
+      .from('user_roles')
+      .select('user_id, role')
+      .in('role', ['admin', 'super_admin']);
+    if (rErr) throw rErr;
+    const ids = (roles || []).map((r) => r.user_id);
+    if (!ids.length) return [];
+    const { data: profiles, error: pErr } = await sb
+      .from('profiles')
+      .select('id, full_name, email')
+      .in('id', ids);
+    if (pErr) throw pErr;
+    return profiles || [];
+  }
+
+  async function setManagerFor(sb, userId, managerId) {
+    const { error } = await sb
+      .from('profiles')
+      .update({ manager_id: managerId || null })
+      .eq('id', userId);
+    if (error) throw error;
+    return managerId || null;
   }
 
   async function setStepFor(sb, userId, step) {
