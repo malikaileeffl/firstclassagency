@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Admin — Agent portal</title>
+<meta name="robots" content="noindex,nofollow" />
+<meta name="theme-color" content="#0d0d0e" />
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/styles.css" />
+<script src="../assets/js/theme.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <a href="dashboard.html" class="brand">
+    <img class="brand-logo" src="../assets/img/logo.png" alt="First Class Agency" />
+    <span>First Class · Agent</span>
+  </a>
+  <div class="nav-cta">
+    <div class="user-menu" data-user-chip style="display:none;">
+      <button class="user-chip" data-user-chip-trigger type="button">
+        <span class="user-avatar" data-user-initial>—</span>
+        <span class="user-name">Hi, <strong data-user-name>—</strong></span>
+        <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="user-menu-dropdown" role="menu">
+        <a href="account.html" class="user-menu-item" role="menuitem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 14 0v1"/></svg>
+          Account settings
+        </a>
+        <div class="user-menu-divider"></div>
+        <button class="user-menu-item" data-logout type="button" role="menuitem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign out
+        </button>
+      </div>
+    </div>
+    <button class="nav-toggle" aria-label="Open menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</header>
+
+<nav class="mobile-nav" aria-label="Mobile">
+  <a href="dashboard.html">Dashboard</a>
+  <a href="training.html">Training</a>
+  <a href="quick-links.html">Quick Links</a>
+  <a href="portals.html">E-apps & Portals</a>
+  <a href="https://app.firstclassagency.info/login" target="_blank" rel="noopener noreferrer">Leads Center ↗</a>
+  <a href="promotion.html">Promotion & Comp</a>
+  <a href="carriers.html">Carrier Contacts</a>
+  <a href="resources.html">Agent Resources</a>
+  <a href="admin.html" data-admin-only>Admin</a>
+  <a href="account.html">Account settings</a>
+  <a href="#" data-logout class="btn btn--ghost mt-16">Sign out</a>
+</nav>
+
+<main class="container hub-shell">
+  <aside class="hub-side" aria-label="Agent navigation">
+    <a href="dashboard.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>
+      Dashboard
+    </a>
+    <a href="training.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      Training
+    </a>
+    <a href="quick-links.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      Quick Links
+    </a>
+    <a href="portals.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20"/><path d="M6 7h.01"/></svg>
+      E-apps & Portals
+    </a>
+    <a href="https://app.firstclassagency.info/login" target="_blank" rel="noopener noreferrer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      Leads Center
+    </a>
+    <a href="promotion.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+      Promotion & Comp
+    </a>
+    <a href="carriers.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Carrier Contacts
+    </a>
+    <a href="resources.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      Agent Resources
+    </a>
+    <a href="admin.html" class="active" data-admin-only>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9.5-8 10-4.5-.5-8-5-8-10V6l8-4z"/><path d="m9 12 2 2 4-4"/></svg>
+      Admin
+    </a>
+  </aside>
+
+  <section class="hub-main">
+    <div class="hub-head">
+      <div>
+        <span class="eyebrow">Admin · Team progress</span>
+        <h1 class="mt-8">Onboarding overview.</h1>
+      </div>
+    </div>
+
+    <p style="color:var(--text-3);font-size:0.92rem;margin:-6px 0 22px;padding-right:var(--gutter);max-width:60ch;">Track where every agent stands in the 9-step onboarding roadmap. Click a row to override an agent's step manually.</p>
+
+    <!-- summary tiles -->
+    <div class="admin-tiles" id="admin-tiles" style="display:none;">
+      <div class="admin-tile">
+        <span class="admin-tile-label">Total agents</span>
+        <span class="admin-tile-value" id="tile-total">—</span>
+      </div>
+      <div class="admin-tile">
+        <span class="admin-tile-label">Started</span>
+        <span class="admin-tile-value" id="tile-started">—</span>
+      </div>
+      <div class="admin-tile">
+        <span class="admin-tile-label">In progress</span>
+        <span class="admin-tile-value" id="tile-active">—</span>
+      </div>
+      <div class="admin-tile">
+        <span class="admin-tile-label">Hit the rule</span>
+        <span class="admin-tile-value" id="tile-complete">—</span>
+      </div>
+    </div>
+
+    <!-- table -->
+    <div id="admin-loading" class="admin-empty">Loading team…</div>
+
+    <div class="admin-table-wrap" id="admin-table-wrap" style="display:none;">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Agent</th>
+            <th>Step</th>
+            <th>Progress</th>
+            <th>Last advanced</th>
+            <th>Override</th>
+          </tr>
+        </thead>
+        <tbody id="admin-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- access denied state -->
+    <div id="admin-denied" class="admin-empty" style="display:none;">
+      <h3>Admin access only.</h3>
+      <p>Your account doesn't have admin permissions. Contact leadership if you think this is a mistake.</p>
+      <a href="dashboard.html" class="btn btn--primary mt-16">Back to dashboard</a>
+    </div>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/main.js"></script>
+<script src="../assets/js/agent-auth.js"></script>
+<script>
+(function() {
+  const STEP_LABELS = [
+    'Not started',
+    'Pass exam & apply',
+    'Join the team chat',
+    'Complete boot camp',
+    'Study the script',
+    'Complete contracting',
+    'Track your activity',
+    'First 48 challenge',
+    'Learn as you earn',
+    '$15K IP by month three',
+  ];
+
+  document.addEventListener('fca:auth-ready', async (e) => {
+    const { isAdmin } = e.detail;
+    if (!isAdmin) {
+      document.getElementById('admin-loading').style.display = 'none';
+      document.getElementById('admin-denied').style.display = '';
+      return;
+    }
+
+    try {
+      const team = await window.fcAuth.listTeam();
+      renderTeam(team);
+    } catch (err) {
+      console.error(err);
+      document.getElementById('admin-loading').textContent =
+        'Could not load team data. Make sure the Supabase setup script has been run.';
+    }
+  });
+
+  function renderTeam(team) {
+    const tbody = document.getElementById('admin-tbody');
+    const loading = document.getElementById('admin-loading');
+    const wrap = document.getElementById('admin-table-wrap');
+    const tiles = document.getElementById('admin-tiles');
+
+    let started = 0, active = 0, complete = 0;
+    tbody.innerHTML = '';
+
+    if (!team.length) {
+      loading.textContent = 'No agents yet.';
+      return;
+    }
+
+    team.forEach((row) => {
+      const step = row.progress.current_step || 0;
+      if (step > 0) started++;
+      if (step >= 1 && step < 9) active++;
+      if (step >= 9) complete++;
+
+      const tr = document.createElement('tr');
+      tr.dataset.userId = row.id;
+
+      const lastAdv = row.progress.last_advanced_at
+        ? formatRelative(new Date(row.progress.last_advanced_at))
+        : '—';
+
+      const initial = (row.full_name || row.email || '?').charAt(0).toUpperCase();
+      const avatar = row.avatar_url
+        ? `<span class="admin-avatar avatar-with-image"><img src="${escapeAttr(row.avatar_url)}" alt=""></span>`
+        : `<span class="admin-avatar">${escapeText(initial)}</span>`;
+
+      tr.innerHTML = `
+        <td class="admin-cell-agent">
+          ${avatar}
+          <div>
+            <div class="admin-name">${escapeText(row.full_name || '(no name)')}</div>
+            <div class="admin-email">${escapeText(row.email || '')}</div>
+          </div>
+        </td>
+        <td class="admin-cell-step">
+          <span class="admin-step-num">${step}<span class="admin-step-of">/9</span></span>
+          <span class="admin-step-label">${escapeText(STEP_LABELS[step] || '—')}</span>
+        </td>
+        <td class="admin-cell-progress">
+          <div class="admin-bar"><div class="admin-bar-fill" style="width:${(step/9)*100}%"></div></div>
+        </td>
+        <td class="admin-cell-time">${lastAdv}</td>
+        <td class="admin-cell-override">
+          <select class="admin-step-select" data-user-id="${escapeAttr(row.id)}">
+            ${[0,1,2,3,4,5,6,7,8,9].map((s) =>
+              `<option value="${s}"${s === step ? ' selected' : ''}>${s}</option>`
+            ).join('')}
+          </select>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('tile-total').textContent = team.length;
+    document.getElementById('tile-started').textContent = started;
+    document.getElementById('tile-active').textContent = active;
+    document.getElementById('tile-complete').textContent = complete;
+
+    loading.style.display = 'none';
+    tiles.style.display = '';
+    wrap.style.display = '';
+
+    tbody.querySelectorAll('.admin-step-select').forEach((sel) => {
+      sel.addEventListener('change', async (e) => {
+        const uid = sel.dataset.userId;
+        const newStep = parseInt(sel.value, 10);
+        const original = sel.dataset.previous || sel.options[Array.from(sel.options).findIndex((o) => o.defaultSelected)]?.value || '0';
+        sel.disabled = true;
+        try {
+          await window.fcAuth.setStep(uid, newStep);
+          // Refresh the row in place
+          const tr = sel.closest('tr');
+          const stepNumEl = tr.querySelector('.admin-step-num');
+          stepNumEl.innerHTML = `${newStep}<span class="admin-step-of">/9</span>`;
+          tr.querySelector('.admin-step-label').textContent = STEP_LABELS[newStep] || '—';
+          tr.querySelector('.admin-bar-fill').style.width = `${(newStep/9)*100}%`;
+          tr.querySelector('.admin-cell-time').textContent = 'just now';
+          sel.dataset.previous = String(newStep);
+        } catch (err) {
+          console.error(err);
+          alert('Failed to update. ' + (err.message || ''));
+          sel.value = original;
+        } finally {
+          sel.disabled = false;
+        }
+      });
+    });
+  }
+
+  function formatRelative(date) {
+    const diff = (Date.now() - date.getTime()) / 1000;
+    if (diff < 60) return 'just now';
+    if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
+    if (diff < 86400 * 7) return `${Math.floor(diff/86400)}d ago`;
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return `${months[date.getMonth()]} ${date.getDate()}`;
+  }
+
+  function escapeText(s) {
+    const d = document.createElement('div');
+    d.textContent = s == null ? '' : String(s);
+    return d.innerHTML;
+  }
+  function escapeAttr(s) {
+    return escapeText(s).replace(/"/g, '&quot;');
+  }
+})();
+</script>
+</body>
+</html>

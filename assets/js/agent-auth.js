@@ -43,6 +43,22 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
     wireUserMenu(sb);
     wireLogout(sb);
 
+    // Resolve role + reveal admin-only UI
+    const isAdmin = await checkAdmin(sb, user.id);
+    window.fcAuth = window.fcAuth || {};
+    window.fcAuth.user = user;
+    window.fcAuth.isAdmin = isAdmin;
+    window.fcAuth.sb = sb;
+    window.fcAuth.getProgress = () => getMyProgress(sb, user.id);
+    window.fcAuth.advanceProgress = () => advanceMyProgress(sb, user.id);
+    window.fcAuth.listTeam = () => listTeamProgress(sb);
+    window.fcAuth.setStep = (uid, step) => setStepFor(sb, uid, step);
+
+    document.querySelectorAll('[data-admin-only]').forEach((el) => {
+      el.style.display = isAdmin ? '' : 'none';
+    });
+    document.dispatchEvent(new CustomEvent('fca:auth-ready', { detail: { user, isAdmin } }));
+
     if (isAccountPage) {
       wireAccountPage(sb, user);
     }
@@ -471,6 +487,90 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
         }
       });
     }
+  }
+
+  // -------------------------------------------------------------------------
+  // role + onboarding progress
+  // -------------------------------------------------------------------------
+
+  async function checkAdmin(sb, userId) {
+    const { data, error } = await sb
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .maybeSingle();
+    if (error) {
+      console.warn('[FCA] role lookup failed:', error.message);
+      return false;
+    }
+    return !!data && data.role === 'admin';
+  }
+
+  async function getMyProgress(sb, userId) {
+    const { data, error } = await sb
+      .from('onboarding_progress')
+      .select('current_step, started_at, last_advanced_at')
+      .eq('user_id', userId)
+      .maybeSingle();
+    if (error) {
+      console.warn('[FCA] progress lookup failed:', error.message);
+      return { current_step: 0 };
+    }
+    if (!data) {
+      // No row yet — create one and return defaults
+      const now = new Date().toISOString();
+      const { error: insertErr } = await sb
+        .from('onboarding_progress')
+        .insert({ user_id: userId, current_step: 0, started_at: now, last_advanced_at: now });
+      if (insertErr) console.warn('[FCA] progress seed failed:', insertErr.message);
+      return { current_step: 0, started_at: now, last_advanced_at: now };
+    }
+    return data;
+  }
+
+  async function advanceMyProgress(sb, userId) {
+    const current = await getMyProgress(sb, userId);
+    const next = Math.min(9, (current.current_step || 0) + 1);
+    const now = new Date().toISOString();
+    const { error } = await sb
+      .from('onboarding_progress')
+      .upsert(
+        { user_id: userId, current_step: next, last_advanced_at: now },
+        { onConflict: 'user_id' }
+      );
+    if (error) {
+      console.warn('[FCA] advance failed:', error.message);
+      throw error;
+    }
+    return { current_step: next, last_advanced_at: now };
+  }
+
+  async function listTeamProgress(sb) {
+    // Two queries: profiles + progress. Join client-side.
+    const [{ data: profiles, error: pErr }, { data: progress, error: gErr }] = await Promise.all([
+      sb.from('profiles').select('id, full_name, email, avatar_url, created_at').order('created_at', { ascending: true }),
+      sb.from('onboarding_progress').select('user_id, current_step, started_at, last_advanced_at'),
+    ]);
+    if (pErr) throw pErr;
+    if (gErr) throw gErr;
+    const progressByUser = new Map((progress || []).map((p) => [p.user_id, p]));
+    return (profiles || []).map((p) => ({
+      ...p,
+      progress: progressByUser.get(p.id) || { current_step: 0, started_at: null, last_advanced_at: null },
+    }));
+  }
+
+  async function setStepFor(sb, userId, step) {
+    const clamped = Math.max(0, Math.min(9, parseInt(step, 10) || 0));
+    const now = new Date().toISOString();
+    const { error } = await sb
+      .from('onboarding_progress')
+      .upsert(
+        { user_id: userId, current_step: clamped, last_advanced_at: now },
+        { onConflict: 'user_id' }
+      );
+    if (error) throw error;
+    return clamped;
   }
 
   function friendlyError(msg) {
