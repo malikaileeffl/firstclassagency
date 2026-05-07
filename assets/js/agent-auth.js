@@ -64,6 +64,7 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
     window.fcAuth.setManager = (uid, managerId) => setManagerFor(sb, uid, managerId);
     window.fcAuth.listSchedulingAdmins = () => listSchedulingAdmins(sb);
     window.fcAuth.setCalendlyUrl = (url) => setCalendlyUrl(sb, user.id, url);
+    window.fcAuth.setTrainingStatus = (dateStr, status) => setTrainingStatus(sb, user.id, dateStr, status);
 
     document.querySelectorAll('[data-admin-only]').forEach((el) => {
       el.style.display = isAdmin ? '' : 'none';
@@ -546,26 +547,58 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
   async function getMyProgress(sb, userId) {
     const { data, error } = await sb
       .from('onboarding_progress')
-      .select('completed_weeks, task_progress, started_at, last_advanced_at')
+      .select('completed_weeks, task_progress, training_attendance, started_at, last_advanced_at')
       .eq('user_id', userId)
       .maybeSingle();
     if (error) {
       console.warn('[FCA] progress lookup failed:', error.message);
-      return { completed_weeks: [], task_progress: {} };
+      return { completed_weeks: [], task_progress: {}, training_attendance: {} };
     }
     if (!data) {
       const now = new Date().toISOString();
       const { error: insertErr } = await sb
         .from('onboarding_progress')
-        .insert({ user_id: userId, completed_weeks: [], task_progress: {}, started_at: now, last_advanced_at: now });
+        .insert({ user_id: userId, completed_weeks: [], task_progress: {}, training_attendance: {}, started_at: now, last_advanced_at: now });
       if (insertErr) console.warn('[FCA] progress seed failed:', insertErr.message);
-      return { completed_weeks: [], task_progress: {}, started_at: now, last_advanced_at: now };
+      return { completed_weeks: [], task_progress: {}, training_attendance: {}, started_at: now, last_advanced_at: now };
     }
     return {
       ...data,
       completed_weeks: data.completed_weeks || [],
       task_progress: data.task_progress || {},
+      training_attendance: data.training_attendance || {},
     };
+  }
+
+  async function setTrainingStatus(sb, userId, dateStr, status) {
+    // status is 'attended' or 'missed'. Idempotent — once a value is written
+    // for that date, repeat clicks don't overwrite (their first decision sticks).
+    const allowed = status === 'attended' || status === 'missed';
+    if (!allowed) throw new Error('status must be "attended" or "missed"');
+    const { data, error: getErr } = await sb
+      .from('onboarding_progress')
+      .select('training_attendance')
+      .eq('user_id', userId)
+      .maybeSingle();
+    if (getErr) {
+      console.warn('[FCA] attendance read failed:', getErr.message);
+      throw getErr;
+    }
+    const attendance = (data && data.training_attendance) || {};
+    if (attendance[dateStr]) return attendance; // already recorded, no-op
+    attendance[dateStr] = status;
+    const now = new Date().toISOString();
+    const { error } = await sb
+      .from('onboarding_progress')
+      .upsert(
+        { user_id: userId, training_attendance: attendance, last_advanced_at: now },
+        { onConflict: 'user_id' }
+      );
+    if (error) {
+      console.warn('[FCA] attendance write failed:', error.message);
+      throw error;
+    }
+    return attendance;
   }
 
   async function savePartialProgress(sb, userId, taskProgress, completedWeeks) {
@@ -634,7 +667,7 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
   async function listTeamProgress(sb) {
     const [{ data: profiles, error: pErr }, { data: progress, error: gErr }] = await Promise.all([
       sb.from('profiles').select('id, full_name, email, avatar_url, created_at, manager_id').order('created_at', { ascending: true }),
-      sb.from('onboarding_progress').select('user_id, completed_weeks, task_progress, started_at, last_advanced_at'),
+      sb.from('onboarding_progress').select('user_id, completed_weeks, task_progress, training_attendance, started_at, last_advanced_at'),
     ]);
     if (pErr) throw pErr;
     if (gErr) throw gErr;
@@ -642,12 +675,13 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
       ...p,
       completed_weeks: p.completed_weeks || [],
       task_progress: p.task_progress || {},
+      training_attendance: p.training_attendance || {},
     }]));
     const profileById = new Map((profiles || []).map((p) => [p.id, p]));
     return (profiles || []).map((p) => ({
       ...p,
       manager: p.manager_id ? (profileById.get(p.manager_id) || null) : null,
-      progress: progressByUser.get(p.id) || { completed_weeks: [], task_progress: {}, started_at: null, last_advanced_at: null },
+      progress: progressByUser.get(p.id) || { completed_weeks: [], task_progress: {}, training_attendance: {}, started_at: null, last_advanced_at: null },
     }));
   }
 

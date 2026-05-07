@@ -114,8 +114,12 @@
           <span class="eyebrow" id="today-eyebrow">Today's training call</span>
           <h3 class="mt-16" id="today-title">Team Call — with Drew Smith</h3>
           <p class="mt-8" id="today-date" style="color:var(--text-2);max-width:54ch;">Mon, May 4 · 9:00 AM ET on Zoom. Be there. Get better. Win.</p>
-          <div class="mt-24" style="display:flex;flex-wrap:wrap;gap:10px;">
-            <a href="https://us05web.zoom.us/j/81495699957?pwd=arX0o5IF2SrbYNbOmOq3Yktk0aT8yu.1" target="_blank" rel="noopener" class="btn btn--primary">Join Zoom <span class="arrow">→</span></a>
+          <div class="mt-24" style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;">
+            <a id="join-zoom-btn" href="https://us05web.zoom.us/j/81495699957?pwd=arX0o5IF2SrbYNbOmOq3Yktk0aT8yu.1" target="_blank" rel="noopener" class="btn btn--primary">Join Zoom <span class="arrow">→</span></a>
+            <span id="today-attended" class="attendance-pill" hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
+              You joined today
+            </span>
           </div>
         </div>
       </div>
@@ -179,27 +183,37 @@
 <script src="../assets/js/main.js"></script>
 <script src="../assets/js/agent-auth.js"></script>
 <script>
-/* Auto-update training-call info on the dashboard.
-   Mon-Fri: shows that day's call. Sat/Sun: shows next Monday. */
+/* Training-call dashboard with self-accountability checkmarks.
+   - Today's card: Join Zoom click marks today as attended (Supabase).
+   - Week list: shows all 5 weekdays; checkmark on attended days,
+     muted "missed" indicator on past days that weren't attended,
+     "Today" highlight on the current weekday, plain on future days. */
 (() => {
   const SCHEDULE = [
-    { day: 'Mon', topic: 'Team Call',             host: 'Drew Smith' },
-    { day: 'Tue', topic: 'Back on the Books',     host: 'Hayden Keltner' },
-    { day: 'Wed', topic: 'Handling Objections',   host: 'Colby Whittaker' },
+    { day: 'Mon', topic: 'Team Call',              host: 'Drew Smith' },
+    { day: 'Tue', topic: 'Back on the Books',      host: 'Hayden Keltner' },
+    { day: 'Wed', topic: 'Handling Objections',    host: 'Colby Whittaker' },
     { day: 'Thu', topic: 'Locking Down the Close', host: 'Garrett Sekelsky' },
-    { day: 'Fri', topic: 'Growing Online',        host: 'Malikai Lee' },
+    { day: 'Fri', topic: 'Growing Online',         host: 'Malikai Lee' },
   ];
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
+  function isoDate(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
   const now = new Date();
-  const dow = now.getDay();
+  const dow = now.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
   let mondayOffset;
   if (dow === 0) mondayOffset = 1;
   else if (dow === 6) mondayOffset = 2;
   else mondayOffset = 1 - dow;
   const monday = new Date(now);
   monday.setDate(now.getDate() + mondayOffset);
-  monday.setHours(0,0,0,0);
+  monday.setHours(0, 0, 0, 0);
 
   const weekDates = SCHEDULE.map((_, i) => {
     const d = new Date(monday);
@@ -209,8 +223,9 @@
 
   const isWeekday = dow >= 1 && dow <= 5;
   const todayIdx = isWeekday ? dow - 1 : -1;
+  const todayDateStr = isWeekday ? isoDate(weekDates[todayIdx]) : null;
 
-  // Today's training call card
+  // ----- Today's training-call card -----
   const eyebrowEl = document.getElementById('today-eyebrow');
   const titleEl   = document.getElementById('today-title');
   const dateEl    = document.getElementById('today-date');
@@ -228,23 +243,155 @@
     if (dateEl)    dateEl.textContent = `${t.day}, ${months[d.getMonth()]} ${d.getDate()} · 9:00 AM ET on Zoom. Be there. Get better. Win.`;
   }
 
-  // Rest-of-the-week list (or full week on weekends)
-  const listEl       = document.getElementById('week-list');
-  const restEyebrow  = document.getElementById('rest-eyebrow');
-  if (listEl) {
-    if (restEyebrow) restEyebrow.textContent = isWeekday ? 'Rest of the week' : 'Next week';
-    const items = [];
-    SCHEDULE.forEach((s, i) => {
-      if (i === todayIdx) return; // skip today on weekdays
-      items.push({ ...s, date: weekDates[i] });
-    });
-    listEl.innerHTML = items.map((it, idx) => {
-      const isLast = idx === items.length - 1;
-      const dayNum = String(it.date.getDate()).padStart(2, '0');
+  // ----- Week list (all five weekdays, not just remaining) -----
+  let attendance = {}; // populated from Supabase once auth-ready
+
+  // Returns 'attended' | 'missed' | null (no entry).
+  // Treats legacy boolean true as 'attended' for safety.
+  function statusFor(dateStr) {
+    const v = attendance[dateStr];
+    if (v === 'attended' || v === true) return 'attended';
+    if (v === 'missed') return 'missed';
+    return null;
+  }
+
+  function renderWeekList() {
+    const listEl = document.getElementById('week-list');
+    const restEyebrow = document.getElementById('rest-eyebrow');
+    if (!listEl) return;
+    if (restEyebrow) restEyebrow.textContent = isWeekday ? "This week's training" : "Next week";
+
+    listEl.innerHTML = SCHEDULE.map((s, i) => {
+      const date = weekDates[i];
+      const dateStr = isoDate(date);
+      const dayNum = String(date.getDate()).padStart(2, '0');
+      const isToday = i === todayIdx;
+      const isPast = isWeekday ? (i < todayIdx) : false;
+      const recorded = statusFor(dateStr);
+      const isAttended = recorded === 'attended';
+      const isMissed = recorded === 'missed' || (isPast && !recorded);
+
+      // Status indicator on the right
+      let status = '';
+      if (isAttended) {
+        status = `<span class="day-status day-status-attended" title="You joined this call before 10:30 AM ET">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>`;
+      } else if (isMissed) {
+        status = `<span class="day-status day-status-missed" title="You missed this call">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </span>`;
+      } else if (isToday) {
+        status = `<span class="day-status day-status-today" title="That's today — join before 10:30 AM ET">Today</span>`;
+      }
+
+      const isLast = i === SCHEDULE.length - 1;
       const border = isLast ? '' : 'padding-bottom:12px;border-bottom:1px solid var(--border);';
-      return `<li style="display:flex;align-items:center;gap:12px;${border}"><div style="width:36px;height:36px;border-radius:10px;background:var(--accent-soft);border:1px solid rgba(0,120,171,0.35);display:grid;place-items:center;flex-shrink:0;"><span style="font-family:var(--font-display);font-weight:600;font-size:0.95rem;">${dayNum}</span></div><div style="flex:1;min-width:0;"><div style="color:var(--text);font-size:0.92rem;">${it.topic}</div><div style="font-size:0.78rem;color:var(--text-3);">${it.day} · ${it.host}</div></div></li>`;
+
+      const badgeBg = isToday ? 'background:var(--accent-bright);color:#fff;border-color:var(--accent-bright);' : '';
+      return `
+        <li class="week-row${isToday ? ' is-today' : ''}${isAttended ? ' is-attended' : ''}${isMissed ? ' is-missed' : ''}" style="display:flex;align-items:center;gap:12px;${border}">
+          <div class="day-badge" style="width:36px;height:36px;border-radius:10px;background:var(--accent-soft);border:1px solid rgba(0,120,171,0.35);display:grid;place-items:center;flex-shrink:0;${badgeBg}">
+            <span style="font-family:var(--font-display);font-weight:600;font-size:0.95rem;">${dayNum}</span>
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="color:var(--text);font-size:0.92rem;">${s.topic}</div>
+            <div style="font-size:0.78rem;color:var(--text-3);">${s.day} · ${s.host}</div>
+          </div>
+          ${status}
+        </li>
+      `;
     }).join('');
   }
+
+  function refreshTodayPill() {
+    const pill = document.getElementById('today-attended');
+    if (!pill) return;
+    if (!isWeekday || !todayDateStr) { pill.hidden = true; return; }
+    const recorded = statusFor(todayDateStr);
+    if (recorded === 'attended') {
+      pill.hidden = false;
+      pill.classList.remove('is-missed');
+      pill.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
+        You joined on time
+      `;
+    } else if (recorded === 'missed') {
+      pill.hidden = false;
+      pill.classList.add('is-missed');
+      pill.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        Marked missed · clicked after 10:30 AM ET
+      `;
+    } else {
+      pill.hidden = true;
+    }
+  }
+
+  // Compute current Eastern Time hour/minute regardless of agent's local timezone.
+  // Handles DST automatically since Intl uses the IANA zone "America/New_York".
+  function getEasternHourMinute() {
+    const fmt = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/New_York',
+      hour: 'numeric', minute: 'numeric', hour12: false,
+    });
+    const parts = fmt.formatToParts(new Date());
+    const get = (t) => parseInt(parts.find((p) => p.type === t).value, 10);
+    let hour = get('hour'); // can be 24 in some locales — normalize
+    if (hour === 24) hour = 0;
+    const minute = get('minute');
+    return { hour, minute };
+  }
+
+  function isOnTimeET() {
+    const { hour, minute } = getEasternHourMinute();
+    // Cutoff: before 10:30 AM ET = on time. 10:30 sharp counts as missed.
+    return hour < 10 || (hour === 10 && minute < 30);
+  }
+
+  // Initial paint with empty attendance — if Supabase is slow, the page still
+  // renders the week schedule.
+  renderWeekList();
+
+  // Hook into auth-ready to fetch real attendance
+  document.addEventListener('fca:auth-ready', async () => {
+    if (!window.fcAuth || !window.fcAuth.getProgress) return;
+    try {
+      const progress = await window.fcAuth.getProgress();
+      attendance = progress.training_attendance || {};
+    } catch (e) {
+      console.warn('[dashboard] could not load attendance', e);
+      attendance = {};
+    }
+    renderWeekList();
+    refreshTodayPill();
+  });
+
+  // Wire Join Zoom click — record attended/missed depending on Eastern Time.
+  // We don't preventDefault, so Zoom still opens in a new tab regardless.
+  document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('#join-zoom-btn');
+    if (!btn) return;
+    if (!isWeekday || !todayDateStr) return;
+    if (!window.fcAuth || !window.fcAuth.setTrainingStatus) return;
+    if (attendance[todayDateStr]) return; // already recorded — first decision sticks
+
+    const status = isOnTimeET() ? 'attended' : 'missed';
+
+    // Optimistic update
+    attendance[todayDateStr] = status;
+    renderWeekList();
+    refreshTodayPill();
+
+    try {
+      await window.fcAuth.setTrainingStatus(todayDateStr, status);
+    } catch (err) {
+      console.error('[dashboard] attendance save failed', err);
+      delete attendance[todayDateStr];
+      renderWeekList();
+      refreshTodayPill();
+    }
+  });
 })();
 </script>
 </body>

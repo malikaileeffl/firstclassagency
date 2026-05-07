@@ -3448,7 +3448,311 @@ p {
   to   { opacity: 1; transform: translateY(0)     scale(1); }
 }
 
+/* Training-call attendance — dashboard week list + today pill */
+
+/* Today's-card pill that confirms the click was registered */
+.attendance-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.12);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.attendance-pill.is-missed {
+  background: rgba(220, 60, 70, 0.12);
+  color: #ef4444;
+  border-color: rgba(220, 60, 70, 0.35);
+}
+[data-theme="light"] .attendance-pill {
+  background: rgba(22, 163, 74, 0.12);
+  color: #15803d;
+  border-color: rgba(22, 163, 74, 0.35);
+}
+[data-theme="light"] .attendance-pill.is-missed {
+  background: rgba(220, 38, 38, 0.1);
+  color: #b91c1c;
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+/* Right-side status indicator on each day in the week list */
+.day-status {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.day-status-attended {
+  background: rgba(34, 197, 94, 0.14);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+.day-status-missed {
+  background: rgba(220, 60, 70, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(220, 60, 70, 0.28);
+}
+.day-status-today {
+  background: linear-gradient(135deg, #0090ce 0%, #005d85 100%);
+  color: #ffffff;
+  border: 1px solid #0078ab;
+  padding: 0 10px;
+  box-shadow: 0 4px 10px -3px rgba(0, 144, 206, 0.5);
+}
+[data-theme="light"] .day-status-attended {
+  background: rgba(22, 163, 74, 0.14);
+  color: #15803d;
+  border-color: rgba(22, 163, 74, 0.35);
+}
+[data-theme="light"] .day-status-missed {
+  background: rgba(220, 38, 38, 0.1);
+  color: #b91c1c;
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+/* Subtle dimming for missed past calls — visible accountability without shouting */
+.week-row.is-missed { opacity: 0.55; }
+.week-row.is-attended .day-badge {
+  background: rgba(34, 197, 94, 0.14);
+  border-color: rgba(34, 197, 94, 0.35);
+  color: #22c55e;
+}
+.day-status-upcoming {
+  background: var(--surface-hover);
+  color: var(--text-3);
+  border: 1px solid var(--border);
+}
+
+/* Admin → attendance pill cell + breakdown modal */
+.admin-cell-attendance { min-width: 90px; width: 100px; }
+.admin-att-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-hover);
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--dur-2) var(--ease),
+    border-color var(--dur-2) var(--ease),
+    transform var(--dur-2) var(--ease);
+}
+.admin-att-pill:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+}
+.admin-att-num {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+}
+.admin-att-of {
+  color: var(--text-3);
+  font-weight: 500;
+  font-size: 0.78rem;
+  margin-left: 1px;
+}
+.admin-att-icon {
+  display: inline-flex;
+  color: var(--text-3);
+  transition: transform var(--dur-2) var(--ease);
+}
+.admin-att-pill:hover .admin-att-icon { transform: translateX(2px); color: var(--accent-bright); }
+
+.admin-att-pill-good {
+  border-color: rgba(34, 197, 94, 0.4);
+  background: rgba(34, 197, 94, 0.08);
+}
+.admin-att-pill-good .admin-att-num { color: #22c55e; }
+.admin-att-pill-warn {
+  border-color: rgba(212, 160, 79, 0.4);
+  background: rgba(212, 160, 79, 0.08);
+}
+.admin-att-pill-warn .admin-att-num { color: #d4a04f; }
+.admin-att-pill-bad {
+  border-color: rgba(220, 60, 70, 0.35);
+  background: rgba(220, 60, 70, 0.08);
+}
+.admin-att-pill-bad .admin-att-num { color: #ef4444; }
+
+[data-theme="light"] .admin-att-pill-good .admin-att-num { color: #15803d; }
+[data-theme="light"] .admin-att-pill-bad .admin-att-num  { color: #b91c1c; }
+
+/* Attendance breakdown modal */
+.att-modal[hidden] { display: none; }
+.att-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9991;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.att-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 12, 18, 0.7);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  cursor: pointer;
+  animation: cm-fade 0.25s ease-out;
+}
+.att-modal-content {
+  position: relative;
+  background: linear-gradient(160deg, #1a1d22 0%, #0d0f12 100%);
+  border: 1px solid rgba(0, 120, 171, 0.32);
+  border-radius: 18px;
+  padding: 32px 32px 24px;
+  max-width: 460px;
+  width: 100%;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+  animation: cm-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+[data-theme="light"] .att-modal-content {
+  background: linear-gradient(160deg, #ffffff 0%, #f4f7fa 100%);
+  border-color: rgba(0, 120, 171, 0.4);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.18);
+}
+.att-modal-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+  display: inline-block;
+  margin-bottom: 6px;
+}
+.att-modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.att-modal-sub {
+  margin: 0 0 18px;
+  color: var(--text-3);
+  font-size: 0.9rem;
+}
+.att-modal-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.att-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  transition: opacity var(--dur-2) var(--ease);
+}
+.att-row.is-missed { opacity: 0.65; }
+.att-row.is-attended {
+  border-color: rgba(34, 197, 94, 0.3);
+  background: rgba(34, 197, 94, 0.06);
+}
+.att-day-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  border: 1px solid rgba(0, 120, 171, 0.35);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.att-row.is-attended .att-day-badge {
+  background: rgba(34, 197, 94, 0.14);
+  border-color: rgba(34, 197, 94, 0.35);
+  color: #22c55e;
+}
+.att-day-topic { color: var(--text); font-size: 0.95rem; font-weight: 500; }
+.att-day-host  { color: var(--text-3); font-size: 0.8rem; margin-top: 2px; }
+
 /* admin page (team progress) */
+.admin-search {
+  position: relative;
+  margin: 0 var(--gutter) 18px 0;
+  max-width: 460px;
+}
+.admin-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-3);
+  pointer-events: none;
+}
+.admin-search input {
+  width: 100%;
+  padding: 11px 40px 11px 42px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.92rem;
+  transition: border-color var(--dur-2) var(--ease),
+    box-shadow var(--dur-2) var(--ease);
+}
+.admin-search input::placeholder { color: var(--text-3); }
+.admin-search input:focus {
+  outline: none;
+  border-color: var(--accent-bright);
+  box-shadow: 0 0 0 3px rgba(0, 144, 206, 0.18);
+}
+/* Hide the native search clear "x" so we can show our own button */
+.admin-search input::-webkit-search-cancel-button { -webkit-appearance: none; }
+.admin-search-clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  color: var(--text-3);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background var(--dur-2) var(--ease), color var(--dur-2) var(--ease);
+}
+.admin-search-clear:hover { background: var(--accent-soft); color: var(--accent-bright); }
+
 .admin-tiles {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -3490,22 +3794,23 @@ p {
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
 }
 .admin-table thead th {
   text-align: left;
   font-family: var(--font-mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.16em;
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text-3);
   font-weight: 600;
-  padding: 14px 18px;
+  padding: 12px 12px;
   background: var(--surface-hover);
   border-bottom: 1px solid var(--border);
+  white-space: nowrap;
 }
 .admin-table tbody td {
-  padding: 14px 18px;
+  padding: 12px 12px;
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
 }
@@ -3542,43 +3847,44 @@ p {
   font-size: 0.82rem;
   color: var(--text-3);
 }
-.admin-cell-step {
+/* Onboarding cell — merges the old "Weeks" + "Progress" columns into one */
+.admin-cell-onboarding {
+  min-width: 170px;
+  width: 180px;
+}
+.admin-onboarding-top {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 140px;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+  white-space: nowrap;
 }
 .admin-step-num {
   font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--accent-bright);
 }
 .admin-step-of {
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   color: var(--text-3);
   font-weight: 500;
 }
 .admin-step-label {
-  font-size: 0.82rem;
+  font-size: 0.76rem;
   color: var(--text-3);
+  white-space: nowrap;
 }
-.admin-cell-progress { width: 200px; }
 .admin-bar {
-  height: 8px;
+  height: 6px;
   background: var(--border);
-  border-radius: 4px;
+  border-radius: 3px;
   overflow: hidden;
 }
 .admin-bar-fill {
   height: 100%;
   background: linear-gradient(90deg, #0090ce 0%, #005d85 100%);
   transition: width 0.4s var(--ease);
-}
-.admin-cell-time {
-  font-size: 0.85rem;
-  color: var(--text-3);
-  white-space: nowrap;
 }
 .admin-step-select,
 .admin-manager-select {
@@ -3595,8 +3901,8 @@ p {
 .admin-manager-select:hover { border-color: var(--border-strong); }
 .admin-step-select:focus,
 .admin-manager-select:focus { outline: 2px solid var(--accent-bright); outline-offset: 2px; }
-.admin-manager-select { font-family: inherit; max-width: 200px; }
-.admin-cell-manager { min-width: 160px; }
+.admin-manager-select { font-family: inherit; max-width: 160px; width: 100%; }
+.admin-cell-manager { min-width: 140px; max-width: 170px; }
 .admin-manager-name { color: var(--text); font-size: 0.92rem; }
 .admin-manager-none {
   color: var(--text-3);
@@ -3607,18 +3913,18 @@ p {
 /* admin override: 8 week-toggle pills */
 .weeks-toggles {
   display: inline-flex;
-  gap: 4px;
+  gap: 3px;
   flex-wrap: nowrap;
 }
 .week-toggle {
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
   border: 1px solid var(--border);
   background: var(--surface-hover);
   color: var(--text-3);
   font-family: var(--font-mono);
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   font-weight: 700;
   cursor: pointer;
   transition: background var(--dur-2) var(--ease),

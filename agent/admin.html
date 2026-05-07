@@ -109,6 +109,15 @@
 
     <p id="admin-scope-note" style="color:var(--text-3);font-size:0.92rem;margin:-6px 0 22px;padding-right:var(--gutter);max-width:60ch;">Track where every agent stands in the 9-step onboarding roadmap. Override an agent's step manually using the dropdown.</p>
 
+    <!-- search bar -->
+    <div class="admin-search" id="admin-search" style="display:none;">
+      <svg class="admin-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" id="admin-search-input" placeholder="Search agents by name or email…" autocomplete="off" />
+      <button type="button" class="admin-search-clear" id="admin-search-clear" aria-label="Clear search" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+      </button>
+    </div>
+
     <!-- summary tiles -->
     <div class="admin-tiles" id="admin-tiles" style="display:none;">
       <div class="admin-tile">
@@ -137,11 +146,10 @@
         <thead>
           <tr>
             <th>Agent</th>
-            <th>Weeks</th>
-            <th>Progress</th>
+            <th>Onboarding</th>
+            <th>Trainings</th>
             <th id="th-manager">Manager</th>
-            <th>Last advanced</th>
-            <th>Override (toggle weeks)</th>
+            <th>Override</th>
           </tr>
         </thead>
         <tbody id="admin-tbody"></tbody>
@@ -157,6 +165,20 @@
   </section>
 </main>
 
+<!-- Training-attendance breakdown modal (admin clicks an agent's Trainings cell) -->
+<div class="att-modal" id="att-modal" hidden>
+  <div class="att-modal-backdrop" data-close-att-modal></div>
+  <div class="att-modal-content" role="dialog" aria-modal="true" aria-labelledby="att-modal-title">
+    <button class="week-modal-close" type="button" data-close-att-modal aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+    </button>
+    <span class="att-modal-eyebrow" id="att-modal-eyebrow">Training attendance</span>
+    <h2 class="att-modal-title" id="att-modal-title">Agent</h2>
+    <p class="att-modal-sub" id="att-modal-sub">Week of —</p>
+    <ul class="att-modal-list" id="att-modal-list"></ul>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/main.js"></script>
 <script src="../assets/js/agent-auth.js"></script>
@@ -167,6 +189,82 @@
   // a week's complete state, we also rewrite task_progress so the agent's
   // checklist matches what the admin sees here.
   const WEEK_TASK_COUNTS = { 1: 6, 2: 5, 3: 3, 4: 4, 5: 3, 6: 3, 7: 4, 8: 6 };
+
+  // Mirror of the dashboard's training schedule (used for the attendance
+  // breakdown modal so an admin can see *which* training each agent missed).
+  const SCHEDULE = [
+    { day: 'Mon', topic: 'Team Call',              host: 'Drew Smith' },
+    { day: 'Tue', topic: 'Back on the Books',      host: 'Hayden Keltner' },
+    { day: 'Wed', topic: 'Handling Objections',    host: 'Colby Whittaker' },
+    { day: 'Thu', topic: 'Locking Down the Close', host: 'Garrett Sekelsky' },
+    { day: 'Fri', topic: 'Growing Online',         host: 'Malikai Lee' },
+  ];
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  function isoDate(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  function thisWeekDates() {
+    // Compute Monday 00:00 of the current week and return Mon..Fri Dates.
+    const now = new Date();
+    const dow = now.getDay(); // 0=Sun
+    let mondayOffset;
+    if (dow === 0) mondayOffset = -6; // Sun → previous Mon
+    else if (dow === 6) mondayOffset = -5; // Sat → previous Mon
+    else mondayOffset = 1 - dow;
+    const monday = new Date(now);
+    monday.setDate(now.getDate() + mondayOffset);
+    monday.setHours(0, 0, 0, 0);
+    return SCHEDULE.map((_, i) => {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      return d;
+    });
+  }
+
+  function statusFromValue(v) {
+    if (v === 'attended' || v === true) return 'attended';
+    if (v === 'missed') return 'missed';
+    return null;
+  }
+
+  // Returns { count, total: 5, breakdown: [{ idx, dateStr, status, isFuture, isToday }, ...] }
+  function computeWeekAttendance(attendance) {
+    const dates = thisWeekDates();
+    const today = new Date(); today.setHours(0,0,0,0);
+    let count = 0;
+    const breakdown = dates.map((d, i) => {
+      const dateStr = isoDate(d);
+      const recorded = statusFromValue((attendance || {})[dateStr]);
+      const isToday = d.getTime() === today.getTime();
+      const isFuture = d.getTime() > today.getTime();
+      const isPast = !isToday && d.getTime() < today.getTime();
+      let status = recorded;
+      if (!status && isPast) status = 'missed';
+      if (status === 'attended') count++;
+      return { idx: i, date: d, dateStr, status, isToday, isFuture, isPast };
+    });
+    return { count, total: SCHEDULE.length, breakdown };
+  }
+
+  // Cache so the modal can re-render without re-querying.
+  const teamByUserId = new Map();
+
+  // Compact label for the Weeks column. Avoids "Weeks 1, 2, 3, 4, 5, 6, 7" long lists.
+  function weeksLabel(weeks) {
+    const sorted = (weeks || []).slice().sort((a, b) => a - b);
+    if (sorted.length === 0) return 'Not started';
+    if (sorted.length >= TOTAL_WEEKS) return 'Hit the standard';
+    // Sequential 1..N? (the normal progression case)
+    const isSequential = sorted.every((w, i) => w === i + 1);
+    if (isSequential) return `On week ${sorted.length}`;
+    // Non-sequential (admin override) — just show count
+    return `${sorted.length} of ${TOTAL_WEEKS} done`;
+  }
 
   function buildTaskProgress(weeks, existing) {
     const out = { ...(existing || {}) };
@@ -242,7 +340,9 @@
       return;
     }
 
+    teamByUserId.clear();
     team.forEach((row) => {
+      teamByUserId.set(row.id, row);
       const weeks = (row.progress.completed_weeks || []).slice().sort((a,b) => a-b);
       const count = weeks.length;
       if (count > 0) started++;
@@ -264,6 +364,18 @@
       const managerCell = renderManagerCell(row);
       const togglesHtml = renderTogglesCell(row.id, weeks);
 
+      // Training attendance for the current week
+      const att = computeWeekAttendance(row.progress.training_attendance || {});
+      const attTone = att.count >= 4 ? 'good' : (att.count >= 2 ? 'warn' : 'bad');
+      const attCellHtml = `
+        <button type="button" class="admin-att-pill admin-att-pill-${attTone}" data-att-user-id="${escapeAttr(row.id)}" title="Click to see which trainings ${escapeAttr(row.full_name || 'this agent')} attended">
+          <span class="admin-att-num">${att.count}<span class="admin-att-of">/${att.total}</span></span>
+          <span class="admin-att-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M9 18l6-6-6-6"/></svg>
+          </span>
+        </button>
+      `;
+
       tr.innerHTML = `
         <td class="admin-cell-agent">
           ${avatar}
@@ -272,15 +384,15 @@
             <div class="admin-email">${escapeText(row.email || '')}</div>
           </div>
         </td>
-        <td class="admin-cell-step">
-          <span class="admin-step-num">${count}<span class="admin-step-of">/${TOTAL_WEEKS}</span></span>
-          <span class="admin-step-label">${count === 0 ? 'Not started' : (count >= TOTAL_WEEKS ? 'Hit the standard' : `Weeks ${weeks.join(', ')}`)}</span>
-        </td>
-        <td class="admin-cell-progress">
+        <td class="admin-cell-onboarding" title="Last advanced: ${escapeAttr(lastAdv)}">
+          <div class="admin-onboarding-top">
+            <span class="admin-step-num">${count}<span class="admin-step-of">/${TOTAL_WEEKS}</span></span>
+            <span class="admin-step-label">${weeksLabel(weeks)}</span>
+          </div>
           <div class="admin-bar"><div class="admin-bar-fill" style="width:${(count/TOTAL_WEEKS)*100}%"></div></div>
         </td>
+        <td class="admin-cell-attendance">${attCellHtml}</td>
         <td class="admin-cell-manager">${managerCell}</td>
-        <td class="admin-cell-time">${lastAdv}</td>
         <td class="admin-cell-override">${togglesHtml}</td>
       `;
       tbody.appendChild(tr);
@@ -294,6 +406,16 @@
     loading.style.display = 'none';
     tiles.style.display = '';
     wrap.style.display = '';
+    document.getElementById('admin-search').style.display = '';
+    wireSearch();
+
+    // Wire attendance pill clicks → open breakdown modal
+    tbody.querySelectorAll('[data-att-user-id]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const uid = btn.dataset.attUserId;
+        openAttendanceModal(uid);
+      });
+    });
 
     // Wire week toggle buttons
     tbody.querySelectorAll('.week-toggle').forEach((toggle) => {
@@ -358,10 +480,10 @@
   function updateRowSummary(tr, newWeeks) {
     const count = newWeeks.length;
     tr.querySelector('.admin-step-num').innerHTML = `${count}<span class="admin-step-of">/${TOTAL_WEEKS}</span>`;
-    const label = count === 0 ? 'Not started' : (count >= TOTAL_WEEKS ? 'Hit the standard' : `Weeks ${newWeeks.join(', ')}`);
-    tr.querySelector('.admin-step-label').textContent = label;
+    tr.querySelector('.admin-step-label').textContent = weeksLabel(newWeeks);
     tr.querySelector('.admin-bar-fill').style.width = `${(count/TOTAL_WEEKS)*100}%`;
-    tr.querySelector('.admin-cell-time').textContent = 'just now';
+    const onboardingCell = tr.querySelector('.admin-cell-onboarding');
+    if (onboardingCell) onboardingCell.title = 'Last advanced: just now';
   }
 
   function renderManagerCell(row) {
@@ -391,6 +513,128 @@
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     return `${months[date.getMonth()]} ${date.getDate()}`;
   }
+
+  // ----- Search filter -----
+  let searchWired = false;
+  function wireSearch() {
+    if (searchWired) return;
+    searchWired = true;
+    const input = document.getElementById('admin-search-input');
+    const clear = document.getElementById('admin-search-clear');
+    if (!input) return;
+
+    function applyFilter() {
+      const q = input.value.trim().toLowerCase();
+      clear.hidden = q === '';
+      const tbody = document.getElementById('admin-tbody');
+      let visibleCount = 0;
+      tbody.querySelectorAll('tr').forEach((tr) => {
+        if (tr.classList.contains('admin-no-match')) return; // skip our placeholder row
+        const name = (tr.querySelector('.admin-name')?.textContent || '').toLowerCase();
+        const email = (tr.querySelector('.admin-email')?.textContent || '').toLowerCase();
+        const match = !q || name.includes(q) || email.includes(q);
+        tr.style.display = match ? '' : 'none';
+        if (match) visibleCount++;
+      });
+      // Toggle the "no matches" message row
+      let noMatchTr = tbody.querySelector('tr.admin-no-match');
+      if (q && visibleCount === 0) {
+        if (!noMatchTr) {
+          noMatchTr = document.createElement('tr');
+          noMatchTr.className = 'admin-no-match';
+          const colCount = document.querySelectorAll('.admin-table thead th').length;
+          noMatchTr.innerHTML = `<td colspan="${colCount}" style="text-align:center;color:var(--text-3);padding:24px;">No agents match "<strong>${escapeText(q)}</strong>"</td>`;
+          tbody.appendChild(noMatchTr);
+        } else {
+          noMatchTr.querySelector('strong').textContent = q;
+          noMatchTr.style.display = '';
+        }
+      } else if (noMatchTr) {
+        noMatchTr.style.display = 'none';
+      }
+    }
+
+    input.addEventListener('input', applyFilter);
+    clear.addEventListener('click', () => {
+      input.value = '';
+      input.focus();
+      applyFilter();
+    });
+    // Cmd/Ctrl+K focuses the search box
+    document.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        input.focus();
+        input.select();
+      }
+    });
+  }
+
+  // ----- Attendance breakdown modal -----
+  function openAttendanceModal(userId) {
+    const row = teamByUserId.get(userId);
+    if (!row) return;
+    const { count, total, breakdown } = computeWeekAttendance(row.progress.training_attendance || {});
+    const monday = breakdown[0].date;
+    const friday = breakdown[4].date;
+
+    document.getElementById('att-modal-eyebrow').textContent = `Attendance · ${count} of ${total}`;
+    document.getElementById('att-modal-title').textContent = row.full_name || row.email || 'Agent';
+    document.getElementById('att-modal-sub').textContent =
+      `Week of ${MONTHS[monday.getMonth()]} ${monday.getDate()} – ${MONTHS[friday.getMonth()]} ${friday.getDate()}`;
+
+    const list = document.getElementById('att-modal-list');
+    list.innerHTML = breakdown.map((b) => {
+      const s = SCHEDULE[b.idx];
+      let badge;
+      if (b.status === 'attended') {
+        badge = `<span class="day-status day-status-attended">
+                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
+                 </span>`;
+      } else if (b.status === 'missed') {
+        badge = `<span class="day-status day-status-missed">
+                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                 </span>`;
+      } else if (b.isToday) {
+        badge = `<span class="day-status day-status-today">Today</span>`;
+      } else {
+        badge = `<span class="day-status day-status-upcoming">Upcoming</span>`;
+      }
+      const rowClass = b.status === 'attended' ? 'is-attended'
+                     : b.status === 'missed'   ? 'is-missed'
+                     : '';
+      const dayNum = String(b.date.getDate()).padStart(2, '0');
+      return `
+        <li class="att-row ${rowClass}">
+          <div class="att-day-badge">${dayNum}</div>
+          <div class="att-day-meta">
+            <div class="att-day-topic">${escapeText(s.topic)}</div>
+            <div class="att-day-host">${s.day} · ${escapeText(s.host)}</div>
+          </div>
+          ${badge}
+        </li>
+      `;
+    }).join('');
+
+    const modal = document.getElementById('att-modal');
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeAttendanceModal() {
+    const modal = document.getElementById('att-modal');
+    if (!modal) return;
+    modal.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('[data-close-att-modal]')) closeAttendanceModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    const modal = document.getElementById('att-modal');
+    if (e.key === 'Escape' && modal && !modal.hidden) closeAttendanceModal();
+  });
 
   function escapeText(s) {
     const d = document.createElement('div');
