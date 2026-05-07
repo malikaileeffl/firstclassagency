@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Builders — Agent portal</title>
+<meta name="robots" content="noindex,nofollow" />
+<meta name="theme-color" content="#0d0d0e" />
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/styles.css" />
+<script src="../assets/js/theme.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <a href="dashboard.html" class="brand">
+    <img class="brand-logo" src="../assets/img/logo.png" alt="First Class Agency" />
+    <span>First Class · Agent</span>
+  </a>
+  <div class="nav-cta">
+    <div class="user-menu" data-user-chip style="display:none;">
+      <button class="user-chip" data-user-chip-trigger type="button">
+        <span class="user-avatar" data-user-initial>—</span>
+        <span class="user-name">Hi, <strong data-user-name>—</strong></span>
+        <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="user-menu-dropdown" role="menu">
+        <a href="account.html" class="user-menu-item" role="menuitem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 14 0v1"/></svg>
+          Account settings
+        </a>
+        <div class="user-menu-divider"></div>
+        <button class="user-menu-item" data-logout type="button" role="menuitem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign out
+        </button>
+      </div>
+    </div>
+    <button class="nav-toggle" aria-label="Open menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</header>
+
+<nav class="mobile-nav" aria-label="Mobile">
+  <a href="dashboard.html">Dashboard</a>
+  <a href="training.html">Training</a>
+  <a href="quick-links.html">Quick Links</a>
+  <a href="portals.html">E-apps & Portals</a>
+  <a href="https://app.firstclassagency.info/login" target="_blank" rel="noopener noreferrer">Leads Center ↗</a>
+  <a href="promotion.html">Promotion & Comp</a>
+  <a href="carriers.html">Carrier Contacts</a>
+  <a href="resources.html">Agent Resources</a>
+  <a href="builders.html">Builders</a>
+  <a href="admin.html" data-admin-only style="display:none;">Admin</a>
+  <a href="account.html">Account settings</a>
+  <a href="#" data-logout class="btn btn--ghost mt-16">Sign out</a>
+</nav>
+
+<main class="container hub-shell">
+  <aside class="hub-side" aria-label="Agent navigation">
+    <a href="dashboard.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>
+      Dashboard
+    </a>
+    <a href="training.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      Training
+    </a>
+    <a href="quick-links.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      Quick Links
+    </a>
+    <a href="portals.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20"/><path d="M6 7h.01"/></svg>
+      E-apps & Portals
+    </a>
+    <a href="https://app.firstclassagency.info/login" target="_blank" rel="noopener noreferrer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      Leads Center
+    </a>
+    <a href="promotion.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+      Promotion & Comp
+    </a>
+    <a href="carriers.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Carrier Contacts
+    </a>
+    <a href="resources.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      Agent Resources
+    </a>
+    <a href="builders.html" class="active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      Builders
+    </a>
+    <a href="admin.html" data-admin-only style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9.5-8 10-4.5-.5-8-5-8-10V6l8-4z"/><path d="m9 12 2 2 4-4"/></svg>
+      Admin
+    </a>
+  </aside>
+
+  <section class="hub-main">
+    <div class="hub-head">
+      <div>
+        <span class="eyebrow">Builders</span>
+        <h1 class="mt-8">Win the first month.</h1>
+      </div>
+    </div>
+
+    <p style="color:var(--text-3);font-size:0.95rem;margin:-6px 0 32px;padding-right:var(--gutter);max-width:62ch;line-height:1.55;">
+      The first month of an agent's career is the most important. Follow the targets below alongside daily constructive feedback — every conversation, every dial, every objection is a chance to sharpen.
+    </p>
+
+    <!-- THREE PILLARS -->
+    <h2 class="list-section-head">Set the standards</h2>
+    <div class="pillar-grid reveal-stagger">
+      <div class="pillar">
+        <span class="pillar-num">01</span>
+        <h3 class="pillar-title">Consistency</h3>
+        <p class="pillar-desc">Show up the same way every day. Reps over heroics — production follows habit.</p>
+      </div>
+      <div class="pillar">
+        <span class="pillar-num">02</span>
+        <h3 class="pillar-title">Standards</h3>
+        <p class="pillar-desc">Hold the bar — for yourself, your prospects, and your team. Excellence is a baseline, not a ceiling.</p>
+      </div>
+      <div class="pillar">
+        <span class="pillar-num">03</span>
+        <h3 class="pillar-title">Confidence</h3>
+        <p class="pillar-desc">Belief sells. Lead the conversation, own the close, trust the process you've been taught.</p>
+      </div>
+    </div>
+
+    <!-- DISCOVERY QUESTIONS -->
+    <h2 class="list-section-head">Discovery questions</h2>
+    <p class="pb-section-sub">Ask each new agent in their first conversation. Their answers shape every coaching session that follows.</p>
+    <div class="question-grid reveal-stagger">
+      <div class="question-card">
+        <span class="q-mark" aria-hidden="true">"</span>
+        <h3>What are your goals for yourself?</h3>
+        <p>Listen for specifics — income, lifestyle, time freedom. Generic answers mean we dig deeper.</p>
+      </div>
+      <div class="question-card">
+        <span class="q-mark" aria-hidden="true">"</span>
+        <h3>What are you hoping to get out of this?</h3>
+        <p>Their why becomes the anchor we come back to on tough days. Write it down.</p>
+      </div>
+    </div>
+
+    <!-- EXPECTATIONS -->
+    <h2 class="list-section-head">Setting expectations</h2>
+    <ul class="expect-list reveal-stagger">
+      <li>
+        <span class="expect-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </span>
+        <div>
+          <strong>Consistent schedule.</strong>
+          <span>Same start time, same end time, every day. The dial begins when you say it does.</span>
+        </div>
+      </li>
+      <li>
+        <span class="expect-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </span>
+        <div>
+          <strong>On Zoom, unmuted, camera on.</strong>
+          <span>Trainings only work when you're in them. Be present, be visible, be ready to roleplay.</span>
+        </div>
+      </li>
+      <li>
+        <span class="expect-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </span>
+        <div>
+          <strong>Walk the script in detail.</strong>
+          <span>Page by page, line by line. Know why every word is there before you ever touch a phone.</span>
+        </div>
+      </li>
+    </ul>
+
+    <!-- WEEKLY GOALS -->
+    <h2 class="list-section-head">Weekly production goals</h2>
+    <p class="pb-section-sub">Six weeks of escalating focus. Hit the objective, then hit the number.</p>
+    <div class="weekly-grid reveal-stagger">
+      <article class="weekly-card">
+        <span class="weekly-tag">Week 1</span>
+        <h3 class="weekly-objective">Focus on tonality</h3>
+        <div class="weekly-stat">
+          <span class="weekly-num">2–3</span>
+          <span class="weekly-unit">policies</span>
+        </div>
+      </article>
+      <article class="weekly-card">
+        <span class="weekly-tag">Week 2</span>
+        <h3 class="weekly-objective">Master the first 90 seconds</h3>
+        <div class="weekly-stat">
+          <span class="weekly-num">3–5</span>
+          <span class="weekly-unit">policies</span>
+        </div>
+      </article>
+      <article class="weekly-card">
+        <span class="weekly-tag">Week 3</span>
+        <h3 class="weekly-objective">Closing on numbers</h3>
+        <div class="weekly-stat">
+          <span class="weekly-num">4–6</span>
+          <span class="weekly-unit">policies</span>
+        </div>
+      </article>
+      <article class="weekly-card">
+        <span class="weekly-tag">Week 4</span>
+        <h3 class="weekly-objective">Smooth presentations &amp; objections</h3>
+        <div class="weekly-stat">
+          <span class="weekly-num">5–8</span>
+          <span class="weekly-unit">policies</span>
+        </div>
+      </article>
+      <article class="weekly-card weekly-card-final">
+        <span class="weekly-tag">Weeks 5 &amp; 6</span>
+        <h3 class="weekly-objective">Flawless on script &amp; every objection</h3>
+        <div class="weekly-stat">
+          <span class="weekly-num">6–8</span>
+          <span class="weekly-unit">policies</span>
+        </div>
+      </article>
+    </div>
+
+    <!-- ONBOARDING CHECKLIST -->
+    <h2 class="list-section-head">Onboarding checklist</h2>
+    <p class="pb-section-sub">Phase by phase from exam day to your first dial. Hit every box, in order.</p>
+
+    <div class="phase-stack reveal-stagger">
+
+      <section class="phase">
+        <header class="phase-head">
+          <span class="phase-num">1</span>
+          <div>
+            <span class="phase-eyebrow">Pre-exam</span>
+            <h3 class="phase-title">Lock in your exam.</h3>
+          </div>
+        </header>
+        <ul class="phase-list">
+          <li>
+            <span class="phase-check" aria-hidden="true"></span>
+            <div>
+              <strong>Schedule your exam.</strong>
+              <small>Two-week deadline. Send proof — screenshot or text confirmation — to admin.</small>
+            </div>
+          </li>
+          <li>
+            <span class="phase-check" aria-hidden="true"></span>
+            <div>
+              <strong>Claim your free course voucher.</strong>
+            </div>
+          </li>
+          <li>
+            <span class="phase-check" aria-hidden="true"></span>
+            <div>
+              <strong>Pass the exam.</strong>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <section class="phase">
+        <header class="phase-head">
+          <span class="phase-num">2</span>
+          <div>
+            <span class="phase-eyebrow">Post-exam</span>
+            <h3 class="phase-title">Apply for your license.</h3>
+          </div>
+        </header>
+        <ul class="phase-list">
+          <li>
+            <span class="phase-check" aria-hidden="true"></span>
+            <div>
+              <strong>Create a dedicated work Gmail.</strong>
+              <small>Format: <code>firstnamelastname@gmail.com</code> — text the new address to admin.</small>
+            </div>
+          </li>
+          <li>
+            <span class="phase-check" aria-hidden="true"></span>
+            <div>
+              <strong>Apply for your state license.</strong>
+            </div>
+          </li>
+          <li>
+            <span class="phase-check" aria-hidden="true"></span>
+            <div>
+              <strong>Schedule fingerprints.</strong>
+              <small>If your state requires it — schedule after applying for your license.</small>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <section class="phase">
+        <header class="phase-head">
+          <span class="phase-num">3</span>
+          <div>
+            <span class="phase-eyebrow">While you wait</span>
+            <h3 class="phase-title">Build the foundation.</h3>
+          </div>
+        </header>
+        <ul class="phase-list">
+          <li>
+            <span class="phase-check" aria-hidden="true"></span>
+            <div>
+              <strong>Join the team Discord and GroupMe.</strong>
+              <small>Links live on <a href="quick-links.html">Quick Links</a>.</small>
+            </div>
+          </li>
+          <li>
+            <span class="phase-check" aria-hidden="true"></span>
+            <div>
+              <strong>Complete boot camp.</strong>
+            </div>
+          </li>
+          <li>
+            <span class="phase-check" aria-hidden="true"></span>
+            <div>
+              <strong>Attend Sales Mastery and Closerz Academy trainings.</strong>
+            </div>
+          </li>
+          <li>
+            <span class="phase-check" aria-hidden="true"></span>
+            <div>
+              <strong>Study the sales script and rebuttals.</strong>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <section class="phase phase-final">
+        <header class="phase-head">
+          <span class="phase-num">4</span>
+          <div>
+            <span class="phase-eyebrow">Post-license approval</span>
+            <h3 class="phase-title">Launch and dial.</h3>
+          </div>
+        </header>
+        <ul class="phase-list">
+          <li>
+            <span class="phase-check" aria-hidden="true"></span>
+            <div>
+              <strong>Check for your National Producer Number (NPN).</strong>
+              <small>Usually available about a week after license approval.</small>
+            </div>
+          </li>
+          <li>
+            <span class="phase-check" aria-hidden="true"></span>
+            <div>
+              <strong>Purchase E&amp;O insurance.</strong>
+              <small>Select the lowest option (Option A). Send proof to admin.</small>
+            </div>
+          </li>
+          <li>
+            <span class="phase-check" aria-hidden="true"></span>
+            <div>
+              <strong>Submit a voided check.</strong>
+              <small>For commission deposit setup. Send to admin.</small>
+            </div>
+          </li>
+          <li>
+            <span class="phase-check" aria-hidden="true"></span>
+            <div>
+              <strong>Complete contracting with carriers.</strong>
+              <small>Schedule a Zoom appointment with admin to walk through it.</small>
+            </div>
+          </li>
+          <li>
+            <span class="phase-check" aria-hidden="true"></span>
+            <div>
+              <strong>Request vault access.</strong>
+            </div>
+          </li>
+          <li>
+            <span class="phase-check" aria-hidden="true"></span>
+            <div>
+              <strong>Start dialing and training.</strong>
+              <small>Use paper applications until your carrier approvals come through.</small>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+    </div>
+
+    <p class="help mt-32" style="padding-right:var(--gutter);max-width:60ch;">
+      Once you're past the checklist, your day-to-day cadence lives on the <a href="training.html" style="color:var(--accent-bright);">Training page</a>. Every week unlocks once the previous one is checked off.
+    </p>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/main.js"></script>
+<script src="../assets/js/agent-auth.js"></script>
+</body>
+</html>
