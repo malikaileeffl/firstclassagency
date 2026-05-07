@@ -965,6 +965,49 @@ p {
   font-weight: 500;
 }
 
+/* Row that puts a label on the left and an inline action (e.g. "Forgot?") on the right */
+.label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.forgot-link {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: 0.78rem;
+  color: var(--accent-bright);
+  cursor: pointer;
+  font-family: inherit;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+  transition: color var(--dur-1) var(--ease);
+}
+.forgot-link:hover {
+  color: var(--text);
+  text-decoration: underline;
+}
+
+/* Forgot-password / reset-password page bits */
+.forgot-intro {
+  color: var(--text-3);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0 0 4px;
+}
+.reset-loading,
+.reset-invalid {
+  text-align: center;
+  color: var(--text-3);
+  font-size: 0.95rem;
+  padding: 12px 0 4px;
+}
+.reset-invalid p {
+  color: var(--text-2);
+  margin: 0 0 8px;
+}
+
 .input,
 .textarea,
 .select {
@@ -3865,10 +3908,10 @@ p {
   line-height: 1.5;
 }
 
-/* Weekly production goals — 5 cards */
+/* Weekly production goals — 7 cards (laid out 4+3 on desktop) */
 .weekly-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 12px;
   margin: 0 var(--gutter) 36px 0;
 }

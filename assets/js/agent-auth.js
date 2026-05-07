@@ -525,6 +525,71 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
         }
       });
     }
+
+    // ----- FORGOT PASSWORD -----
+    const forgotLink = document.getElementById('forgot-link');
+    const forgotForm = document.getElementById('forgot-form');
+    const forgotBack = document.getElementById('forgot-back');
+    const tabsRow = document.querySelector('.auth-tabs');
+
+    function showForgot() {
+      signinForm.classList.add('hidden');
+      signupForm.classList.add('hidden');
+      forgotForm.classList.remove('hidden');
+      if (tabsRow) tabsRow.style.display = 'none';
+      if (heading) heading.textContent = 'Reset your password.';
+      if (sub) sub.textContent = "We'll email you a secure link to set a new one.";
+      // Pre-fill from sign-in if they typed there first
+      const signedInEmail = signinForm.elements.email.value.trim();
+      if (signedInEmail) document.getElementById('forgot-email').value = signedInEmail;
+      ['signin-err', 'signup-err', 'signup-ok', 'forgot-err', 'forgot-ok'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) { el.textContent = ''; el.classList.remove('show'); }
+      });
+    }
+
+    function hideForgot() {
+      forgotForm.classList.add('hidden');
+      signinForm.classList.remove('hidden');
+      if (tabsRow) tabsRow.style.display = '';
+      // Reset the active tab to sign-in
+      tabs.forEach((t) => t.classList.toggle('active', t.dataset.tab === 'signin'));
+      if (heading) heading.textContent = 'Welcome back.';
+      if (sub) sub.textContent = 'Sign in with your agent account, or create one if you’re new.';
+    }
+
+    if (forgotLink) forgotLink.addEventListener('click', showForgot);
+    if (forgotBack) forgotBack.addEventListener('click', hideForgot);
+
+    if (forgotForm) {
+      forgotForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = forgotForm.elements.email.value.trim();
+        const err = document.getElementById('forgot-err');
+        const ok = document.getElementById('forgot-ok');
+        const btn = document.getElementById('forgot-btn');
+        err.classList.remove('show'); err.textContent = '';
+        ok.classList.remove('show'); ok.textContent = '';
+        btn.disabled = true;
+        const original = btn.innerHTML;
+        btn.textContent = 'Sending…';
+
+        const redirectTo = `${window.location.origin}/reset-password.html`;
+        const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo });
+
+        btn.disabled = false;
+        btn.innerHTML = original;
+
+        // Always show success-style messaging (don't leak whether the email exists)
+        if (error) {
+          console.warn('[FCA] reset email failed:', error.message);
+          // Even on error, show generic message to avoid email enumeration
+        }
+        ok.textContent = `If an account exists for ${email}, a reset link is on its way. Check your inbox (and spam folder).`;
+        ok.classList.add('show');
+        forgotForm.reset();
+      });
+    }
   }
 
   // -------------------------------------------------------------------------

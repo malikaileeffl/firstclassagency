@@ -52,11 +52,26 @@
         <input class="input" id="signin-email" name="email" type="email" required autocomplete="email" />
       </div>
       <div class="field">
-        <label for="signin-password">Password</label>
+        <div class="label-row">
+          <label for="signin-password">Password</label>
+          <button type="button" class="forgot-link" id="forgot-link">Forgot your password?</button>
+        </div>
         <input class="input" id="signin-password" name="password" type="password" required autocomplete="current-password" minlength="6" />
       </div>
       <p id="signin-err" class="err"></p>
       <button id="signin-btn" class="btn btn--primary full-width btn--lg" type="submit">Sign in <span class="arrow">→</span></button>
+    </form>
+
+    <form id="forgot-form" class="form hidden" autocomplete="on">
+      <p class="forgot-intro">Enter the email tied to your agent account. We'll send a link to reset your password.</p>
+      <div class="field">
+        <label for="forgot-email">Email</label>
+        <input class="input" id="forgot-email" name="email" type="email" required autocomplete="email" />
+      </div>
+      <p id="forgot-err" class="err"></p>
+      <p id="forgot-ok" class="ok"></p>
+      <button id="forgot-btn" class="btn btn--primary full-width btn--lg" type="submit">Send reset link <span class="arrow">→</span></button>
+      <button type="button" class="btn btn--ghost full-width mt-12" id="forgot-back">Back to sign in</button>
     </form>
 
     <form id="signup-form" class="form hidden" autocomplete="on">
