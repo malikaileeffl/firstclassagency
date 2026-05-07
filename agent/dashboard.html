@@ -186,21 +186,17 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/main.js"></script>
+<script src="../assets/js/training-schedule.js"></script>
 <script src="../assets/js/agent-auth.js"></script>
 <script>
 /* Training-call dashboard with self-accountability checkmarks.
    - Today's card: Join Zoom click marks today as attended (Supabase).
    - Week list: shows all 5 weekdays; checkmark on attended days,
      muted "missed" indicator on past days that weren't attended,
-     "Today" highlight on the current weekday, plain on future days. */
+     "Today" highlight on the current weekday, plain on future days.
+   The Mon–Fri call lineup itself lives in assets/js/training-schedule.js. */
 (() => {
-  const SCHEDULE = [
-    { day: 'Mon', topic: 'Team Call',              host: 'Drew Smith' },
-    { day: 'Tue', topic: 'Back on the Books',      host: 'Hayden Keltner' },
-    { day: 'Wed', topic: 'Handling Objections',    host: 'Colby Whittaker' },
-    { day: 'Thu', topic: 'Locking Down the Close', host: 'Garrett Sekelsky' },
-    { day: 'Fri', topic: 'Growing Online',         host: 'Malikai Lee' },
-  ];
+  const SCHEDULE = window.FCA_SCHEDULE || [];
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
   function isoDate(d) {

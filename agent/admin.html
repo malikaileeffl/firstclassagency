@@ -186,6 +186,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/main.js"></script>
+<script src="../assets/js/training-schedule.js"></script>
 <script src="../assets/js/agent-auth.js"></script>
 <script>
 (function() {
@@ -195,15 +196,10 @@
   // checklist matches what the admin sees here.
   const WEEK_TASK_COUNTS = { 1: 6, 2: 5, 3: 3, 4: 4, 5: 3, 6: 3, 7: 4, 8: 6 };
 
-  // Mirror of the dashboard's training schedule (used for the attendance
-  // breakdown modal so an admin can see *which* training each agent missed).
-  const SCHEDULE = [
-    { day: 'Mon', topic: 'Team Call',              host: 'Drew Smith' },
-    { day: 'Tue', topic: 'Back on the Books',      host: 'Hayden Keltner' },
-    { day: 'Wed', topic: 'Handling Objections',    host: 'Colby Whittaker' },
-    { day: 'Thu', topic: 'Locking Down the Close', host: 'Garrett Sekelsky' },
-    { day: 'Fri', topic: 'Growing Online',         host: 'Malikai Lee' },
-  ];
+  // Training-call schedule — single source of truth lives in
+  // assets/js/training-schedule.js. Both the agent dashboard and this admin
+  // attendance breakdown modal read from it.
+  const SCHEDULE = window.FCA_SCHEDULE || [];
   const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
   function isoDate(d) {
