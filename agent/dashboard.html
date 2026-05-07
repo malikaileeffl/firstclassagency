@@ -117,8 +117,8 @@
         <div style="position:absolute;inset:0;background:radial-gradient(500px 240px at 100% 0%,rgba(0,120,171,0.18),transparent 70%);pointer-events:none;"></div>
         <div style="position:relative;">
           <span class="eyebrow" id="today-eyebrow">Today's training call</span>
-          <h3 class="mt-16" id="today-title">Team Call — with Drew Smith</h3>
-          <p class="mt-8" id="today-date" style="color:var(--text-2);max-width:54ch;">Mon, May 4 · 9:00 AM ET on Zoom. Be there. Get better. Win.</p>
+          <h3 class="mt-16" id="today-title">Team Call with Drew Smith</h3>
+          <p class="mt-8" id="today-date" style="color:var(--text-2);max-width:54ch;">Mon, May 4 · 9:00 AM ET on Zoom.</p>
           <div class="mt-24" style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;">
             <a id="join-zoom-btn" href="https://us05web.zoom.us/j/81495699957?pwd=arX0o5IF2SrbYNbOmOq3Yktk0aT8yu.1" target="_blank" rel="noopener" class="btn btn--primary">Join Zoom <span class="arrow">→</span></a>
             <span id="today-attended" class="attendance-pill" hidden>
@@ -238,14 +238,14 @@
     const t = SCHEDULE[todayIdx];
     const d = weekDates[todayIdx];
     if (eyebrowEl) eyebrowEl.textContent = "Today's training call";
-    if (titleEl)   titleEl.textContent = `${t.topic} — with ${t.host}`;
-    if (dateEl)    dateEl.textContent = `${t.day}, ${months[d.getMonth()]} ${d.getDate()} · 9:00 AM ET on Zoom. Be there. Get better. Win.`;
+    if (titleEl)   titleEl.textContent = `${t.topic} with ${t.host}`;
+    if (dateEl)    dateEl.textContent = `${t.day}, ${months[d.getMonth()]} ${d.getDate()} · 9:00 AM ET on Zoom.`;
   } else {
     const t = SCHEDULE[0];
     const d = weekDates[0];
     if (eyebrowEl) eyebrowEl.textContent = 'Next training call';
-    if (titleEl)   titleEl.textContent = `${t.topic} — with ${t.host}`;
-    if (dateEl)    dateEl.textContent = `${t.day}, ${months[d.getMonth()]} ${d.getDate()} · 9:00 AM ET on Zoom. Be there. Get better. Win.`;
+    if (titleEl)   titleEl.textContent = `${t.topic} with ${t.host}`;
+    if (dateEl)    dateEl.textContent = `${t.day}, ${months[d.getMonth()]} ${d.getDate()} · 9:00 AM ET on Zoom.`;
   }
 
   // ----- Week list -----
