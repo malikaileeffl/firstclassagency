@@ -2224,6 +2224,67 @@ p {
   color: var(--accent-bright);
 }
 
+/* informational row inside a carrier card (e.g. "Accepts online banks: Yes/No") */
+.carrier-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 11px 12px;
+  margin-top: 4px;
+  border-top: 1px solid var(--border);
+  font-size: 0.92rem;
+  color: var(--text-2);
+}
+.carrier-info .info-name {
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.info-badge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.info-badge small {
+  font-size: 0.62rem;
+  font-weight: 600;
+  opacity: 0.78;
+  letter-spacing: 0.06em;
+  text-transform: none;
+}
+.info-badge.bank-yes {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+.info-badge.bank-no {
+  background: rgba(220, 60, 70, 0.12);
+  color: #ef4444;
+  border: 1px solid rgba(220, 60, 70, 0.3);
+}
+[data-theme="light"] .info-badge.bank-yes {
+  background: rgba(22, 163, 74, 0.14);
+  color: #15803d;
+  border-color: rgba(22, 163, 74, 0.3);
+}
+[data-theme="light"] .info-badge.bank-no {
+  background: rgba(220, 38, 38, 0.1);
+  color: #b91c1c;
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
 /* section header used inside list pages (carriers / quick links / resources) */
 .list-section-head {
   font-size: 1.05rem;
