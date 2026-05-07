@@ -243,8 +243,12 @@
     if (dateEl)    dateEl.textContent = `${t.day}, ${months[d.getMonth()]} ${d.getDate()} · 9:00 AM ET on Zoom. Be there. Get better. Win.`;
   }
 
-  // ----- Week list (all five weekdays, not just remaining) -----
-  let attendance = {}; // populated from Supabase once auth-ready
+  // ----- Week list -----
+  let attendance = {};        // populated from Supabase once auth-ready
+  let onboardingDone = false; // true once the agent has hit 8/8; hides the
+                              // accountability UI and reverts the dashboard
+                              // to its pre-feature look.
+  const TOTAL_WEEKS = 8;
 
   // Returns 'attended' | 'missed' | null (no entry).
   // Treats legacy boolean true as 'attended' for safety.
@@ -259,6 +263,26 @@
     const listEl = document.getElementById('week-list');
     const restEyebrow = document.getElementById('rest-eyebrow');
     if (!listEl) return;
+
+    // Once onboarding is complete, restore the original "Rest of the week"
+    // experience — no status indicators, today filtered out on weekdays.
+    if (onboardingDone) {
+      if (restEyebrow) restEyebrow.textContent = isWeekday ? 'Rest of the week' : 'Next week';
+      const items = [];
+      SCHEDULE.forEach((s, i) => {
+        if (i === todayIdx) return; // skip today on weekdays (original behavior)
+        items.push({ ...s, date: weekDates[i] });
+      });
+      listEl.innerHTML = items.map((it, idx) => {
+        const isLast = idx === items.length - 1;
+        const dayNum = String(it.date.getDate()).padStart(2, '0');
+        const border = isLast ? '' : 'padding-bottom:12px;border-bottom:1px solid var(--border);';
+        return `<li style="display:flex;align-items:center;gap:12px;${border}"><div style="width:36px;height:36px;border-radius:10px;background:var(--accent-soft);border:1px solid rgba(0,120,171,0.35);display:grid;place-items:center;flex-shrink:0;"><span style="font-family:var(--font-display);font-weight:600;font-size:0.95rem;">${dayNum}</span></div><div style="flex:1;min-width:0;"><div style="color:var(--text);font-size:0.92rem;">${it.topic}</div><div style="font-size:0.78rem;color:var(--text-3);">${it.day} · ${it.host}</div></div></li>`;
+      }).join('');
+      return;
+    }
+
+    // Onboarding still in progress — full accountability view.
     if (restEyebrow) restEyebrow.textContent = isWeekday ? "This week's training" : "Next week";
 
     listEl.innerHTML = SCHEDULE.map((s, i) => {
@@ -307,6 +331,7 @@
   function refreshTodayPill() {
     const pill = document.getElementById('today-attended');
     if (!pill) return;
+    if (onboardingDone) { pill.hidden = true; return; }
     if (!isWeekday || !todayDateStr) { pill.hidden = true; return; }
     const recorded = statusFor(todayDateStr);
     if (recorded === 'attended') {
@@ -359,9 +384,12 @@
     try {
       const progress = await window.fcAuth.getProgress();
       attendance = progress.training_attendance || {};
+      const completed = progress.completed_weeks || [];
+      onboardingDone = completed.length >= TOTAL_WEEKS;
     } catch (e) {
-      console.warn('[dashboard] could not load attendance', e);
+      console.warn('[dashboard] could not load progress', e);
       attendance = {};
+      onboardingDone = false;
     }
     renderWeekList();
     refreshTodayPill();
@@ -372,6 +400,7 @@
   document.addEventListener('click', async (e) => {
     const btn = e.target.closest('#join-zoom-btn');
     if (!btn) return;
+    if (onboardingDone) return; // graduated agents — no accountability tracking
     if (!isWeekday || !todayDateStr) return;
     if (!window.fcAuth || !window.fcAuth.setTrainingStatus) return;
     if (attendance[todayDateStr]) return; // already recorded — first decision sticks
