@@ -72,6 +72,30 @@
     }
   });
 
+  // Leads Center — single-account unlock. Listens for the auth-ready event
+  // dispatched by agent-auth.js, then if the signed-in user matches the
+  // allowlisted email, swaps every disabled "leads-soon" link into a real link.
+  const LEADS_CENTER_ALLOWED = 'dsmith511.ffl@gmail.com';
+  const LEADS_CENTER_URL = 'https://app.firstclassagency.info/login';
+  document.addEventListener('fca:auth-ready', (e) => {
+    const email = (e.detail && e.detail.user && e.detail.user.email || '').toLowerCase();
+    if (email !== LEADS_CENTER_ALLOWED.toLowerCase()) return;
+    document.querySelectorAll('a.leads-soon').forEach((a) => {
+      a.classList.remove('leads-soon');
+      a.setAttribute('href', LEADS_CENTER_URL);
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+      const pill = a.querySelector('.soon-pill');
+      if (pill) pill.remove();
+      const textSpan = a.querySelector('.leads-text');
+      if (textSpan) {
+        const hasIcon = !!a.querySelector('svg');
+        // Mobile-nav variant has no icon and used a trailing arrow originally
+        textSpan.replaceWith(document.createTextNode(hasIcon ? 'Leads Center' : 'Leads Center ↗'));
+      }
+    });
+  });
+
   // Ambient flow-field particle background — hub pages only.
   // Vanilla port of the React flow-field component, in First Class brand blue.
   if (window.location.pathname.includes('/agent/') &&
