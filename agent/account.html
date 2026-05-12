@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Account settings — Agent portal</title>
+<title>Account — Agent portal</title>
 <meta name="robots" content="noindex,nofollow" />
 <meta name="theme-color" content="#0d0d0e" />
 <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
@@ -36,7 +36,7 @@
       <div class="user-menu-dropdown" role="menu">
         <a href="account.html" class="user-menu-item" role="menuitem">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 14 0v1"/></svg>
-          Account settings
+          Account
         </a>
         <div class="user-menu-divider"></div>
         <button class="user-menu-item" data-logout type="button" role="menuitem">
@@ -63,7 +63,7 @@
   <a href="leaderboard.html">Leaderboard</a>
   <a href="builders.html" data-admin-only style="display:none;">Builders</a>
   <a href="admin.html" data-admin-only style="display:none;">Admin</a>
-  <a href="account.html">Account settings</a>
+  <a href="account.html">Account</a>
   <a href="#" data-logout class="btn btn--ghost mt-16">Sign out</a>
 </nav>
 
@@ -120,7 +120,7 @@
     <div class="hub-head">
       <div>
         <span class="eyebrow">Account</span>
-        <h1 class="mt-8">Settings</h1>
+        <h1 class="mt-8">Your profile, your stats.</h1>
       </div>
     </div>
 
@@ -184,6 +184,50 @@
             <span id="profile-status" class="save-status"></span>
           </div>
         </form>
+      </div>
+
+      <!-- YOUR STATS -->
+      <div class="account-card reveal" id="stats-card" style="display:none;">
+        <div class="card-head">
+          <div>
+            <h2>Your stats</h2>
+            <div class="card-sub" id="stats-card-sub">Submitted premium across your time at the agency.</div>
+          </div>
+        </div>
+
+        <div class="stats-tiles">
+          <div class="stats-tile">
+            <span class="stats-tile-label">Best month</span>
+            <span class="stats-tile-value" id="stats-best-month">—</span>
+            <span class="stats-tile-sub" id="stats-best-month-sub">—</span>
+            <div class="stats-tile-rank" id="stats-best-month-rank"></div>
+          </div>
+          <div class="stats-tile">
+            <span class="stats-tile-label">Best week</span>
+            <span class="stats-tile-value" id="stats-best-week">—</span>
+            <span class="stats-tile-sub" id="stats-best-week-sub">—</span>
+          </div>
+          <div class="stats-tile">
+            <span class="stats-tile-label">Best day</span>
+            <span class="stats-tile-value" id="stats-best-day">—</span>
+            <span class="stats-tile-sub" id="stats-best-day-sub">—</span>
+          </div>
+        </div>
+
+        <div class="stats-chart-wrap">
+          <div class="stats-chart-head">
+            <span class="stats-chart-title" id="stats-chart-title">Monthly submitted · 2026</span>
+            <span class="stats-chart-legend">
+              <span class="stats-legend-dot stats-legend-current"></span> current
+              <span class="stats-legend-dot stats-legend-best"></span> best
+            </span>
+          </div>
+          <div id="stats-chart"></div>
+        </div>
+
+        <div class="stats-empty" id="stats-empty" hidden>
+          <p>No submitted premium yet. Drop your first <code>$NNNN CARRIER</code> in the GroupMe to start building your stats.</p>
+        </div>
       </div>
 
       <!-- SECURITY -->
@@ -263,6 +307,164 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/main.js"></script>
+<script src="../assets/js/ranks.js"></script>
 <script src="../assets/js/agent-auth.js"></script>
+
+<script>
+/* "Your stats" card — best month/week/day + monthly line chart for this year. */
+(() => {
+  document.addEventListener('fca:auth-ready', async (e) => {
+    const user = e.detail && e.detail.user;
+    if (!user || !window.fcaSupabase || !window.FCA_RANKS) return;
+
+    const fullName = (user.user_metadata && user.user_metadata.full_name) || user.email.split('@')[0];
+
+    let stats;
+    try {
+      const { data, error } = await window.fcaSupabase.rpc('get_agent_stats', { p_name: fullName });
+      if (error) throw error;
+      stats = data || {};
+    } catch (err) {
+      console.warn('[FCA] stats: rpc failed', err);
+      return;
+    }
+
+    const card = document.getElementById('stats-card');
+    if (!card) return;
+    card.style.display = '';
+
+    const F = window.FCA_RANKS;
+    const titleEl = document.getElementById('stats-chart-title');
+    if (titleEl) titleEl.textContent = 'Monthly submitted · ' + (stats.year || new Date().getFullYear());
+
+    // Best-month tile + rank emblem for that month's amount
+    if (stats.best_month) {
+      document.getElementById('stats-best-month').textContent = F.formatMoney(stats.best_month.amount);
+      document.getElementById('stats-best-month-sub').textContent = stats.best_month.label;
+      const rank = F.rankFor(Number(stats.best_month.amount) || 0);
+      document.getElementById('stats-best-month-rank').innerHTML =
+        F.emblemSvg(rank.key, { size: 48, animate: false }) +
+        '<span class="stats-tile-rank-label">' + F.rankLabel(rank) + '</span>';
+    } else {
+      document.getElementById('stats-best-month').textContent = '—';
+      document.getElementById('stats-best-month-sub').textContent = '';
+    }
+    if (stats.best_week) {
+      document.getElementById('stats-best-week').textContent = F.formatMoney(stats.best_week.amount);
+      document.getElementById('stats-best-week-sub').textContent = stats.best_week.label;
+    } else {
+      document.getElementById('stats-best-week').textContent = '—';
+      document.getElementById('stats-best-week-sub').textContent = '';
+    }
+    if (stats.best_day) {
+      document.getElementById('stats-best-day').textContent = F.formatMoney(stats.best_day.amount);
+      document.getElementById('stats-best-day-sub').textContent = stats.best_day.label;
+    } else {
+      document.getElementById('stats-best-day').textContent = '—';
+      document.getElementById('stats-best-day-sub').textContent = '';
+    }
+
+    const hasAnyData = (stats.monthly_year && stats.monthly_year.length) || stats.best_day;
+    document.getElementById('stats-empty').hidden = hasAnyData;
+
+    if (hasAnyData) {
+      renderChart(stats.monthly_year || [], stats.year || new Date().getFullYear(), stats.best_month);
+    } else {
+      document.getElementById('stats-chart').innerHTML = '';
+    }
+  });
+
+  function renderChart(monthlyData, year, bestMonth) {
+    const labels = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+    const fullNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const months = labels.map((label, i) => ({
+      key: year + '-' + String(i + 1).padStart(2, '0'),
+      label,
+      full: fullNames[i],
+      amount: 0,
+    }));
+    (monthlyData || []).forEach((m) => {
+      const found = months.find((x) => x.key === m.month);
+      if (found) found.amount = Number(m.amount) || 0;
+    });
+
+    // ET-based current month index
+    const fmt = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', month: 'numeric', year: 'numeric' });
+    const parts = fmt.formatToParts(new Date());
+    const curYear  = Number(parts.find((p) => p.type === 'year').value);
+    const curMonth = Number(parts.find((p) => p.type === 'month').value);
+    const curIdx   = (curYear === year) ? curMonth - 1 : -1;
+
+    const max = Math.max(1, ...months.map((m) => m.amount));
+    const W = 600, H = 220, padL = 44, padR = 16, padT = 16, padB = 36;
+    const innerW = W - padL - padR;
+    const innerH = H - padT - padB;
+
+    const pts = months.map((m, i) => ({
+      x: padL + (i / 11) * innerW,
+      y: padT + innerH - (m.amount / max) * innerH,
+      ...m,
+    }));
+
+    // Area fill path (under the line, anchored to baseline)
+    const areaPath = pts.map((p, i) => (i === 0 ? `M ${p.x} ${p.y}` : `L ${p.x} ${p.y}`))
+      .join(' ') + ` L ${pts[pts.length - 1].x} ${padT + innerH} L ${pts[0].x} ${padT + innerH} Z`;
+    const linePath = pts.map((p, i) => (i === 0 ? `M ${p.x} ${p.y}` : `L ${p.x} ${p.y}`)).join(' ');
+
+    // Y-axis ticks (4 evenly spaced)
+    const ticks = [0, 0.25, 0.5, 0.75, 1].map((p) => ({
+      y: padT + innerH * (1 - p),
+      v: max * p,
+    }));
+
+    const bestKey = bestMonth ? null : null; // placeholder
+    const bestIdx = months.findIndex((m) => m.key === (bestMonth && (bestMonth.label || '').slice(0, 3) + ' ' + year && monthKeyFromBestLabel(bestMonth.label, year)));
+    // Recompute best idx more reliably: max amount in this year's data
+    let highestIdx = -1, highest = 0;
+    months.forEach((m, i) => { if (m.amount > highest) { highest = m.amount; highestIdx = i; } });
+
+    const svg = `<svg viewBox="0 0 ${W} ${H}" width="100%" preserveAspectRatio="none" class="stats-chart-svg">
+      <defs>
+        <linearGradient id="statsArea" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#1aa3df" stop-opacity="0.32"/>
+          <stop offset="1" stop-color="#0078ab" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      ${ticks.map((t) => `
+        <line x1="${padL}" y1="${t.y}" x2="${W - padR}" y2="${t.y}" class="stats-chart-grid"/>
+        <text x="${padL - 8}" y="${t.y + 4}" class="stats-chart-tick" text-anchor="end">${fmtTick(t.v)}</text>
+      `).join('')}
+      <path d="${areaPath}" fill="url(#statsArea)"/>
+      <path d="${linePath}" class="stats-chart-line"/>
+      ${pts.map((p, i) => {
+        const isCurrent = i === curIdx;
+        const isBest    = i === highestIdx && highest > 0;
+        const cls = 'stats-chart-pt' + (isCurrent ? ' is-current' : '') + (isBest ? ' is-best' : '');
+        return `<g class="${cls}">
+          ${isBest ? `<circle cx="${p.x}" cy="${p.y}" r="8" class="stats-chart-pt-ring"/>` : ''}
+          ${isCurrent ? `<circle cx="${p.x}" cy="${p.y}" r="9" class="stats-chart-pt-pulse"><animate attributeName="r" values="6;11;6" dur="2.2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.45;0;0.45" dur="2.2s" repeatCount="indefinite"/></circle>` : ''}
+          <circle cx="${p.x}" cy="${p.y}" r="${isBest ? 4.5 : 3.5}" class="stats-chart-pt-dot"/>
+          <title>${p.full} · $${(p.amount || 0).toLocaleString('en-US')}</title>
+        </g>`;
+      }).join('')}
+      ${pts.map((p) => `<text x="${p.x}" y="${H - 14}" class="stats-chart-xlabel" text-anchor="middle">${p.label}</text>`).join('')}
+    </svg>`;
+
+    document.getElementById('stats-chart').innerHTML = svg;
+  }
+
+  function fmtTick(v) {
+    if (v >= 1000) return '$' + Math.round(v / 1000) + 'k';
+    return '$' + Math.round(v);
+  }
+  // Unused helper — kept in case we later want to find best month by label rather than amount.
+  function monthKeyFromBestLabel(label, year) {
+    if (!label) return null;
+    const idx = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].indexOf(label.slice(0, 3));
+    if (idx < 0) return null;
+    return year + '-' + String(idx + 1).padStart(2, '0');
+  }
+})();
+</script>
 </body>
 </html>
