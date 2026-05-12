@@ -5573,32 +5573,28 @@ p {
   }
 }
 
-/* Gold feathers flanking the avatar — pseudo elements with inline SVG.
-   Sized as a percentage of the avatar so they scale across small (header
-   chip ~24px) and large (account page ~64px) variants. */
+/* Laurel wreath surrounding the avatar — pseudo elements with inline SVG.
+   ::before is the LEFT half of the wreath, ::after is the same SVG mirrored
+   to form the RIGHT half. Together they wrap around the profile photo. */
 .top-producer::before,
 .top-producer::after {
   content: '';
   position: absolute;
   top: 50%;
-  width: 90%;
-  height: 180%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  transform: translate(-50%, -50%);
   pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><defs><linearGradient id='wg' x1='0%25' y1='0%25' x2='100%25' y2='50%25'><stop offset='0%25' stop-color='%237a5212'/><stop offset='50%25' stop-color='%23e6b34a'/><stop offset='100%25' stop-color='%23fff8d8'/></linearGradient></defs><path d='M 100 184 Q 32 100 100 16' fill='none' stroke='%235c3416' stroke-width='1.2'/><g fill='url(%23wg)' stroke='%237a5212' stroke-width='0.5'><ellipse cx='88' cy='178' rx='9' ry='3.5' transform='rotate(-118 88 178)'/><ellipse cx='70' cy='166' rx='10' ry='3.8' transform='rotate(-130 70 166)'/><ellipse cx='54' cy='150' rx='11' ry='4' transform='rotate(-145 54 150)'/><ellipse cx='42' cy='128' rx='11' ry='4' transform='rotate(-160 42 128)'/><ellipse cx='36' cy='100' rx='11' ry='4' transform='rotate(-180 36 100)'/><ellipse cx='42' cy='72' rx='11' ry='4' transform='rotate(160 42 72)'/><ellipse cx='54' cy='50' rx='11' ry='4' transform='rotate(145 54 50)'/><ellipse cx='70' cy='34' rx='10' ry='3.8' transform='rotate(130 70 34)'/><ellipse cx='88' cy='22' rx='9' ry='3.5' transform='rotate(118 88 22)'/></g></svg>");
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
   animation: topProducerFeatherGlow 2.6s ease-in-out infinite;
   z-index: -1;
 }
-.top-producer::before {
-  left: -80%;
-  transform: translateY(-50%) scaleX(-1);
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='%23e6b34a' stop-opacity='0'/><stop offset='1' stop-color='%23ffd86a' stop-opacity='1'/></linearGradient></defs><path d='M58 50 Q40 14 14 14 Q22 22 22 32 Q22 40 14 42 Q24 44 26 50 Q24 56 14 58 Q22 60 22 68 Q22 78 14 86 Q40 86 58 50 Z' fill='url(%23g)' stroke='%237a5212' stroke-width='0.6' stroke-opacity='0.5'/><path d='M58 50 Q44 38 30 36' stroke='%237a5212' stroke-width='0.4' stroke-opacity='0.4' fill='none'/><path d='M58 50 Q44 62 30 64' stroke='%237a5212' stroke-width='0.4' stroke-opacity='0.4' fill='none'/></svg>");
-}
 .top-producer::after {
-  right: -80%;
-  transform: translateY(-50%);
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='%23e6b34a' stop-opacity='0'/><stop offset='1' stop-color='%23ffd86a' stop-opacity='1'/></linearGradient></defs><path d='M58 50 Q40 14 14 14 Q22 22 22 32 Q22 40 14 42 Q24 44 26 50 Q24 56 14 58 Q22 60 22 68 Q22 78 14 86 Q40 86 58 50 Z' fill='url(%23g)' stroke='%237a5212' stroke-width='0.6' stroke-opacity='0.5'/><path d='M58 50 Q44 38 30 36' stroke='%237a5212' stroke-width='0.4' stroke-opacity='0.4' fill='none'/><path d='M58 50 Q44 62 30 64' stroke='%237a5212' stroke-width='0.4' stroke-opacity='0.4' fill='none'/></svg>");
+  transform: translate(-50%, -50%) scaleX(-1);
 }
 @keyframes topProducerFeatherGlow {
   0%, 100% { opacity: 0.55; filter: drop-shadow(0 0 2px rgba(255, 216, 106, 0.45)); }
