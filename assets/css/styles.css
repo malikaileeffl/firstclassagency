@@ -5549,3 +5549,70 @@ p {
   0%, 100% { filter: drop-shadow(0 0 1px rgba(176, 127, 28, 0.35)); }
   50%      { filter: drop-shadow(0 0 7px rgba(176, 127, 28, 0.7)); }
 }
+
+/* Top producer recognition — Platinum or higher monthly rank.
+   Added to [data-user-initial] elements after rank check in agent-auth.js.
+   Gives the agent's avatar a gold ring, breathing glow, and side feathers. */
+[data-user-initial].top-producer {
+  position: relative;
+  box-shadow:
+    0 0 0 2px #ffd86a,
+    0 0 12px rgba(255, 216, 106, 0.55);
+  animation: topProducerGlow 2.6s ease-in-out infinite;
+}
+@keyframes topProducerGlow {
+  0%, 100% {
+    box-shadow:
+      0 0 0 2px #e6b34a,
+      0 0 8px rgba(255, 216, 106, 0.45);
+  }
+  50% {
+    box-shadow:
+      0 0 0 2.4px #ffd86a,
+      0 0 22px rgba(255, 216, 106, 0.9);
+  }
+}
+
+/* Gold feathers flanking the avatar — pseudo elements with inline SVG.
+   Sized as a percentage of the avatar so they scale across small (header
+   chip ~24px) and large (account page ~64px) variants. */
+[data-user-initial].top-producer::before,
+[data-user-initial].top-producer::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 90%;
+  height: 180%;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  animation: topProducerFeatherGlow 2.6s ease-in-out infinite;
+  z-index: -1;
+}
+[data-user-initial].top-producer::before {
+  left: -80%;
+  transform: translateY(-50%) scaleX(-1);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='%23e6b34a' stop-opacity='0'/><stop offset='1' stop-color='%23ffd86a' stop-opacity='1'/></linearGradient></defs><path d='M58 50 Q40 14 14 14 Q22 22 22 32 Q22 40 14 42 Q24 44 26 50 Q24 56 14 58 Q22 60 22 68 Q22 78 14 86 Q40 86 58 50 Z' fill='url(%23g)' stroke='%237a5212' stroke-width='0.6' stroke-opacity='0.5'/><path d='M58 50 Q44 38 30 36' stroke='%237a5212' stroke-width='0.4' stroke-opacity='0.4' fill='none'/><path d='M58 50 Q44 62 30 64' stroke='%237a5212' stroke-width='0.4' stroke-opacity='0.4' fill='none'/></svg>");
+}
+[data-user-initial].top-producer::after {
+  right: -80%;
+  transform: translateY(-50%);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='%23e6b34a' stop-opacity='0'/><stop offset='1' stop-color='%23ffd86a' stop-opacity='1'/></linearGradient></defs><path d='M58 50 Q40 14 14 14 Q22 22 22 32 Q22 40 14 42 Q24 44 26 50 Q24 56 14 58 Q22 60 22 68 Q22 78 14 86 Q40 86 58 50 Z' fill='url(%23g)' stroke='%237a5212' stroke-width='0.6' stroke-opacity='0.5'/><path d='M58 50 Q44 38 30 36' stroke='%237a5212' stroke-width='0.4' stroke-opacity='0.4' fill='none'/><path d='M58 50 Q44 62 30 64' stroke='%237a5212' stroke-width='0.4' stroke-opacity='0.4' fill='none'/></svg>");
+}
+@keyframes topProducerFeatherGlow {
+  0%, 100% { opacity: 0.55; filter: drop-shadow(0 0 2px rgba(255, 216, 106, 0.45)); }
+  50%      { opacity: 1;    filter: drop-shadow(0 0 8px rgba(255, 216, 106, 0.9)); }
+}
+
+/* Honor reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  [data-user-initial].top-producer,
+  [data-user-initial].top-producer::before,
+  [data-user-initial].top-producer::after {
+    animation: none;
+  }
+}
+
+/* Make sure the parent containers don't clip the feathers */
+.user-chip, .account-profile-row, .account-avatar-lg { overflow: visible; }

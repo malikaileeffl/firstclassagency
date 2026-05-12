@@ -73,11 +73,33 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
       detail: { user, isAdmin, isSuperAdmin, role }
     }));
 
+    // Top-producer check — if the agent is at Platinum or higher for the
+    // current month, decorate their avatar(s) with the gold ring + feathers
+    // wherever they appear (header chip, account page, etc.).
+    maybeMarkTopProducer(sb, user);
+
     if (isAccountPage) {
       wireAccountPage(sb, user);
     }
 
     return;
+  }
+
+  async function maybeMarkTopProducer(sb, user) {
+    const fullName = (user.user_metadata && user.user_metadata.full_name) || (user.email || '').split('@')[0];
+    if (!fullName) return;
+    try {
+      const { data, error } = await sb.rpc('get_my_monthly_summary', { p_name: fullName });
+      if (error || !data) return;
+      const row = Array.isArray(data) ? data[0] : data;
+      // Truthy if (current month >= $40k) OR (permanently unlocked via
+      // back-to-back $40k months OR admin override).
+      if (row && row.is_top_producer) {
+        document.querySelectorAll('[data-user-initial]').forEach((el) => el.classList.add('top-producer'));
+      }
+    } catch (e) {
+      console.warn('[FCA] top-producer check failed:', e.message);
+    }
   }
 
   // ---------- GATE PAGE ----------
