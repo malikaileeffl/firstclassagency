@@ -2,30 +2,30 @@
    16 ranks total, lifetime accumulating. Single source of truth for the
    rank engine, used by dashboard widget, leaderboard pills, and rank-up modal.
 
-     Bronze IV → III → II → I       ($0 → $14,999)
-     Silver IV → III → II → I       ($15k → $29,999)
-     Gold   IV → III → II → I       ($30k → $49,999)
-     Platinum  III → II → I         ($50k → $99,999) — 3 sub-tiers only
-     Champion                        ($100k+) — singular
+     Bronze IV → III → II → I       ($0 → $49,999)        ramping up
+     Silver IV → III → II → I       ($50k → $149,999)     first real year
+     Gold   IV → III → II → I       ($150k → $399,999)    trusted producer
+     Platinum  III → II → I         ($400k → $999,999)    veteran heavyweight
+     Champion                        ($1,000,000+)         hall of fame
 */
 (function () {
   const RANKS = [
-    { key: 'bronze-iv',    tier: 'Bronze',   sub: 'IV',  min: 0,      pips: 1, totalPips: 4, color: 'bronze' },
-    { key: 'bronze-iii',   tier: 'Bronze',   sub: 'III', min: 4000,   pips: 2, totalPips: 4, color: 'bronze' },
-    { key: 'bronze-ii',    tier: 'Bronze',   sub: 'II',  min: 8000,   pips: 3, totalPips: 4, color: 'bronze' },
-    { key: 'bronze-i',     tier: 'Bronze',   sub: 'I',   min: 12000,  pips: 4, totalPips: 4, color: 'bronze' },
-    { key: 'silver-iv',    tier: 'Silver',   sub: 'IV',  min: 15000,  pips: 1, totalPips: 4, color: 'silver' },
-    { key: 'silver-iii',   tier: 'Silver',   sub: 'III', min: 19000,  pips: 2, totalPips: 4, color: 'silver' },
-    { key: 'silver-ii',    tier: 'Silver',   sub: 'II',  min: 23000,  pips: 3, totalPips: 4, color: 'silver' },
-    { key: 'silver-i',     tier: 'Silver',   sub: 'I',   min: 27000,  pips: 4, totalPips: 4, color: 'silver' },
-    { key: 'gold-iv',      tier: 'Gold',     sub: 'IV',  min: 30000,  pips: 1, totalPips: 4, color: 'gold' },
-    { key: 'gold-iii',     tier: 'Gold',     sub: 'III', min: 35000,  pips: 2, totalPips: 4, color: 'gold' },
-    { key: 'gold-ii',      tier: 'Gold',     sub: 'II',  min: 40000,  pips: 3, totalPips: 4, color: 'gold' },
-    { key: 'gold-i',       tier: 'Gold',     sub: 'I',   min: 45000,  pips: 4, totalPips: 4, color: 'gold' },
-    { key: 'platinum-iii', tier: 'Platinum', sub: 'III', min: 50000,  pips: 1, totalPips: 3, color: 'platinum' },
-    { key: 'platinum-ii',  tier: 'Platinum', sub: 'II',  min: 66000,  pips: 2, totalPips: 3, color: 'platinum' },
-    { key: 'platinum-i',   tier: 'Platinum', sub: 'I',   min: 83000,  pips: 3, totalPips: 3, color: 'platinum' },
-    { key: 'champion',     tier: 'Champion', sub: null,  min: 100000, pips: 0, totalPips: 0, color: 'champion' },
+    { key: 'bronze-iv',    tier: 'Bronze',   sub: 'IV',  min: 0,       pips: 1, totalPips: 4, color: 'bronze' },
+    { key: 'bronze-iii',   tier: 'Bronze',   sub: 'III', min: 12500,   pips: 2, totalPips: 4, color: 'bronze' },
+    { key: 'bronze-ii',    tier: 'Bronze',   sub: 'II',  min: 25000,   pips: 3, totalPips: 4, color: 'bronze' },
+    { key: 'bronze-i',     tier: 'Bronze',   sub: 'I',   min: 37500,   pips: 4, totalPips: 4, color: 'bronze' },
+    { key: 'silver-iv',    tier: 'Silver',   sub: 'IV',  min: 50000,   pips: 1, totalPips: 4, color: 'silver' },
+    { key: 'silver-iii',   tier: 'Silver',   sub: 'III', min: 75000,   pips: 2, totalPips: 4, color: 'silver' },
+    { key: 'silver-ii',    tier: 'Silver',   sub: 'II',  min: 100000,  pips: 3, totalPips: 4, color: 'silver' },
+    { key: 'silver-i',     tier: 'Silver',   sub: 'I',   min: 125000,  pips: 4, totalPips: 4, color: 'silver' },
+    { key: 'gold-iv',      tier: 'Gold',     sub: 'IV',  min: 150000,  pips: 1, totalPips: 4, color: 'gold' },
+    { key: 'gold-iii',     tier: 'Gold',     sub: 'III', min: 210000,  pips: 2, totalPips: 4, color: 'gold' },
+    { key: 'gold-ii',      tier: 'Gold',     sub: 'II',  min: 275000,  pips: 3, totalPips: 4, color: 'gold' },
+    { key: 'gold-i',       tier: 'Gold',     sub: 'I',   min: 340000,  pips: 4, totalPips: 4, color: 'gold' },
+    { key: 'platinum-iii', tier: 'Platinum', sub: 'III', min: 400000,  pips: 1, totalPips: 3, color: 'platinum' },
+    { key: 'platinum-ii',  tier: 'Platinum', sub: 'II',  min: 600000,  pips: 2, totalPips: 3, color: 'platinum' },
+    { key: 'platinum-i',   tier: 'Platinum', sub: 'I',   min: 800000,  pips: 3, totalPips: 3, color: 'platinum' },
+    { key: 'champion',     tier: 'Champion', sub: null,  min: 1000000, pips: 0, totalPips: 0, color: 'champion' },
   ];
 
   function rankFor(amount) {
