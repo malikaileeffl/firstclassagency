@@ -431,7 +431,7 @@
   });
 
   // ----- RANK WIDGET ------------------------------------------------------
-  // Monthly system — current month's issued premium determines rank.
+  // Monthly system — current month's submitted premium determines rank.
   // Resets on the 1st of each month (America/New_York). Compares against
   // last month so the agent always has a number to chase.
   document.addEventListener('fca:auth-ready', async (e) => {
@@ -572,7 +572,7 @@
         <div class="rankup-eyebrow">${monthLabel} wrap</div>
         <h2 class="rankup-title">You finished as ${escapeHtml(lastStats.rankLabel)}</h2>
         <div class="rankup-emblem">${window.FCA_RANKS.emblemSvg(lastStats.rankKey, { size: 130 })}</div>
-        <div class="rankup-name">${fmt(lastStats.amount)} issued</div>
+        <div class="rankup-name">${fmt(lastStats.amount)} submitted</div>
         <div class="rankup-sub">${isPR ? '★ New personal best · ' : ''}New month is open — drop your first win in the GroupMe.</div>
         <button class="rankup-dismiss" type="button">Let's go</button>
       </div>`;
@@ -629,7 +629,7 @@
         <button class="rank-info-close" type="button" aria-label="Close">×</button>
         <h2 class="rank-info-title">How rankings work</h2>
         <div class="rank-info-rules">
-          <p><strong>Your rank reflects this month's issued premium.</strong> Every dollar you submit in the GroupMe lifts you up the ladder. Drop a win in the chat with the format <code>$1200 CARRIER</code> and it'll count.</p>
+          <p><strong>Your rank reflects this month's submitted premium</strong> — the dollar amounts you post in the GroupMe chat with the format <code>$1200 CARRIER</code>. Note that <em>submitted ≠ issued</em>; GroupMe numbers track applications you've put in, not what the carrier ultimately issues. Ranks measure activity and effort, not booked production.</p>
           <p><strong class="rank-info-warning">Your portal name must match your GroupMe name EXACTLY.</strong> Wins are matched by name — if "Drew Smith" in the portal posts as "Drew S." in the GroupMe, those wins won't count toward your rank. Update your name in Account settings if there's a mismatch.</p>
           <p><strong>Ranks reset on the 1st of every month</strong> at midnight Eastern. Last month's standings get a wrap-up card — including a personal-best flag if you outdid yourself.</p>
           <p><strong>Each tier has sub-ranks IV → I</strong> (Bronze through Gold), III → I for Platinum. Climb them all to reach Champion.</p>

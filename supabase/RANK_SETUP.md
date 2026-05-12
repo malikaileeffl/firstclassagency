@@ -1,6 +1,6 @@
 # Rank system setup
 
-The premium rank ladder is **monthly** — every agent's rank is computed from their issued premium for the current calendar month (America/New_York), and resets on the 1st of every month. Frontend-only system that reads from your existing `leaderboard_entries` table.
+The premium rank ladder is **monthly** — every agent's rank is computed from their **submitted premium** for the current calendar month (America/New_York), and resets on the 1st of every month. "Submitted" means the dollar amounts agents post in the GroupMe chat — these are submitted applications, not necessarily what the carrier ultimately issues. Frontend-only system that reads from your existing `leaderboard_entries` table.
 
 ## 1) Run the SQL
 

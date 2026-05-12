@@ -2,7 +2,8 @@
 -- First Class Agency — monthly rank system helpers
 -- Run AFTER 07-leaderboard.sql.
 -- Ranks reset on the 1st of every month (America/New_York). Each agent's
--- current rank is computed from their THIS-MONTH issued premium total.
+-- current rank is computed from their THIS-MONTH submitted premium total
+-- (the dollar amounts posted in the GroupMe chat — NOT carrier-issued IP).
 -- We also expose last month and personal-best month so the dashboard can
 -- show a "beat last month" comparison.
 -- Idempotent — safe to re-run.
