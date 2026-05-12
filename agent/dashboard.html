@@ -127,12 +127,19 @@
     <div class="rank-card reveal" id="rank-card" style="margin-right:var(--gutter);margin-bottom:20px;display:none;">
       <div class="rank-card-emblem" id="rank-card-emblem"></div>
       <div class="rank-card-body">
-        <span class="rank-card-label">Premium rank</span>
+        <div class="rank-card-header">
+          <span class="rank-card-label" id="rank-card-period">This month</span>
+          <span class="rank-card-lifetime" id="rank-card-lifetime"></span>
+        </div>
         <h2 class="rank-card-name" id="rank-card-name">—</h2>
         <span class="rank-card-stats" id="rank-card-stats">—</span>
         <div class="rank-card-progress">
           <div class="rank-card-progress-bar"><div class="rank-card-progress-fill" id="rank-card-fill" style="width:0%"></div></div>
           <div class="rank-card-progress-meta"><span id="rank-card-progress-left">—</span><span id="rank-card-progress-right">—</span></div>
+        </div>
+        <div class="rank-card-comparison" id="rank-card-comparison" hidden>
+          <span class="rank-trend" id="rank-trend"></span>
+          <span id="rank-comparison-text"></span>
         </div>
       </div>
     </div>
@@ -423,9 +430,9 @@
   });
 
   // ----- RANK WIDGET ------------------------------------------------------
-  // Loads the agent's lifetime issued premium (from leaderboard_entries
-  // joined on their portal full_name → GroupMe sender_name) and renders
-  // the rank emblem, progress bar, and rank-up celebration on promotion.
+  // Monthly system — current month's issued premium determines rank.
+  // Resets on the 1st of each month (America/New_York). Compares against
+  // last month so the agent always has a number to chase.
   document.addEventListener('fca:auth-ready', async (e) => {
     if (!window.FCA_RANKS || !window.fcaSupabase) return;
     const user = e.detail && e.detail.user;
@@ -433,25 +440,33 @@
 
     const fullName = (user.user_metadata && user.user_metadata.full_name) || user.email.split('@')[0];
 
-    let lifetime = 0;
+    let summary = { this_month: 0, last_month: 0, best_month: 0, best_month_label: '', lifetime: 0 };
     try {
-      const { data, error } = await window.fcaSupabase.rpc('get_my_lifetime_premium', { p_name: fullName });
+      const { data, error } = await window.fcaSupabase.rpc('get_my_monthly_summary', { p_name: fullName });
       if (error) throw error;
-      lifetime = Number(data) || 0;
+      if (Array.isArray(data) && data.length) summary = data[0];
     } catch (err) {
-      console.warn('[FCA] rank: could not load lifetime premium', err);
+      console.warn('[FCA] rank: could not load monthly summary', err);
       return;
     }
 
     const card = document.getElementById('rank-card');
     if (!card) return;
-    const { current, next, pct, remaining } = window.FCA_RANKS.progressToNext(lifetime);
 
-    document.getElementById('rank-card-emblem').innerHTML = window.FCA_RANKS.emblemSvg(lifetime, { size: 90 });
+    const thisMonth = Number(summary.this_month) || 0;
+    const lastMonth = Number(summary.last_month) || 0;
+    const bestMonth = Number(summary.best_month) || 0;
+    const lifetime  = Number(summary.lifetime)   || 0;
+
+    const { current, next, pct, remaining } = window.FCA_RANKS.progressToNext(thisMonth);
+
+    document.getElementById('rank-card-emblem').innerHTML = window.FCA_RANKS.emblemSvg(thisMonth, { size: 90 });
     document.getElementById('rank-card-name').textContent = window.FCA_RANKS.rankLabel(current);
+    document.getElementById('rank-card-period').textContent = 'This month · ' + window.FCA_RANKS.currentMonthLabel();
+    document.getElementById('rank-card-lifetime').textContent = window.FCA_RANKS.formatMoney(lifetime) + ' career';
     document.getElementById('rank-card-stats').textContent = next
-      ? `${window.FCA_RANKS.formatMoney(lifetime)} lifetime · ${window.FCA_RANKS.formatMoney(remaining)} to ${window.FCA_RANKS.rankLabel(next)}`
-      : `${window.FCA_RANKS.formatMoney(lifetime)} lifetime · top rank reached`;
+      ? window.FCA_RANKS.formatMoney(thisMonth) + ' this month · ' + window.FCA_RANKS.formatMoney(remaining) + ' to ' + window.FCA_RANKS.rankLabel(next)
+      : window.FCA_RANKS.formatMoney(thisMonth) + ' this month · Champion';
 
     const fill = document.getElementById('rank-card-fill');
     fill.className = 'rank-card-progress-fill rank-fill-' + current.color;
@@ -464,19 +479,63 @@
       ? window.FCA_RANKS.formatMoney(next.min)
       : '';
 
+    // ----- Beat-last-month comparison --------------------------------------
+    const comparison = document.getElementById('rank-card-comparison');
+    const trendEl    = document.getElementById('rank-trend');
+    const textEl     = document.getElementById('rank-comparison-text');
+
+    if (lastMonth > 0) {
+      const delta = thisMonth - lastMonth;
+      if (delta >= 0) {
+        trendEl.className = 'rank-trend up';
+        trendEl.textContent = '↑';
+        textEl.textContent  = 'Above last month by ' + window.FCA_RANKS.formatMoney(delta) + ' (last: ' + window.FCA_RANKS.formatMoney(lastMonth) + ')';
+      } else {
+        trendEl.className = 'rank-trend down';
+        trendEl.textContent = '→';
+        textEl.textContent  = window.FCA_RANKS.formatMoney(-delta) + ' to beat last month (' + window.FCA_RANKS.formatMoney(lastMonth) + ')';
+      }
+      comparison.hidden = false;
+    } else if (thisMonth === 0) {
+      trendEl.className = 'rank-trend';
+      trendEl.textContent = '★';
+      textEl.textContent  = 'First active month — set a baseline.';
+      comparison.hidden = false;
+    } else {
+      comparison.hidden = true;
+    }
+
     card.style.display = 'grid';
 
-    // ----- Rank-up celebration ---------------------------------------------
-    // Compare against locally-stored "last seen rank" — if the agent has
-    // climbed since we last saw them, fire the modal once.
-    const STORAGE_KEY = 'fca_rank_last_seen_' + user.id;
-    const lastSeenKey = window.localStorage.getItem(STORAGE_KEY);
-    const lastSeen = lastSeenKey ? window.FCA_RANKS.rankByKey(lastSeenKey) : null;
+    // ----- Month-wrap modal (fires on first visit of a new month) ----------
+    const MONTH_KEY = 'fca_rank_last_month_' + user.id;
+    const STATS_KEY = 'fca_rank_last_month_stats_' + user.id;
+    const thisMonthKey = window.FCA_RANKS.currentMonthKey();
+    const storedMonthKey = window.localStorage.getItem(MONTH_KEY);
+    if (storedMonthKey && storedMonthKey !== thisMonthKey) {
+      let lastStats = null;
+      try { lastStats = JSON.parse(window.localStorage.getItem(STATS_KEY) || 'null'); } catch (_) {}
+      if (lastStats && lastStats.amount > 0) showMonthWrapModal(lastStats, bestMonth, summary.best_month_label);
+    }
+    window.localStorage.setItem(MONTH_KEY, thisMonthKey);
+    // Snapshot this month's running total so when the month rolls, the wrap
+    // modal has accurate end-of-month numbers without another server call.
+    window.localStorage.setItem(STATS_KEY, JSON.stringify({
+      month: thisMonthKey,
+      amount: thisMonth,
+      rankKey: current.key,
+      rankLabel: window.FCA_RANKS.rankLabel(current),
+    }));
 
-    if (lastSeen && window.FCA_RANKS.rankIndex(current.key) > window.FCA_RANKS.rankIndex(lastSeen.key)) {
+    // ----- Rank-up celebration (within current month) ----------------------
+    // Only fires on upward movement. Monthly reset to Bronze IV is silent.
+    const RANK_KEY = 'fca_rank_last_seen_' + user.id;
+    const lastSeen = window.localStorage.getItem(RANK_KEY);
+    const lastRank = lastSeen ? window.FCA_RANKS.rankByKey(lastSeen) : null;
+    if (lastRank && window.FCA_RANKS.rankIndex(current.key) > window.FCA_RANKS.rankIndex(lastRank.key)) {
       showRankUpModal(current);
     }
-    window.localStorage.setItem(STORAGE_KEY, current.key);
+    window.localStorage.setItem(RANK_KEY, current.key);
   });
 
   function showRankUpModal(rank) {
@@ -487,8 +546,8 @@
         <div class="rankup-eyebrow">Rank up</div>
         <h2 class="rankup-title">You're now ${window.FCA_RANKS.rankLabel(rank)}</h2>
         <div class="rankup-emblem">${window.FCA_RANKS.emblemSvg(rank.key, { size: 130 })}</div>
-        <div class="rankup-name">Keep stacking premium.</div>
-        <div class="rankup-sub">Promoted just now · Lifetime issued premium</div>
+        <div class="rankup-name">Keep stacking premium this month.</div>
+        <div class="rankup-sub">Promoted just now</div>
         <button class="rankup-dismiss" type="button">Let's go</button>
       </div>`;
     document.body.appendChild(overlay);
@@ -499,6 +558,43 @@
     };
     overlay.querySelector('.rankup-dismiss').addEventListener('click', dismiss);
     overlay.addEventListener('click', (ev) => { if (ev.target === overlay) dismiss(); });
+  }
+
+  function showMonthWrapModal(lastStats, bestMonth, bestMonthLabel) {
+    const fmt = window.FCA_RANKS.formatMoney;
+    const monthLabel = monthLabelFromKey(lastStats.month);
+    const isPR = (Number(bestMonth) || 0) > 0 && Number(lastStats.amount) >= Number(bestMonth);
+    const overlay = document.createElement('div');
+    overlay.className = 'rankup-overlay';
+    overlay.innerHTML = `
+      <div class="rankup-card">
+        <div class="rankup-eyebrow">${monthLabel} wrap</div>
+        <h2 class="rankup-title">You finished as ${escapeHtml(lastStats.rankLabel)}</h2>
+        <div class="rankup-emblem">${window.FCA_RANKS.emblemSvg(lastStats.rankKey, { size: 130 })}</div>
+        <div class="rankup-name">${fmt(lastStats.amount)} issued</div>
+        <div class="rankup-sub">${isPR ? '★ New personal best · ' : ''}New month is open — drop your first win in the GroupMe.</div>
+        <button class="rankup-dismiss" type="button">Let's go</button>
+      </div>`;
+    document.body.appendChild(overlay);
+    requestAnimationFrame(() => overlay.classList.add('show'));
+    const dismiss = () => {
+      overlay.classList.remove('show');
+      setTimeout(() => overlay.remove(), 400);
+    };
+    overlay.querySelector('.rankup-dismiss').addEventListener('click', dismiss);
+    overlay.addEventListener('click', (ev) => { if (ev.target === overlay) dismiss(); });
+  }
+
+  function monthLabelFromKey(key) {
+    // "2026-05" → "May 2026"
+    if (!key || key.indexOf('-') < 0) return key || '';
+    const [y, m] = key.split('-');
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const idx = parseInt(m, 10) - 1;
+    return (months[idx] || '') + ' ' + y;
+  }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]);
   }
 
   // Wire Join Zoom click — record attended/missed depending on Eastern Time.

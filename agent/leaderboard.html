@@ -162,18 +162,18 @@
 
   let currentPeriod = 'day';
   let signedIn = false;
-  let lifetimeByName = {}; // sender_name → lifetime $ total, for rank pills
+  let monthlyByName = {}; // sender_name → current-month $ total, for rank pills
 
   // Wait for auth before fetching
   document.addEventListener('fca:auth-ready', async () => {
     signedIn = true;
-    // Fetch lifetime totals once — used to attach a rank pill to each row.
+    // Fetch current-month totals once — used to attach a rank pill to each row.
     try {
-      const { data } = await window.fcaSupabase.rpc('get_lifetime_premiums');
-      lifetimeByName = {};
-      (data || []).forEach((r) => { lifetimeByName[(r.sender_name || '').toLowerCase()] = Number(r.lifetime_premium) || 0; });
+      const { data } = await window.fcaSupabase.rpc('get_current_month_premiums');
+      monthlyByName = {};
+      (data || []).forEach((r) => { monthlyByName[(r.sender_name || '').toLowerCase()] = Number(r.monthly_premium) || 0; });
     } catch (e) {
-      console.warn('[FCA] could not load lifetime premiums for ranks', e);
+      console.warn('[FCA] could not load monthly premiums for ranks', e);
     }
     load(currentPeriod);
   });
@@ -249,8 +249,8 @@
 
   function rankPill(name) {
     if (!window.FCA_RANKS) return '';
-    const lifetime = lifetimeByName[(name || '').toLowerCase()] || 0;
-    return window.FCA_RANKS.pillHtml(lifetime);
+    const monthly = monthlyByName[(name || '').toLowerCase()] || 0;
+    return window.FCA_RANKS.pillHtml(monthly);
   }
 
   function initial(name) {

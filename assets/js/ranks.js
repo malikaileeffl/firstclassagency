@@ -1,32 +1,54 @@
 /* First Class Agency — premium rank system.
-   16 ranks total, lifetime accumulating. Single source of truth for the
-   rank engine, used by dashboard widget, leaderboard pills, and rank-up modal.
+   16 ranks total. MONTHLY — resets on the 1st of each month (America/New_York).
+   Single source of truth, used by dashboard widget, leaderboard pills, and
+   rank-up modal.
 
-     Bronze IV → III → II → I       ($0 → $49,999)        ramping up
-     Silver IV → III → II → I       ($50k → $149,999)     first real year
-     Gold   IV → III → II → I       ($150k → $399,999)    trusted producer
-     Platinum  III → II → I         ($400k → $999,999)    veteran heavyweight
-     Champion                        ($1,000,000+)         hall of fame
+     Bronze IV → III → II → I       ($0 → $9,999)         start of month
+     Silver IV → III → II → I       ($10k → $24,999)      real producer month
+     Gold   IV → III → II → I       ($25k → $49,999)      heater month
+     Platinum  III → II → I         ($50k → $99,999)      hall-of-fame month
+     Champion                        ($100k+)              legendary month
 */
 (function () {
   const RANKS = [
-    { key: 'bronze-iv',    tier: 'Bronze',   sub: 'IV',  min: 0,       pips: 1, totalPips: 4, color: 'bronze' },
-    { key: 'bronze-iii',   tier: 'Bronze',   sub: 'III', min: 12500,   pips: 2, totalPips: 4, color: 'bronze' },
-    { key: 'bronze-ii',    tier: 'Bronze',   sub: 'II',  min: 25000,   pips: 3, totalPips: 4, color: 'bronze' },
-    { key: 'bronze-i',     tier: 'Bronze',   sub: 'I',   min: 37500,   pips: 4, totalPips: 4, color: 'bronze' },
-    { key: 'silver-iv',    tier: 'Silver',   sub: 'IV',  min: 50000,   pips: 1, totalPips: 4, color: 'silver' },
-    { key: 'silver-iii',   tier: 'Silver',   sub: 'III', min: 75000,   pips: 2, totalPips: 4, color: 'silver' },
-    { key: 'silver-ii',    tier: 'Silver',   sub: 'II',  min: 100000,  pips: 3, totalPips: 4, color: 'silver' },
-    { key: 'silver-i',     tier: 'Silver',   sub: 'I',   min: 125000,  pips: 4, totalPips: 4, color: 'silver' },
-    { key: 'gold-iv',      tier: 'Gold',     sub: 'IV',  min: 150000,  pips: 1, totalPips: 4, color: 'gold' },
-    { key: 'gold-iii',     tier: 'Gold',     sub: 'III', min: 210000,  pips: 2, totalPips: 4, color: 'gold' },
-    { key: 'gold-ii',      tier: 'Gold',     sub: 'II',  min: 275000,  pips: 3, totalPips: 4, color: 'gold' },
-    { key: 'gold-i',       tier: 'Gold',     sub: 'I',   min: 340000,  pips: 4, totalPips: 4, color: 'gold' },
-    { key: 'platinum-iii', tier: 'Platinum', sub: 'III', min: 400000,  pips: 1, totalPips: 3, color: 'platinum' },
-    { key: 'platinum-ii',  tier: 'Platinum', sub: 'II',  min: 600000,  pips: 2, totalPips: 3, color: 'platinum' },
-    { key: 'platinum-i',   tier: 'Platinum', sub: 'I',   min: 800000,  pips: 3, totalPips: 3, color: 'platinum' },
-    { key: 'champion',     tier: 'Champion', sub: null,  min: 1000000, pips: 0, totalPips: 0, color: 'champion' },
+    { key: 'bronze-iv',    tier: 'Bronze',   sub: 'IV',  min: 0,      pips: 1, totalPips: 4, color: 'bronze' },
+    { key: 'bronze-iii',   tier: 'Bronze',   sub: 'III', min: 2500,   pips: 2, totalPips: 4, color: 'bronze' },
+    { key: 'bronze-ii',    tier: 'Bronze',   sub: 'II',  min: 5000,   pips: 3, totalPips: 4, color: 'bronze' },
+    { key: 'bronze-i',     tier: 'Bronze',   sub: 'I',   min: 7500,   pips: 4, totalPips: 4, color: 'bronze' },
+    { key: 'silver-iv',    tier: 'Silver',   sub: 'IV',  min: 10000,  pips: 1, totalPips: 4, color: 'silver' },
+    { key: 'silver-iii',   tier: 'Silver',   sub: 'III', min: 13000,  pips: 2, totalPips: 4, color: 'silver' },
+    { key: 'silver-ii',    tier: 'Silver',   sub: 'II',  min: 17000,  pips: 3, totalPips: 4, color: 'silver' },
+    { key: 'silver-i',     tier: 'Silver',   sub: 'I',   min: 21000,  pips: 4, totalPips: 4, color: 'silver' },
+    { key: 'gold-iv',      tier: 'Gold',     sub: 'IV',  min: 25000,  pips: 1, totalPips: 4, color: 'gold' },
+    { key: 'gold-iii',     tier: 'Gold',     sub: 'III', min: 31000,  pips: 2, totalPips: 4, color: 'gold' },
+    { key: 'gold-ii',      tier: 'Gold',     sub: 'II',  min: 37000,  pips: 3, totalPips: 4, color: 'gold' },
+    { key: 'gold-i',       tier: 'Gold',     sub: 'I',   min: 43000,  pips: 4, totalPips: 4, color: 'gold' },
+    { key: 'platinum-iii', tier: 'Platinum', sub: 'III', min: 50000,  pips: 1, totalPips: 3, color: 'platinum' },
+    { key: 'platinum-ii',  tier: 'Platinum', sub: 'II',  min: 66000,  pips: 2, totalPips: 3, color: 'platinum' },
+    { key: 'platinum-i',   tier: 'Platinum', sub: 'I',   min: 83000,  pips: 3, totalPips: 3, color: 'platinum' },
+    { key: 'champion',     tier: 'Champion', sub: null,  min: 100000, pips: 0, totalPips: 0, color: 'champion' },
   ];
+
+  // Returns the current calendar month key in America/New_York, e.g. "2026-05".
+  function currentMonthKey() {
+    const fmt = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/New_York',
+      year: 'numeric',
+      month: '2-digit',
+    });
+    const parts = fmt.formatToParts(new Date());
+    const y = parts.find((p) => p.type === 'year').value;
+    const m = parts.find((p) => p.type === 'month').value;
+    return y + '-' + m;
+  }
+  function currentMonthLabel() {
+    const fmt = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/New_York',
+      year: 'numeric',
+      month: 'long',
+    });
+    return fmt.format(new Date());
+  }
 
   function rankFor(amount) {
     const v = Number(amount) || 0;
@@ -259,5 +281,7 @@
     formatMoney,
     emblemSvg,
     pillHtml,
+    currentMonthKey,
+    currentMonthLabel,
   };
 })();

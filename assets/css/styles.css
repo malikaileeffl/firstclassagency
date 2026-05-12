@@ -5158,3 +5158,48 @@ p {
   transition: background var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
 }
 .rankup-dismiss:hover { background: var(--accent-bright); transform: translateY(-1px); }
+
+/* Rank card header (period label + small lifetime stat) and beat-last-month comparison */
+.rank-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.rank-card-lifetime {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-3);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.rank-card-comparison {
+  margin-top: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text-2);
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  align-self: flex-start;
+}
+.rank-trend {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 0.9rem;
+  background: var(--surface);
+  color: var(--text-3);
+}
+.rank-trend.up   { background: rgba(34, 197, 94, 0.18); color: #22c55e; }
+.rank-trend.down { background: rgba(220, 60, 70, 0.16); color: #ef4444; }
+[data-theme="light"] .rank-trend.up   { color: #15803d; }
+[data-theme="light"] .rank-trend.down { color: #b91c1c; }
