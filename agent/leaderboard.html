@@ -167,16 +167,22 @@
 
   let currentPeriod = 'day';
   let signedIn = false;
-  let monthlyByName = {}; // sender_name → current-month $ total, for rank pills
+  let monthlyByName = {};        // sender_name → current-month $ total, for rank pills
+  let topProducerByName = {};    // sender_name → boolean (gold ring + feathers)
 
   // Wait for auth before fetching
   document.addEventListener('fca:auth-ready', async () => {
     signedIn = true;
-    // Fetch current-month totals once — used to attach a rank pill to each row.
+    // Fetch current-month totals + top-producer flag for every agent once.
     try {
       const { data } = await window.fcaSupabase.rpc('get_current_month_premiums');
       monthlyByName = {};
-      (data || []).forEach((r) => { monthlyByName[(r.sender_name || '').toLowerCase()] = Number(r.monthly_premium) || 0; });
+      topProducerByName = {};
+      (data || []).forEach((r) => {
+        const key = (r.sender_name || '').toLowerCase();
+        monthlyByName[key] = Number(r.monthly_premium) || 0;
+        topProducerByName[key] = !!r.is_top_producer;
+      });
     } catch (e) {
       console.warn('[FCA] could not load monthly premiums for ranks', e);
     }
@@ -228,10 +234,11 @@
       const order = [rows[1], rows[0], rows[2]]; // 2nd, 1st, 3rd visually
       podiumEl.innerHTML = order.map((r, i) => {
         const rank = (i === 0 ? 2 : i === 1 ? 1 : 3);
+        const tp = isTopProducer(r.sender_name) ? ' top-producer' : '';
         return `
           <div class="lb-podium-card lb-rank-${rank}">
             <div class="lb-medal">${rank === 1 ? '🥇' : rank === 2 ? '🥈' : '🥉'}</div>
-            <div class="lb-podium-avatar">${escape(initial(r.sender_name))}</div>
+            <div class="lb-podium-avatar${tp}">${escape(initial(r.sender_name))}</div>
             <div class="lb-podium-name" title="${escape(r.sender_name)}">${escape(r.sender_name)}</div>
             ${rankPill(r.sender_name)}
             <div class="lb-podium-amount">${fmt(r.total_premium)}</div>
@@ -240,20 +247,26 @@
       podiumEl.setAttribute('aria-hidden', 'false');
     }
 
-    tableEl.innerHTML = rows.map((r) => `
+    tableEl.innerHTML = rows.map((r) => {
+      const tp = isTopProducer(r.sender_name) ? ' top-producer' : '';
+      return `
       <div class="lb-row lb-rank-${r.rank}">
         <div class="lb-rank">${r.rank}</div>
-        <div class="lb-avatar">${escape(initial(r.sender_name))}</div>
+        <div class="lb-avatar${tp}">${escape(initial(r.sender_name))}</div>
         <div class="lb-name" title="${escape(r.sender_name)}">${escape(r.sender_name)} ${rankPill(r.sender_name)}</div>
         <div class="lb-amount">${fmt(r.total_premium)}</div>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
   }
 
   function rankPill(name) {
     if (!window.FCA_RANKS) return '';
     const monthly = monthlyByName[(name || '').toLowerCase()] || 0;
     return window.FCA_RANKS.pillHtml(monthly);
+  }
+
+  function isTopProducer(name) {
+    return !!topProducerByName[(name || '').toLowerCase()];
   }
 
   function initial(name) {
