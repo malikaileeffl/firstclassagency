@@ -3,29 +3,29 @@
    Single source of truth, used by dashboard widget, leaderboard pills, and
    rank-up modal.
 
-     Bronze IV → III → II → I       ($0 → $9,999)         start of month
-     Silver IV → III → II → I       ($10k → $24,999)      real producer month
-     Gold   IV → III → II → I       ($25k → $49,999)      heater month
-     Platinum  III → II → I         ($50k → $99,999)      hall-of-fame month
+     Bronze IV → III → II → I       ($0 → $14,999)        ramping up
+     Silver IV → III → II → I       ($15k → $24,999)      real producer month
+     Gold   IV → III → II → I       ($25k → $39,999)      heater month
+     Platinum  III → II → I         ($40k → $99,999)      hall-of-fame month
      Champion                        ($100k+)              legendary month
 */
 (function () {
   const RANKS = [
     { key: 'bronze-iv',    tier: 'Bronze',   sub: 'IV',  min: 0,      pips: 1, totalPips: 4, color: 'bronze' },
-    { key: 'bronze-iii',   tier: 'Bronze',   sub: 'III', min: 2500,   pips: 2, totalPips: 4, color: 'bronze' },
-    { key: 'bronze-ii',    tier: 'Bronze',   sub: 'II',  min: 5000,   pips: 3, totalPips: 4, color: 'bronze' },
-    { key: 'bronze-i',     tier: 'Bronze',   sub: 'I',   min: 7500,   pips: 4, totalPips: 4, color: 'bronze' },
-    { key: 'silver-iv',    tier: 'Silver',   sub: 'IV',  min: 10000,  pips: 1, totalPips: 4, color: 'silver' },
-    { key: 'silver-iii',   tier: 'Silver',   sub: 'III', min: 13000,  pips: 2, totalPips: 4, color: 'silver' },
-    { key: 'silver-ii',    tier: 'Silver',   sub: 'II',  min: 17000,  pips: 3, totalPips: 4, color: 'silver' },
-    { key: 'silver-i',     tier: 'Silver',   sub: 'I',   min: 21000,  pips: 4, totalPips: 4, color: 'silver' },
+    { key: 'bronze-iii',   tier: 'Bronze',   sub: 'III', min: 4000,   pips: 2, totalPips: 4, color: 'bronze' },
+    { key: 'bronze-ii',    tier: 'Bronze',   sub: 'II',  min: 8000,   pips: 3, totalPips: 4, color: 'bronze' },
+    { key: 'bronze-i',     tier: 'Bronze',   sub: 'I',   min: 12000,  pips: 4, totalPips: 4, color: 'bronze' },
+    { key: 'silver-iv',    tier: 'Silver',   sub: 'IV',  min: 15000,  pips: 1, totalPips: 4, color: 'silver' },
+    { key: 'silver-iii',   tier: 'Silver',   sub: 'III', min: 17500,  pips: 2, totalPips: 4, color: 'silver' },
+    { key: 'silver-ii',    tier: 'Silver',   sub: 'II',  min: 20000,  pips: 3, totalPips: 4, color: 'silver' },
+    { key: 'silver-i',     tier: 'Silver',   sub: 'I',   min: 22500,  pips: 4, totalPips: 4, color: 'silver' },
     { key: 'gold-iv',      tier: 'Gold',     sub: 'IV',  min: 25000,  pips: 1, totalPips: 4, color: 'gold' },
-    { key: 'gold-iii',     tier: 'Gold',     sub: 'III', min: 31000,  pips: 2, totalPips: 4, color: 'gold' },
-    { key: 'gold-ii',      tier: 'Gold',     sub: 'II',  min: 37000,  pips: 3, totalPips: 4, color: 'gold' },
-    { key: 'gold-i',       tier: 'Gold',     sub: 'I',   min: 43000,  pips: 4, totalPips: 4, color: 'gold' },
-    { key: 'platinum-iii', tier: 'Platinum', sub: 'III', min: 50000,  pips: 1, totalPips: 3, color: 'platinum' },
-    { key: 'platinum-ii',  tier: 'Platinum', sub: 'II',  min: 66000,  pips: 2, totalPips: 3, color: 'platinum' },
-    { key: 'platinum-i',   tier: 'Platinum', sub: 'I',   min: 83000,  pips: 3, totalPips: 3, color: 'platinum' },
+    { key: 'gold-iii',     tier: 'Gold',     sub: 'III', min: 29000,  pips: 2, totalPips: 4, color: 'gold' },
+    { key: 'gold-ii',      tier: 'Gold',     sub: 'II',  min: 33000,  pips: 3, totalPips: 4, color: 'gold' },
+    { key: 'gold-i',       tier: 'Gold',     sub: 'I',   min: 37000,  pips: 4, totalPips: 4, color: 'gold' },
+    { key: 'platinum-iii', tier: 'Platinum', sub: 'III', min: 40000,  pips: 1, totalPips: 3, color: 'platinum' },
+    { key: 'platinum-ii',  tier: 'Platinum', sub: 'II',  min: 60000,  pips: 2, totalPips: 3, color: 'platinum' },
+    { key: 'platinum-i',   tier: 'Platinum', sub: 'I',   min: 80000,  pips: 3, totalPips: 3, color: 'platinum' },
     { key: 'champion',     tier: 'Champion', sub: null,  min: 100000, pips: 0, totalPips: 0, color: 'champion' },
   ];
 

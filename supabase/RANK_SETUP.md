@@ -36,18 +36,18 @@ Single source of truth is the `RANKS` array at the top of `assets/js/ranks.js`. 
 | Rank | Threshold |
 |---|---|
 | Bronze IV | $0 |
-| Bronze III | $2,500 |
-| Bronze II | $5,000 |
-| Bronze I | $7,500 |
-| Silver IV | $10,000 |
-| Silver III | $13,000 |
-| Silver II | $17,000 |
-| Silver I | $21,000 |
+| Bronze III | $4,000 |
+| Bronze II | $8,000 |
+| Bronze I | $12,000 |
+| Silver IV | $15,000 |
+| Silver III | $17,500 |
+| Silver II | $20,000 |
+| Silver I | $22,500 |
 | Gold IV | $25,000 |
-| Gold III | $31,000 |
-| Gold II | $37,000 |
-| Gold I | $43,000 |
-| Platinum III | $50,000 |
-| Platinum II | $66,000 |
-| Platinum I | $83,000 |
+| Gold III | $29,000 |
+| Gold II | $33,000 |
+| Gold I | $37,000 |
+| Platinum III | $40,000 |
+| Platinum II | $60,000 |
+| Platinum I | $80,000 |
 | **Champion** | **$100,000+** |
