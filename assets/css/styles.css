@@ -4894,7 +4894,7 @@ p {
 }
 .lb-row {
   display: grid;
-  grid-template-columns: 40px 36px 1fr auto 110px;
+  grid-template-columns: 40px 36px 1fr 110px;
   align-items: center;
   gap: 14px;
   padding: 12px 18px;
@@ -4958,7 +4958,6 @@ p {
     gap: 10px;
     padding: 12px 14px;
   }
-  .lb-count { display: none; }
   .lb-amount { font-size: 0.95rem; }
 }
 

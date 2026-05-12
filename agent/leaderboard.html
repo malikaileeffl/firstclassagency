@@ -230,7 +230,6 @@
             <div class="lb-podium-name" title="${escape(r.sender_name)}">${escape(r.sender_name)}</div>
             ${rankPill(r.sender_name)}
             <div class="lb-podium-amount">${fmt(r.total_premium)}</div>
-            <div class="lb-podium-count">${r.entry_count} ${r.entry_count === 1 ? 'app' : 'apps'}</div>
           </div>`;
       }).join('');
       podiumEl.setAttribute('aria-hidden', 'false');
@@ -241,7 +240,6 @@
         <div class="lb-rank">${r.rank}</div>
         <div class="lb-avatar">${escape(initial(r.sender_name))}</div>
         <div class="lb-name" title="${escape(r.sender_name)}">${escape(r.sender_name)} ${rankPill(r.sender_name)}</div>
-        <div class="lb-count">${r.entry_count} ${r.entry_count === 1 ? 'app' : 'apps'}</div>
         <div class="lb-amount">${fmt(r.total_premium)}</div>
       </div>
     `).join('');
