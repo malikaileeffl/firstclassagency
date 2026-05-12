@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Agent Resources — Agent portal</title>
+<title>Leaderboard — Agent portal</title>
 <meta name="robots" content="noindex,nofollow" />
 <meta name="theme-color" content="#0d0d0e" />
 <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
@@ -77,7 +77,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
       Training
     </a>
-    <a href="leaderboard.html">
+    <a href="leaderboard.html" class="active">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="6" width="6" height="14" rx="1"/><rect x="2" y="12" width="6" height="8" rx="1"/><rect x="16" y="9" width="6" height="11" rx="1"/></svg>
       Leaderboard
     </a>
@@ -102,7 +102,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Carrier Contacts
     </a>
-    <a href="resources.html" class="active">
+    <a href="resources.html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
       Agent Resources
     </a>
@@ -119,132 +119,31 @@
   <section class="hub-main">
     <div class="hub-head">
       <div>
-        <span class="eyebrow">Agent resources</span>
-        <h1 class="mt-8">Tools, templates, and tactics.</h1>
+        <span class="eyebrow">Premium leaderboard</span>
+        <h1 class="mt-8">Submitted premium, ranked.</h1>
       </div>
+      <button class="btn btn--ghost" id="lb-refresh" type="button" aria-label="Refresh leaderboard">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        Refresh
+      </button>
     </div>
 
-    <p style="color:var(--text-3);font-size:0.92rem;margin:-6px 0 24px;padding-right:var(--gutter);max-width:60ch;">Forms, banking-update walkthroughs, and state licensing references.</p>
+    <p style="color:var(--text-3);font-size:0.92rem;margin:-6px 0 24px;padding-right:var(--gutter);max-width:60ch;">Auto-fed from the team GroupMe. Drop "$NNNN CARRIER" in the chat and you'll show up here.</p>
 
-    <h2 class="list-section-head">Tools</h2>
-    <div class="doc-list reveal-stagger">
-
-      <a class="doc-item" href="../assets/docs/dial-tracker.pdf" download="Dial Tracker.pdf">
-        <div class="doc-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20"><path d="M14 3v5h5"/><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
-        </div>
-        <div class="doc-meta">
-          <div class="name">Dial Tracker</div>
-          <div class="sub">PDF · Click to download</div>
-        </div>
-        <div class="doc-action">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M12 4v12m0 0l-5-5m5 5l5-5M4 20h16"/></svg>
-        </div>
-      </a>
-
+    <div class="lb-tabs reveal" role="tablist" aria-label="Leaderboard period">
+      <button class="lb-tab is-active" type="button" data-period="day" role="tab" aria-selected="true">Today</button>
+      <button class="lb-tab" type="button" data-period="week" role="tab" aria-selected="false">This Week</button>
+      <button class="lb-tab" type="button" data-period="month" role="tab" aria-selected="false">This Month</button>
     </div>
 
-    <h2 class="list-section-head">Forms & updates</h2>
-
-    <div class="doc-list reveal-stagger">
-
-      <a class="doc-item" href="https://www.theplaybookagency.info/_files/ugd/dcaa5a_5666bfc0f96b4e3dba3fb38b01f0fe00.pdf" target="_blank" rel="noopener">
-        <div class="doc-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20"><path d="M14 3v5h5"/><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M8 13h8M8 17h6M8 9h2"/></svg>
-        </div>
-        <div class="doc-meta">
-          <div class="name">Corebridge Banking Update</div>
-          <div class="sub">PDF · how to update banking on Corebridge</div>
-        </div>
-        <div class="doc-action">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M7 17L17 7M9 7h8v8"/></svg>
-        </div>
-      </a>
-
-      <a class="doc-item" href="https://www.theplaybookagency.info/_files/ugd/dcaa5a_adf28aa6ab4c4e018ebff516ec24e4b0.pdf" target="_blank" rel="noopener">
-        <div class="doc-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20"><path d="M14 3v5h5"/><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M8 13h8M8 17h6M8 9h2"/></svg>
-        </div>
-        <div class="doc-meta">
-          <div class="name">Corebridge Card Update</div>
-          <div class="sub">PDF · how to update card on Corebridge</div>
-        </div>
-        <div class="doc-action">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M7 17L17 7M9 7h8v8"/></svg>
-        </div>
-      </a>
-
-      <a class="doc-item" href="https://www.theplaybookagency.info/_files/ugd/dcaa5a_0918bd614f464606b6f038b2b425a7c6.pdf" target="_blank" rel="noopener">
-        <div class="doc-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20"><path d="M14 3v5h5"/><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M8 13h8M8 17h6M8 9h2"/></svg>
-        </div>
-        <div class="doc-meta">
-          <div class="name">Americo Banking Update</div>
-          <div class="sub">PDF · how to update banking on Americo</div>
-        </div>
-        <div class="doc-action">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M7 17L17 7M9 7h8v8"/></svg>
-        </div>
-      </a>
-
+    <div class="lb-podium reveal" id="lb-podium" aria-hidden="true">
+      <!-- Top 3 podium injected here when there are >= 3 entries -->
     </div>
 
-    <h2 class="list-section-head">Licensing</h2>
-
-    <div class="doc-list reveal-stagger">
-
-      <a class="doc-item" href="https://nipr.com/licensing-center/state-requirements/california-non-resident-licensing-individual" target="_blank" rel="noopener">
-        <div class="doc-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        </div>
-        <div class="doc-meta">
-          <div class="name">California — non-resident requirements</div>
-          <div class="sub">NIPR licensing center</div>
-        </div>
-        <div class="doc-action">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M7 17L17 7M9 7h8v8"/></svg>
-        </div>
-      </a>
-
-      <a class="doc-item" href="https://aldoi.gov/LicenseeCZ/Initial.aspx" target="_blank" rel="noopener">
-        <div class="doc-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        </div>
-        <div class="doc-meta">
-          <div class="name">Alabama — non-resident requirements</div>
-          <div class="sub">Alabama Department of Insurance</div>
-        </div>
-        <div class="doc-action">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M7 17L17 7M9 7h8v8"/></svg>
-        </div>
-      </a>
-
-      <a class="doc-item" href="https://oci.georgia.gov/citizenship-affidavit" target="_blank" rel="noopener">
-        <div class="doc-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        </div>
-        <div class="doc-meta">
-          <div class="name">Georgia — non-resident requirements</div>
-          <div class="sub">Georgia OCI · citizenship affidavit</div>
-        </div>
-        <div class="doc-action">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M7 17L17 7M9 7h8v8"/></svg>
-        </div>
-      </a>
-
-      <a class="doc-item" href="https://docs.google.com/spreadsheets/d/1KPy3dxyBBGmKmcARgcE81F6hfk2oLj2FRTiok4uQ5TE/edit?gid=332598521#gid=332598521" target="_blank" rel="noopener">
-        <div class="doc-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
-        </div>
-        <div class="doc-meta">
-          <div class="name">State licenses · costs & timelines</div>
-          <div class="sub">Google Sheet — every state at a glance</div>
-        </div>
-        <div class="doc-action">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M7 17L17 7M9 7h8v8"/></svg>
-        </div>
-      </a>
-
+    <div class="lb-table-wrap reveal">
+      <div class="lb-table" id="lb-table">
+        <div class="lb-empty">Loading…</div>
+      </div>
     </div>
   </section>
 </main>
@@ -252,5 +151,102 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/main.js"></script>
 <script src="../assets/js/agent-auth.js"></script>
+
+<script>
+(() => {
+  const tabsEl    = document.querySelector('.lb-tabs');
+  const tableEl   = document.getElementById('lb-table');
+  const podiumEl  = document.getElementById('lb-podium');
+  const refreshEl = document.getElementById('lb-refresh');
+
+  let currentPeriod = 'day';
+  let signedIn = false;
+
+  // Wait for auth before fetching
+  document.addEventListener('fca:auth-ready', () => {
+    signedIn = true;
+    load(currentPeriod);
+  });
+
+  tabsEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('.lb-tab');
+    if (!btn) return;
+    tabsEl.querySelectorAll('.lb-tab').forEach((b) => {
+      b.classList.toggle('is-active', b === btn);
+      b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+    });
+    currentPeriod = btn.dataset.period;
+    load(currentPeriod);
+  });
+
+  refreshEl.addEventListener('click', () => load(currentPeriod));
+
+  async function load(period) {
+    if (!signedIn || !window.fcaSupabase) {
+      tableEl.innerHTML = '<div class="lb-empty">Signing in…</div>';
+      podiumEl.innerHTML = '';
+      podiumEl.setAttribute('aria-hidden', 'true');
+      return;
+    }
+    tableEl.innerHTML = '<div class="lb-empty">Loading…</div>';
+    podiumEl.innerHTML = '';
+    podiumEl.setAttribute('aria-hidden', 'true');
+
+    const { data, error } = await window.fcaSupabase.rpc('get_leaderboard', { p_period: period });
+
+    if (error) {
+      console.error('[FCA] leaderboard rpc failed:', error);
+      tableEl.innerHTML = '<div class="lb-empty error">Could not load leaderboard. ' + (error.message || '') + '</div>';
+      return;
+    }
+    render(data || []);
+  }
+
+  function render(rows) {
+    if (!rows.length) {
+      tableEl.innerHTML = '<div class="lb-empty">No premium yet this period. Drop your first win in the GroupMe — "$1200 CARRIER" — and you\'ll appear here.</div>';
+      return;
+    }
+
+    // Top 3 podium when we have 3+ entries
+    if (rows.length >= 3) {
+      const order = [rows[1], rows[0], rows[2]]; // 2nd, 1st, 3rd visually
+      podiumEl.innerHTML = order.map((r, i) => {
+        const rank = (i === 0 ? 2 : i === 1 ? 1 : 3);
+        return `
+          <div class="lb-podium-card lb-rank-${rank}">
+            <div class="lb-medal">${rank === 1 ? '🥇' : rank === 2 ? '🥈' : '🥉'}</div>
+            <div class="lb-podium-avatar">${escape(initial(r.sender_name))}</div>
+            <div class="lb-podium-name" title="${escape(r.sender_name)}">${escape(r.sender_name)}</div>
+            <div class="lb-podium-amount">${fmt(r.total_premium)}</div>
+            <div class="lb-podium-count">${r.entry_count} ${r.entry_count === 1 ? 'app' : 'apps'}</div>
+          </div>`;
+      }).join('');
+      podiumEl.setAttribute('aria-hidden', 'false');
+    }
+
+    tableEl.innerHTML = rows.map((r) => `
+      <div class="lb-row lb-rank-${r.rank}">
+        <div class="lb-rank">${r.rank}</div>
+        <div class="lb-avatar">${escape(initial(r.sender_name))}</div>
+        <div class="lb-name" title="${escape(r.sender_name)}">${escape(r.sender_name)}</div>
+        <div class="lb-count">${r.entry_count} ${r.entry_count === 1 ? 'app' : 'apps'}</div>
+        <div class="lb-amount">${fmt(r.total_premium)}</div>
+      </div>
+    `).join('');
+  }
+
+  function initial(name) {
+    return (name || '?').trim().charAt(0).toUpperCase();
+  }
+  function escape(s) {
+    return String(s).replace(/[&<>"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[c]);
+  }
+  function fmt(n) {
+    const v = Number(n) || 0;
+    return '$' + v.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  }
+})();
+</script>
 </body>
 </html>
