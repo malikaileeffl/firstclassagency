@@ -5527,3 +5527,25 @@ p {
   background: var(--surface);
   color: var(--text);
 }
+
+/* IP Report sidebar link — gold glowing icon */
+.hub-side a.ip-report-link svg {
+  color: #ffd86a;
+  animation: ipGoldGlow 2.4s ease-in-out infinite;
+  transition: none;
+}
+@keyframes ipGoldGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 2px rgba(255, 216, 106, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 8px rgba(255, 216, 106, 0.95));
+  }
+}
+[data-theme="light"] .hub-side a.ip-report-link svg {
+  color: #b07f1c;
+}
+[data-theme="light"] @keyframes ipGoldGlow {
+  0%, 100% { filter: drop-shadow(0 0 1px rgba(176, 127, 28, 0.35)); }
+  50%      { filter: drop-shadow(0 0 7px rgba(176, 127, 28, 0.7)); }
+}
