@@ -150,6 +150,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/main.js"></script>
+<script src="../assets/js/ranks.js"></script>
 <script src="../assets/js/agent-auth.js"></script>
 
 <script>
@@ -161,10 +162,19 @@
 
   let currentPeriod = 'day';
   let signedIn = false;
+  let lifetimeByName = {}; // sender_name → lifetime $ total, for rank pills
 
   // Wait for auth before fetching
-  document.addEventListener('fca:auth-ready', () => {
+  document.addEventListener('fca:auth-ready', async () => {
     signedIn = true;
+    // Fetch lifetime totals once — used to attach a rank pill to each row.
+    try {
+      const { data } = await window.fcaSupabase.rpc('get_lifetime_premiums');
+      lifetimeByName = {};
+      (data || []).forEach((r) => { lifetimeByName[(r.sender_name || '').toLowerCase()] = Number(r.lifetime_premium) || 0; });
+    } catch (e) {
+      console.warn('[FCA] could not load lifetime premiums for ranks', e);
+    }
     load(currentPeriod);
   });
 
@@ -218,6 +228,7 @@
             <div class="lb-medal">${rank === 1 ? '🥇' : rank === 2 ? '🥈' : '🥉'}</div>
             <div class="lb-podium-avatar">${escape(initial(r.sender_name))}</div>
             <div class="lb-podium-name" title="${escape(r.sender_name)}">${escape(r.sender_name)}</div>
+            ${rankPill(r.sender_name)}
             <div class="lb-podium-amount">${fmt(r.total_premium)}</div>
             <div class="lb-podium-count">${r.entry_count} ${r.entry_count === 1 ? 'app' : 'apps'}</div>
           </div>`;
@@ -229,11 +240,17 @@
       <div class="lb-row lb-rank-${r.rank}">
         <div class="lb-rank">${r.rank}</div>
         <div class="lb-avatar">${escape(initial(r.sender_name))}</div>
-        <div class="lb-name" title="${escape(r.sender_name)}">${escape(r.sender_name)}</div>
+        <div class="lb-name" title="${escape(r.sender_name)}">${escape(r.sender_name)} ${rankPill(r.sender_name)}</div>
         <div class="lb-count">${r.entry_count} ${r.entry_count === 1 ? 'app' : 'apps'}</div>
         <div class="lb-amount">${fmt(r.total_premium)}</div>
       </div>
     `).join('');
+  }
+
+  function rankPill(name) {
+    if (!window.FCA_RANKS) return '';
+    const lifetime = lifetimeByName[(name || '').toLowerCase()] || 0;
+    return window.FCA_RANKS.pillHtml(lifetime);
   }
 
   function initial(name) {

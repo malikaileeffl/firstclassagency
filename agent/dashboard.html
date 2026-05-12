@@ -124,6 +124,19 @@
       </div>
     </div>
 
+    <div class="rank-card reveal" id="rank-card" style="margin-right:var(--gutter);margin-bottom:20px;display:none;">
+      <div class="rank-card-emblem" id="rank-card-emblem"></div>
+      <div class="rank-card-body">
+        <span class="rank-card-label">Premium rank</span>
+        <h2 class="rank-card-name" id="rank-card-name">—</h2>
+        <span class="rank-card-stats" id="rank-card-stats">—</span>
+        <div class="rank-card-progress">
+          <div class="rank-card-progress-bar"><div class="rank-card-progress-fill" id="rank-card-fill" style="width:0%"></div></div>
+          <div class="rank-card-progress-meta"><span id="rank-card-progress-left">—</span><span id="rank-card-progress-right">—</span></div>
+        </div>
+      </div>
+    </div>
+
     <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:24px;padding-right:var(--gutter);" class="reveal">
       <div class="card" style="padding:28px;position:relative;overflow:hidden;">
         <div style="position:absolute;inset:0;background:radial-gradient(500px 240px at 100% 0%,rgba(0,120,171,0.18),transparent 70%);pointer-events:none;"></div>
@@ -199,6 +212,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/main.js"></script>
 <script src="../assets/js/training-schedule.js"></script>
+<script src="../assets/js/ranks.js"></script>
 <script src="../assets/js/agent-auth.js"></script>
 <script>
 /* Training-call dashboard with self-accountability checkmarks.
@@ -407,6 +421,85 @@
     renderWeekList();
     refreshTodayPill();
   });
+
+  // ----- RANK WIDGET ------------------------------------------------------
+  // Loads the agent's lifetime issued premium (from leaderboard_entries
+  // joined on their portal full_name → GroupMe sender_name) and renders
+  // the rank emblem, progress bar, and rank-up celebration on promotion.
+  document.addEventListener('fca:auth-ready', async (e) => {
+    if (!window.FCA_RANKS || !window.fcaSupabase) return;
+    const user = e.detail && e.detail.user;
+    if (!user) return;
+
+    const fullName = (user.user_metadata && user.user_metadata.full_name) || user.email.split('@')[0];
+
+    let lifetime = 0;
+    try {
+      const { data, error } = await window.fcaSupabase.rpc('get_my_lifetime_premium', { p_name: fullName });
+      if (error) throw error;
+      lifetime = Number(data) || 0;
+    } catch (err) {
+      console.warn('[FCA] rank: could not load lifetime premium', err);
+      return;
+    }
+
+    const card = document.getElementById('rank-card');
+    if (!card) return;
+    const { current, next, pct, remaining } = window.FCA_RANKS.progressToNext(lifetime);
+
+    document.getElementById('rank-card-emblem').innerHTML = window.FCA_RANKS.emblemSvg(lifetime, { size: 90 });
+    document.getElementById('rank-card-name').textContent = window.FCA_RANKS.rankLabel(current);
+    document.getElementById('rank-card-stats').textContent = next
+      ? `${window.FCA_RANKS.formatMoney(lifetime)} lifetime · ${window.FCA_RANKS.formatMoney(remaining)} to ${window.FCA_RANKS.rankLabel(next)}`
+      : `${window.FCA_RANKS.formatMoney(lifetime)} lifetime · top rank reached`;
+
+    const fill = document.getElementById('rank-card-fill');
+    fill.className = 'rank-card-progress-fill rank-fill-' + current.color;
+    requestAnimationFrame(() => { fill.style.width = pct + '%'; });
+
+    document.getElementById('rank-card-progress-left').textContent = next
+      ? window.FCA_RANKS.formatMoney(current.min)
+      : 'Champion reached';
+    document.getElementById('rank-card-progress-right').textContent = next
+      ? window.FCA_RANKS.formatMoney(next.min)
+      : '';
+
+    card.style.display = 'grid';
+
+    // ----- Rank-up celebration ---------------------------------------------
+    // Compare against locally-stored "last seen rank" — if the agent has
+    // climbed since we last saw them, fire the modal once.
+    const STORAGE_KEY = 'fca_rank_last_seen_' + user.id;
+    const lastSeenKey = window.localStorage.getItem(STORAGE_KEY);
+    const lastSeen = lastSeenKey ? window.FCA_RANKS.rankByKey(lastSeenKey) : null;
+
+    if (lastSeen && window.FCA_RANKS.rankIndex(current.key) > window.FCA_RANKS.rankIndex(lastSeen.key)) {
+      showRankUpModal(current);
+    }
+    window.localStorage.setItem(STORAGE_KEY, current.key);
+  });
+
+  function showRankUpModal(rank) {
+    const overlay = document.createElement('div');
+    overlay.className = 'rankup-overlay';
+    overlay.innerHTML = `
+      <div class="rankup-card">
+        <div class="rankup-eyebrow">Rank up</div>
+        <h2 class="rankup-title">You're now ${window.FCA_RANKS.rankLabel(rank)}</h2>
+        <div class="rankup-emblem">${window.FCA_RANKS.emblemSvg(rank.key, { size: 130 })}</div>
+        <div class="rankup-name">Keep stacking premium.</div>
+        <div class="rankup-sub">Promoted just now · Lifetime issued premium</div>
+        <button class="rankup-dismiss" type="button">Let's go</button>
+      </div>`;
+    document.body.appendChild(overlay);
+    requestAnimationFrame(() => overlay.classList.add('show'));
+    const dismiss = () => {
+      overlay.classList.remove('show');
+      setTimeout(() => overlay.remove(), 400);
+    };
+    overlay.querySelector('.rankup-dismiss').addEventListener('click', dismiss);
+    overlay.addEventListener('click', (ev) => { if (ev.target === overlay) dismiss(); });
+  }
 
   // Wire Join Zoom click — record attended/missed depending on Eastern Time.
   // We don't preventDefault, so Zoom still opens in a new tab regardless.
