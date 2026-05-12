@@ -5203,3 +5203,164 @@ p {
 .rank-trend.down { background: rgba(220, 60, 70, 0.16); color: #ef4444; }
 [data-theme="light"] .rank-trend.up   { color: #15803d; }
 [data-theme="light"] .rank-trend.down { color: #b91c1c; }
+
+/* "How do the rankings work?" link on the rank card */
+.rank-card { position: relative; }
+.rank-card-info {
+  position: absolute;
+  bottom: 14px;
+  right: 18px;
+  background: transparent;
+  border: 0;
+  color: var(--accent-bright);
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.75;
+  transition: opacity var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+  text-decoration: underline;
+  text-decoration-color: rgba(26, 163, 223, 0.4);
+  text-underline-offset: 3px;
+}
+.rank-card-info:hover { opacity: 1; text-decoration-color: var(--accent-bright); }
+@media (max-width: 560px) {
+  .rank-card-info { position: static; margin: 12px auto 0; display: block; }
+}
+
+/* Rank info modal */
+.rank-info-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 320ms cubic-bezier(0.2, 0.7, 0.1, 1);
+}
+.rank-info-overlay.show { opacity: 1; pointer-events: auto; }
+.rank-info-card {
+  background: linear-gradient(180deg, #1a1a1f 0%, #0d0d0e 100%);
+  border: 1px solid rgba(26, 163, 223, 0.25);
+  border-radius: 18px;
+  padding: 28px 32px;
+  max-width: 720px;
+  width: 100%;
+  max-height: 86vh;
+  overflow-y: auto;
+  position: relative;
+  transform: scale(0.92) translateY(16px);
+  transition: transform 380ms cubic-bezier(0.2, 0.9, 0.3, 1.2);
+  box-shadow: 0 30px 80px rgba(0, 120, 171, 0.22);
+}
+.rank-info-overlay.show .rank-info-card { transform: scale(1) translateY(0); }
+
+[data-theme="light"] .rank-info-card {
+  background: linear-gradient(180deg, #ffffff 0%, #eef0f4 100%);
+  border-color: rgba(0, 120, 171, 0.25);
+}
+
+.rank-info-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease);
+}
+.rank-info-close:hover { background: rgba(255, 255, 255, 0.14); }
+[data-theme="light"] .rank-info-close { background: rgba(13, 18, 25, 0.05); }
+[data-theme="light"] .rank-info-close:hover { background: rgba(13, 18, 25, 0.1); }
+
+.rank-info-title {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 600;
+  margin: 0 0 14px;
+  background: linear-gradient(180deg, #ffffff 0%, #b6dceb 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+[data-theme="light"] .rank-info-title {
+  background: linear-gradient(180deg, #0d1219 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.rank-info-rules {
+  margin: 0 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.rank-info-rules p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+.rank-info-rules code {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.rank-info-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+.rank-info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.rank-info-emblem {
+  flex-shrink: 0;
+  width: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.rank-info-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.rank-info-name {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--text);
+}
+.rank-info-threshold {
+  font-size: 0.78rem;
+  color: var(--text-3);
+}
+
+.rank-info-warning {
+  color: #ffd86a;
+  font-weight: 700;
+}
+[data-theme="light"] .rank-info-warning { color: #b07f1c; }

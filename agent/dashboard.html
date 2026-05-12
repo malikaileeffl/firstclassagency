@@ -142,6 +142,7 @@
           <span id="rank-comparison-text"></span>
         </div>
       </div>
+      <button type="button" class="rank-card-info" id="rank-card-info">How do the rankings work?</button>
     </div>
 
     <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:24px;padding-right:var(--gutter);" class="reveal">
@@ -595,6 +596,60 @@
   }
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]);
+  }
+
+  // ----- "How do the rankings work?" info modal --------------------------
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('#rank-card-info')) {
+      e.preventDefault();
+      showRankInfoModal();
+    }
+  });
+
+  function showRankInfoModal() {
+    if (!window.FCA_RANKS) return;
+    const fmt = window.FCA_RANKS.formatMoney;
+    const rows = window.FCA_RANKS.RANKS.map((r) => {
+      const label = window.FCA_RANKS.rankLabel(r);
+      const threshold = r.min === 0 ? 'Starting rank' : fmt(r.min);
+      return `
+        <div class="rank-info-row">
+          <div class="rank-info-emblem">${window.FCA_RANKS.emblemSvg(r.key, { size: 56, animate: false })}</div>
+          <div class="rank-info-text">
+            <div class="rank-info-name">${escapeHtml(label)}</div>
+            <div class="rank-info-threshold">${threshold} / month</div>
+          </div>
+        </div>`;
+    }).join('');
+
+    const overlay = document.createElement('div');
+    overlay.className = 'rank-info-overlay';
+    overlay.innerHTML = `
+      <div class="rank-info-card">
+        <button class="rank-info-close" type="button" aria-label="Close">×</button>
+        <h2 class="rank-info-title">How rankings work</h2>
+        <div class="rank-info-rules">
+          <p><strong>Your rank reflects this month's issued premium.</strong> Every dollar you submit in the GroupMe lifts you up the ladder. Drop a win in the chat with the format <code>$1200 CARRIER</code> and it'll count.</p>
+          <p><strong class="rank-info-warning">Your portal name must match your GroupMe name EXACTLY.</strong> Wins are matched by name — if "Drew Smith" in the portal posts as "Drew S." in the GroupMe, those wins won't count toward your rank. Update your name in Account settings if there's a mismatch.</p>
+          <p><strong>Ranks reset on the 1st of every month</strong> at midnight Eastern. Last month's standings get a wrap-up card — including a personal-best flag if you outdid yourself.</p>
+          <p><strong>Each tier has sub-ranks IV → I</strong> (Bronze through Gold), III → I for Platinum. Climb them all to reach Champion.</p>
+        </div>
+        <div class="rank-info-list">${rows}</div>
+      </div>`;
+    document.body.appendChild(overlay);
+    requestAnimationFrame(() => overlay.classList.add('show'));
+    const dismiss = () => {
+      overlay.classList.remove('show');
+      setTimeout(() => overlay.remove(), 400);
+    };
+    overlay.querySelector('.rank-info-close').addEventListener('click', dismiss);
+    overlay.addEventListener('click', (ev) => { if (ev.target === overlay) dismiss(); });
+    document.addEventListener('keydown', function escListener(ev) {
+      if (ev.key === 'Escape') {
+        dismiss();
+        document.removeEventListener('keydown', escListener);
+      }
+    });
   }
 
   // Wire Join Zoom click — record attended/missed depending on Eastern Time.
