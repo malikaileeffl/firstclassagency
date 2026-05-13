@@ -534,7 +534,7 @@
     }));
 
     // ----- Rank-up celebration (within current month) ----------------------
-    // Only fires on upward movement. Monthly reset to Bronze IV is silent.
+    // Only fires on upward movement. Monthly reset to Copper IV is silent.
     const RANK_KEY = 'fca_rank_last_seen_' + user.id;
     const lastSeen = window.localStorage.getItem(RANK_KEY);
     const lastRank = lastSeen ? window.FCA_RANKS.rankByKey(lastSeen) : null;

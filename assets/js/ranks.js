@@ -3,7 +3,7 @@
    Single source of truth, used by dashboard widget, leaderboard pills, and
    rank-up modal.
 
-     Bronze IV → III → II → I       ($0 → $14,999)        ramping up
+     Copper IV → III → II → I       ($0 → $14,999)        ramping up
      Silver IV → III → II → I       ($15k → $24,999)      real producer month
      Gold   IV → III → II → I       ($25k → $39,999)      heater month
      Platinum  III → II → I         ($40k → $99,999)      hall-of-fame month
@@ -11,10 +11,10 @@
 */
 (function () {
   const RANKS = [
-    { key: 'bronze-iv',    tier: 'Bronze',   sub: 'IV',  min: 0,      pips: 1, totalPips: 4, color: 'bronze' },
-    { key: 'bronze-iii',   tier: 'Bronze',   sub: 'III', min: 4000,   pips: 2, totalPips: 4, color: 'bronze' },
-    { key: 'bronze-ii',    tier: 'Bronze',   sub: 'II',  min: 8000,   pips: 3, totalPips: 4, color: 'bronze' },
-    { key: 'bronze-i',     tier: 'Bronze',   sub: 'I',   min: 12000,  pips: 4, totalPips: 4, color: 'bronze' },
+    { key: 'bronze-iv',    tier: 'Copper',   sub: 'IV',  min: 0,      pips: 1, totalPips: 4, color: 'bronze' },
+    { key: 'bronze-iii',   tier: 'Copper',   sub: 'III', min: 4000,   pips: 2, totalPips: 4, color: 'bronze' },
+    { key: 'bronze-ii',    tier: 'Copper',   sub: 'II',  min: 8000,   pips: 3, totalPips: 4, color: 'bronze' },
+    { key: 'bronze-i',     tier: 'Copper',   sub: 'I',   min: 12000,  pips: 4, totalPips: 4, color: 'bronze' },
     { key: 'silver-iv',    tier: 'Silver',   sub: 'IV',  min: 15000,  pips: 1, totalPips: 4, color: 'silver' },
     { key: 'silver-iii',   tier: 'Silver',   sub: 'III', min: 17500,  pips: 2, totalPips: 4, color: 'silver' },
     { key: 'silver-ii',    tier: 'Silver',   sub: 'II',  min: 20000,  pips: 3, totalPips: 4, color: 'silver' },

@@ -23,7 +23,7 @@ The rank system itself is pure client-side:
 
 The rank system matches the signed-in agent to their `leaderboard_entries` rows by **comparing their portal `full_name` against the GroupMe `sender_name`** (case-insensitive).
 
-If an agent's portal name doesn't match what they post under in GroupMe, they'll show as Bronze IV with $0 this month. Fix: update their portal name in **Account** to match.
+If an agent's portal name doesn't match what they post under in GroupMe, they'll show as Copper IV with $0 this month. Fix: update their portal name in **Account** to match.
 
 For showing pills on the leaderboard, the same name match is used per row.
 
@@ -35,10 +35,10 @@ Single source of truth is the `RANKS` array at the top of `assets/js/ranks.js`. 
 
 | Rank | Threshold |
 |---|---|
-| Bronze IV | $0 |
-| Bronze III | $4,000 |
-| Bronze II | $8,000 |
-| Bronze I | $12,000 |
+| Copper IV | $0 |
+| Copper III | $4,000 |
+| Copper II | $8,000 |
+| Copper I | $12,000 |
 | Silver IV | $15,000 |
 | Silver III | $17,500 |
 | Silver II | $20,000 |
