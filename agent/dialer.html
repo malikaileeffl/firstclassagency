@@ -411,6 +411,30 @@
           </div>
           <p class="field-help">Minimum $10. Payments are processed securely by Stripe.</p>
         </div>
+
+        <!-- Inline Stripe Payment Element flow -->
+        <div class="topup-flow" id="topup-flow" hidden>
+          <div class="topup-flow-head">
+            <div>
+              <span class="topup-flow-label">Adding credits</span>
+              <span class="topup-flow-amount" id="topup-flow-amount">$0.00</span>
+            </div>
+            <button type="button" class="topup-flow-cancel" id="topup-flow-cancel" aria-label="Cancel">×</button>
+          </div>
+          <div class="topup-flow-mount" id="payment-element">
+            <p class="topup-loading">Loading secure payment form…</p>
+          </div>
+          <div class="topup-flow-actions">
+            <button type="button" class="btn btn--primary topup-flow-pay" id="topup-flow-pay" disabled>
+              <span class="topup-flow-pay-text">Pay <span id="topup-flow-pay-amount">$0.00</span></span>
+            </button>
+          </div>
+          <p class="topup-flow-status" id="topup-flow-status"></p>
+          <p class="topup-flow-trust">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Powered by Stripe · Your card details never touch our servers.
+          </p>
+        </div>
       </section>
 
       <!-- Auto-recharge -->
@@ -648,6 +672,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://js.stripe.com/v3/"></script>
 <script src="../assets/js/main.js"></script>
 <script src="../assets/js/ranks.js"></script>
 <script src="../assets/js/agent-auth.js"></script>
@@ -1793,10 +1818,163 @@
     startTopup(Math.round(dollars * 100));
   });
 
+  // -------- Stripe Payment Element --------------------------------------
+  // Publishable key is safe to expose in frontend code by design.
+  // Swap to pk_live_... when ready to go live.
+  const STRIPE_PUBLISHABLE_KEY = 'pk_test_51RIzHkGzTRNP3Po0EmNzRE6OCKOyw1hkYfMUsTMRY8WHznztp9akCYflnw6oRpjX5yvJZn8pYanDDE5VcjttHSo000Ci9b2Q5U';
+  const stripeJs = (typeof Stripe !== 'undefined') ? Stripe(STRIPE_PUBLISHABLE_KEY) : null;
+  let activeElements = null;     // Stripe Elements instance
+  let activePaymentEl = null;    // Payment Element
+  let activeAmountCents = 0;
+  let pendingPaymentIntentId = null;
+
   async function startTopup(amountCents) {
-    // TODO: invoke a `create-checkout-session` edge function and redirect.
-    // For now we surface a clear placeholder so the UI flow is obvious.
-    alert(`Stripe Checkout for ${fmtUsd(amountCents)} will open here once Stripe is connected.\n\nNext build step wires this to the create-checkout-session edge function.`);
+    if (!stripeJs) {
+      alert('Stripe.js failed to load. Refresh and try again.');
+      return;
+    }
+    if (amountCents < 1000) { alert('Minimum top-up is $10.'); return; }
+    if (amountCents > 100000) { alert('Maximum single top-up is $1,000.'); return; }
+
+    activeAmountCents = amountCents;
+    document.getElementById('topup-flow-amount').textContent       = fmtUsd(amountCents);
+    document.getElementById('topup-flow-pay-amount').textContent   = fmtUsd(amountCents);
+    document.getElementById('topup-flow-status').textContent       = '';
+    document.getElementById('topup-flow-status').className         = 'topup-flow-status';
+    document.getElementById('topup-flow-pay').disabled             = true;
+    document.getElementById('payment-element').innerHTML           = '<p class="topup-loading">Loading secure payment form…</p>';
+
+    document.getElementById('topup-flow').hidden = false;
+    document.getElementById('topup-flow').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    try {
+      // Ask the edge function to create a PaymentIntent for this amount
+      const { data: { session } } = await sb.auth.getSession();
+      const res = await fetch(`${sb.supabaseUrl}/functions/v1/create-payment-intent`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session?.access_token}`,
+          'Content-Type':  'application/json',
+          'apikey':        sb.supabaseKey,
+        },
+        body: JSON.stringify({ amount_cents: amountCents }),
+      });
+      if (!res.ok) {
+        const t = await res.text();
+        throw new Error(t || ('HTTP ' + res.status));
+      }
+      const { client_secret, payment_intent_id } = await res.json();
+      pendingPaymentIntentId = payment_intent_id;
+
+      // Mount the Payment Element with the client_secret
+      activeElements = stripeJs.elements({
+        clientSecret: client_secret,
+        appearance: stripeAppearance(),
+      });
+      document.getElementById('payment-element').innerHTML = '';
+      activePaymentEl = activeElements.create('payment', {
+        layout: { type: 'tabs', defaultCollapsed: false },
+        fields: { billingDetails: { address: { country: 'never', postalCode: 'auto' } } },
+      });
+      activePaymentEl.mount('#payment-element');
+      activePaymentEl.on('ready', () => {
+        document.getElementById('topup-flow-pay').disabled = false;
+      });
+      activePaymentEl.on('change', (e) => {
+        if (e.error) {
+          showTopupStatus(e.error.message, 'error');
+        } else {
+          document.getElementById('topup-flow-status').textContent = '';
+        }
+      });
+    } catch (e) {
+      console.error('[topup] create-payment-intent failed:', e);
+      showTopupStatus('Could not start checkout: ' + e.message, 'error');
+    }
+  }
+
+  function stripeAppearance() {
+    // Match the dialer dark surface
+    const isDark = (document.documentElement.dataset.theme || 'dark') !== 'light';
+    return {
+      theme: isDark ? 'night' : 'stripe',
+      variables: {
+        colorPrimary: '#0078ab',
+        colorBackground: isDark ? '#181a1c' : '#ffffff',
+        colorText: isDark ? '#e9ebef' : '#1e1e1e',
+        colorDanger: '#ef4444',
+        fontFamily: 'Inter, system-ui, sans-serif',
+        spacingUnit: '4px',
+        borderRadius: '8px',
+      },
+    };
+  }
+
+  document.getElementById('topup-flow-cancel').addEventListener('click', cancelTopup);
+
+  function cancelTopup() {
+    if (activePaymentEl) { try { activePaymentEl.destroy(); } catch (_) {} }
+    activePaymentEl = null;
+    activeElements = null;
+    activeAmountCents = 0;
+    pendingPaymentIntentId = null;
+    document.getElementById('topup-flow').hidden = true;
+  }
+
+  document.getElementById('topup-flow-pay').addEventListener('click', async () => {
+    if (!activeElements) return;
+    const btn = document.getElementById('topup-flow-pay');
+    btn.disabled = true;
+    btn.querySelector('.topup-flow-pay-text').textContent = 'Processing…';
+    showTopupStatus('', null);
+
+    const { error, paymentIntent } = await stripeJs.confirmPayment({
+      elements: activeElements,
+      redirect: 'if_required',
+    });
+    if (error) {
+      btn.disabled = false;
+      btn.querySelector('.topup-flow-pay-text').innerHTML = 'Pay <span id="topup-flow-pay-amount">' + fmtUsd(activeAmountCents) + '</span>';
+      showTopupStatus(error.message || 'Payment failed.', 'error');
+      return;
+    }
+    if (paymentIntent && paymentIntent.status === 'succeeded') {
+      showTopupStatus('Payment successful — adding credits to your balance…', 'success');
+      // Optimistic UI bump
+      billingProfile.credit_balance_cents = (billingProfile.credit_balance_cents || 0) + activeAmountCents;
+      renderBilling();
+      // Poll the DB until the webhook confirms (usually < 2s)
+      pollBalanceAfterTopup(activeAmountCents);
+    } else {
+      showTopupStatus('Payment is processing. Credits will appear shortly.', 'success');
+    }
+  });
+
+  function showTopupStatus(msg, kind) {
+    const el = document.getElementById('topup-flow-status');
+    el.textContent = msg;
+    el.className = 'topup-flow-status' + (kind ? ' is-' + kind : '');
+  }
+
+  async function pollBalanceAfterTopup(expectedDeltaCents) {
+    const startBalance = (billingProfile.credit_balance_cents || 0) - expectedDeltaCents;
+    const deadline = Date.now() + 30000; // 30s
+    while (Date.now() < deadline) {
+      await new Promise(r => setTimeout(r, 1500));
+      const { data } = await sb.from('profiles')
+        .select('credit_balance_cents, stripe_card_brand, stripe_card_last4, stripe_card_exp_month, stripe_card_exp_year')
+        .eq('id', user.id).maybeSingle();
+      if (data && data.credit_balance_cents >= startBalance + expectedDeltaCents) {
+        Object.assign(billingProfile, data);
+        renderBilling();
+        await loadRecentTransactions();
+        cancelTopup();
+        showTopupStatus(`+${fmtUsd(expectedDeltaCents)} added · new balance ${fmtUsd(data.credit_balance_cents)}`, 'success');
+        return;
+      }
+    }
+    // Webhook didn't land in time — still show success but warn
+    showTopupStatus('Credits should land within a minute. Refresh if they don\'t appear.', 'success');
   }
 
   document.getElementById('bill-add-card').addEventListener('click', () => {

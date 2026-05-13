@@ -7033,6 +7033,97 @@ body.dialer-fullwidth .hub-main { padding-left: 8px; }
 .topup-custom-row .input { flex: 1; max-width: 160px; }
 .topup-custom-row .btn { flex-shrink: 0; }
 
+/* Inline Stripe Payment Element flow */
+.topup-flow {
+  margin-top: 18px;
+  padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  border-radius: var(--r-md);
+  box-shadow: 0 4px 18px rgba(0, 120, 171, 0.18);
+  animation: topupFadeIn 220ms var(--ease);
+}
+@keyframes topupFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.topup-flow-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+.topup-flow-label {
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.72rem;
+  color: var(--text-3);
+  margin-bottom: 2px;
+}
+.topup-flow-amount {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.topup-flow-cancel {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 0;
+  background: transparent;
+  color: var(--text-2);
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease);
+}
+.topup-flow-cancel:hover { background: var(--surface-hover); color: var(--text); }
+.topup-flow-mount {
+  min-height: 60px;
+  background: var(--bg-1);
+  border-radius: var(--r-md);
+  padding: 10px;
+}
+.topup-loading {
+  margin: 0;
+  padding: 14px;
+  font-size: 0.86rem;
+  color: var(--text-3);
+  text-align: center;
+}
+.topup-flow-actions {
+  margin-top: 14px;
+  display: flex;
+}
+.topup-flow-pay {
+  width: 100%;
+  padding: 12px;
+  font-size: 0.92rem;
+  letter-spacing: 0.04em;
+}
+.topup-flow-pay:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.topup-flow-status {
+  margin: 10px 0 0;
+  font-size: 0.86rem;
+  min-height: 1.2em;
+  color: var(--text-2);
+}
+.topup-flow-status.is-error { color: #ef4444; }
+.topup-flow-status.is-success { color: #4ade80; }
+.topup-flow-trust {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+  margin: 12px 0 0;
+  font-size: 0.74rem;
+  color: var(--text-3);
+}
+
 /* Switch toggle */
 .settings-switch {
   display: inline-block;
