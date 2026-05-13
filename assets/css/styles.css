@@ -6199,6 +6199,11 @@ body.dialer-fullwidth .hub-side a svg {
   height: 20px;
   flex-shrink: 0;
 }
+/* The Feather cart icon's handle anchors top-left while the body sits right
+   of center, so it reads as off-center in a square slot. Nudge it left a
+   hair to balance the visual mass. Applies in both full and icon sidebars. */
+.hub-side .leads-soon svg { transform: translateX(-2px); }
+body.dialer-fullwidth .hub-side .leads-soon svg { transform: translateX(-1.5px); }
 body.dialer-fullwidth .hub-side .leads-soon .leads-text,
 body.dialer-fullwidth .hub-side .leads-soon .soon-pill {
   display: none;
