@@ -6594,3 +6594,186 @@ body.dialer-fullwidth .hub-main { padding-left: 8px; }
 .lr-disp-popover .disp-callback { color: #ffd86a; }
 .lr-disp-popover .disp-not-interested,
 .lr-disp-popover .disp-bad-number { color: #ef4444; }
+
+/* =============================================================================
+   Dialer — Settings modal
+   ============================================================================= */
+
+/* Icon-only gear button in the dialer head */
+.btn--icon {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-md);
+}
+.btn--icon svg { width: 18px; height: 18px; }
+
+/* Wider modal for the two-column settings layout */
+.settings-modal-wide {
+  max-width: 1080px !important;
+  width: 96%;
+  padding: 24px 32px 28px;
+}
+
+/* Tabs */
+.settings-tabs {
+  display: flex;
+  gap: 6px;
+  border-bottom: 1px solid var(--border);
+  margin: -4px -32px 22px;
+  padding: 0 32px;
+  overflow-x: auto;
+}
+.settings-tab {
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: 10px 14px;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
+}
+.settings-tab:hover { color: var(--text); }
+.settings-tab.is-active {
+  color: var(--text);
+  border-bottom-color: var(--accent-bright);
+}
+
+.settings-pane[hidden] { display: none; }
+
+/* Two-column grid */
+.settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px 36px;
+}
+@media (max-width: 880px) {
+  .settings-grid { grid-template-columns: 1fr; gap: 22px; }
+}
+.settings-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Field-level help text */
+.field-help {
+  margin: 6px 0 0;
+  font-size: 0.82rem;
+  color: var(--text-3);
+  line-height: 1.5;
+}
+.field-help code {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--surface-hover);
+  color: var(--text-2);
+}
+
+/* Required asterisk */
+.req { color: #ef4444; margin-left: 2px; }
+
+/* Per-day grid (Sun–Sat) */
+.settings-days {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px 12px;
+  margin: -4px 0 0;
+}
+@media (max-width: 580px) {
+  .settings-days { grid-template-columns: repeat(2, 1fr); }
+}
+.settings-day { display: flex; flex-direction: column; gap: 4px; }
+.settings-day label {
+  font-size: 0.78rem;
+  color: var(--text-2);
+  font-weight: 500;
+}
+.time-select {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  font-size: 0.88rem;
+}
+
+/* Fieldsets */
+.settings-fieldset {
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 12px 16px 14px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.settings-fieldset legend {
+  padding: 0 8px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.legend-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.7rem;
+  cursor: help;
+  user-select: none;
+}
+
+/* Checkbox rows */
+.settings-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: var(--text);
+  cursor: pointer;
+  padding: 4px 0;
+  line-height: 1.4;
+}
+.settings-check input[type="checkbox"] {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  accent-color: var(--accent-bright);
+  cursor: pointer;
+}
+
+/* Save bar */
+.settings-actions {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 14px;
+}
+.settings-save-status {
+  font-size: 0.85rem;
+  color: var(--accent-bright);
+}
+.settings-save-status.error { color: #ef4444; }
+#settings-save {
+  letter-spacing: 0.06em;
+  font-size: 0.82rem;
+  padding: 12px 22px;
+}
