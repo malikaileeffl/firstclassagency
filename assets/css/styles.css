@@ -5989,6 +5989,7 @@ p {
   opacity: 0;
   transition: opacity 280ms var(--ease);
 }
+.lead-modal[hidden] { display: none !important; } /* hidden attribute must win over the display: flex above */
 .lead-modal.show { opacity: 1; }
 .lead-modal-backdrop { position: absolute; inset: 0; cursor: pointer; }
 .lead-modal-content {
