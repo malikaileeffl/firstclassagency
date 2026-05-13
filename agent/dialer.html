@@ -247,7 +247,8 @@
 
     <nav class="settings-tabs" role="tablist">
       <button class="settings-tab is-active" type="button" data-tab="general" role="tab" aria-selected="true">General settings</button>
-      <!-- More tabs (Drip campaigns, SMS templates, Billing, etc.) will be added here. -->
+      <button class="settings-tab"           type="button" data-tab="billing" role="tab" aria-selected="false">Billing</button>
+      <!-- More tabs (Drip campaigns, SMS templates, etc.) will be added here. -->
     </nav>
 
     <div class="settings-pane" data-pane="general">
@@ -360,6 +361,166 @@
           <button type="submit" class="btn btn--primary" id="settings-save">UPDATE INFO</button>
         </div>
       </form>
+    </div>
+
+    <!-- ===== BILLING TAB ===== -->
+    <div class="settings-pane" data-pane="billing" hidden>
+
+      <!-- Balance hero -->
+      <div class="billing-hero">
+        <div class="billing-hero-main">
+          <span class="billing-hero-label">Current balance</span>
+          <span class="billing-hero-amount" id="bill-balance">$0.00</span>
+          <span class="billing-hero-est" id="bill-est">No credits — top up to start calling and texting</span>
+        </div>
+        <div class="billing-hero-status" id="bill-status" data-state="empty">
+          <span class="billing-hero-dot"></span>
+          <span id="bill-status-label">Empty</span>
+        </div>
+      </div>
+
+      <!-- Quick top-up -->
+      <section class="billing-section">
+        <h3 class="billing-section-title">Add credits</h3>
+        <p class="billing-section-help">Credits never expire and only get used when you actually send a text or place a call. Hit zero and the dialer pauses — top up to resume.</p>
+        <div class="topup-grid">
+          <button class="topup-amt" type="button" data-topup="2500">
+            <span class="topup-amt-big">$25</span>
+            <span class="topup-amt-sub">~1,250 SMS</span>
+          </button>
+          <button class="topup-amt" type="button" data-topup="5000">
+            <span class="topup-amt-big">$50</span>
+            <span class="topup-amt-sub">~2,000 voice min</span>
+          </button>
+          <button class="topup-amt is-recommended" type="button" data-topup="10000">
+            <span class="topup-amt-tag">Most popular</span>
+            <span class="topup-amt-big">$100</span>
+            <span class="topup-amt-sub">~4,000 voice min</span>
+          </button>
+          <button class="topup-amt" type="button" data-topup="20000">
+            <span class="topup-amt-big">$200</span>
+            <span class="topup-amt-sub">~8,000 voice min</span>
+          </button>
+        </div>
+        <div class="topup-custom">
+          <label for="topup-custom-amt">Custom amount</label>
+          <div class="topup-custom-row">
+            <span class="topup-currency">$</span>
+            <input class="input" id="topup-custom-amt" type="number" min="10" max="1000" step="5" placeholder="50" />
+            <button class="btn btn--primary" id="topup-custom-go" type="button">Add credits</button>
+          </div>
+          <p class="field-help">Minimum $10. Payments are processed securely by Stripe.</p>
+        </div>
+      </section>
+
+      <!-- Auto-recharge -->
+      <section class="billing-section">
+        <div class="billing-section-head">
+          <h3 class="billing-section-title">Auto-recharge</h3>
+          <label class="settings-switch">
+            <input type="checkbox" id="bill-autorecharge" />
+            <span class="settings-switch-track"><span class="settings-switch-thumb"></span></span>
+          </label>
+        </div>
+        <p class="billing-section-help">Keep the dialer running without thinking about it. We'll charge your saved card automatically when your balance gets low. If the charge fails, auto-recharge turns off and you'll get an alert.</p>
+
+        <div class="autorecharge-fields" id="bill-autorecharge-fields" hidden>
+          <div class="field-row">
+            <div class="field">
+              <label for="bill-threshold">When balance drops below</label>
+              <div class="dollar-input">
+                <span>$</span>
+                <input class="input" id="bill-threshold" type="number" min="5" max="100" step="5" value="10" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="bill-amount">Automatically add</label>
+              <div class="dollar-input">
+                <span>$</span>
+                <input class="input" id="bill-amount" type="number" min="25" max="500" step="25" value="50" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Payment method -->
+      <section class="billing-section">
+        <h3 class="billing-section-title">Payment method</h3>
+        <div class="payment-method" id="bill-payment-method">
+          <div class="payment-method-empty" id="bill-card-empty">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            <div>
+              <p><strong>No card on file</strong></p>
+              <p class="field-help">Add a card to enable one-click top-ups and auto-recharge.</p>
+            </div>
+            <button class="btn btn--ghost" type="button" id="bill-add-card">Add card</button>
+          </div>
+          <div class="payment-method-saved" id="bill-card-saved" hidden>
+            <div class="card-brand-icon" id="bill-card-brand">VISA</div>
+            <div>
+              <p><strong id="bill-card-display">•••• 4242</strong></p>
+              <p class="field-help">Expires <span id="bill-card-exp">12/2028</span></p>
+            </div>
+            <button class="btn btn--ghost" type="button" id="bill-update-card">Update</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Twilio phone number -->
+      <section class="billing-section">
+        <h3 class="billing-section-title">Your dialer phone number</h3>
+        <p class="billing-section-help">Each agent gets a dedicated number so leads can call and text the same number back. The $2/month rental is deducted from your credits on the 1st of each month.</p>
+        <div class="phone-number-row" id="bill-phone-row">
+          <div class="phone-number-none" id="bill-phone-none">
+            <div>
+              <p><strong>No number assigned yet</strong></p>
+              <p class="field-help">Once you add credits, we'll provision a number with an area code matching your default time zone.</p>
+            </div>
+            <button class="btn btn--ghost" type="button" id="bill-claim-number" disabled>Pick a number</button>
+          </div>
+          <div class="phone-number-active" id="bill-phone-active" hidden>
+            <div>
+              <p class="phone-num-display" id="bill-phone-display">—</p>
+              <p class="field-help">$2.00/month · next charge <span id="bill-phone-next">—</span></p>
+            </div>
+            <button class="btn btn--ghost" type="button" id="bill-release-number">Release number</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Rate card -->
+      <section class="billing-section">
+        <details class="billing-rates">
+          <summary>
+            <h3 class="billing-section-title" style="display:inline;">Current rates</h3>
+            <span class="rate-summary">$0.020 / SMS · $0.025 / min</span>
+          </summary>
+          <table class="rate-table">
+            <tr><td>Outbound SMS</td><td class="rate-num">$0.020 per text</td></tr>
+            <tr><td>Inbound SMS (replies)</td><td class="rate-num">$0.015 per text</td></tr>
+            <tr><td>Outbound voice</td><td class="rate-num">$0.025 per minute</td></tr>
+            <tr><td>Inbound voice (callbacks)</td><td class="rate-num">$0.015 per minute</td></tr>
+            <tr><td>Phone number rental</td><td class="rate-num">$2.00 per month</td></tr>
+            <tr><td>Multi-segment SMS (>160 chars)</td><td class="rate-num">$0.020 per 160-char segment</td></tr>
+          </table>
+          <p class="field-help">Rates are subject to a 30-day notice in writing for adjustments. Calls are billed only when the recipient picks up — no charge for rings or no-answers.</p>
+        </details>
+      </section>
+
+      <!-- Recent activity -->
+      <section class="billing-section">
+        <h3 class="billing-section-title">Recent activity</h3>
+        <div class="tx-list" id="bill-tx-list">
+          <p class="tx-empty">No transactions yet. Your top-ups and usage will appear here.</p>
+        </div>
+      </section>
+
+      <div class="settings-actions">
+        <span class="settings-save-status" id="bill-save-status"></span>
+        <button type="button" class="btn btn--primary" id="bill-save">SAVE BILLING SETTINGS</button>
+      </div>
+
     </div>
 
   </div>
@@ -1472,6 +1633,215 @@
     el.addEventListener('click', closeSettings)
   );
   document.getElementById('set-stop-mode').addEventListener('change', (e) => applyStopMode(e.target.value));
+
+  // Tab switching
+  settingsModal.querySelectorAll('.settings-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      settingsModal.querySelectorAll('.settings-tab').forEach(t => {
+        const on = t === tab;
+        t.classList.toggle('is-active', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      settingsModal.querySelectorAll('.settings-pane').forEach(p => {
+        p.hidden = p.dataset.pane !== target;
+      });
+      if (target === 'billing' && !billingLoaded) loadBilling();
+    });
+  });
+
+  // ---------- BILLING TAB ---------------------------------------------------
+
+  let billingLoaded = false;
+  let billingProfile = null;
+
+  // Rate card (in cents, mirrors the SQL/edge function source of truth)
+  const RATES_C = {
+    sms_out: 2.0,   // $0.020 per SMS
+    sms_in:  1.5,
+    voice_out_per_min: 2.5,
+    voice_in_per_min:  1.5,
+    number_month: 200,
+  };
+
+  function fmtUsd(cents) {
+    return '$' + (Math.max(0, cents) / 100).toFixed(2);
+  }
+
+  function estimateUsage(balCents) {
+    // Show a rough "X SMS or Y minutes" line based on current balance
+    const sms = Math.floor(balCents / RATES_C.sms_out);
+    const min = Math.floor(balCents / RATES_C.voice_out_per_min);
+    if (balCents <= 0) return 'No credits — top up to start calling and texting';
+    return `≈ ${sms.toLocaleString()} SMS · ${min.toLocaleString()} voice minutes`;
+  }
+
+  function statusForBalance(balCents) {
+    if (balCents <= 0)     return { state: 'empty',  label: 'Empty' };
+    if (balCents < 500)    return { state: 'low',    label: 'Low — top up soon' };
+    if (balCents < 2500)   return { state: 'okay',   label: 'Active' };
+    return                       { state: 'healthy', label: 'Healthy' };
+  }
+
+  async function loadBilling() {
+    const { data, error } = await sb.from('profiles')
+      .select('credit_balance_cents, stripe_customer_id, stripe_card_brand, stripe_card_last4, stripe_card_exp_month, stripe_card_exp_year, auto_recharge_enabled, auto_recharge_threshold_c, auto_recharge_amount_c, twilio_phone_number, twilio_number_purchased_at, billing_frozen')
+      .eq('id', user.id)
+      .maybeSingle();
+    if (error) { console.warn('[billing] load failed:', error); return; }
+    billingProfile = data || {};
+    renderBilling();
+    await loadRecentTransactions();
+    billingLoaded = true;
+  }
+
+  function renderBilling() {
+    const bal = billingProfile.credit_balance_cents || 0;
+    document.getElementById('bill-balance').textContent = fmtUsd(bal);
+    document.getElementById('bill-est').textContent = estimateUsage(bal);
+    const st = statusForBalance(bal);
+    const statusEl = document.getElementById('bill-status');
+    statusEl.dataset.state = st.state;
+    document.getElementById('bill-status-label').textContent = st.label;
+
+    // Auto-recharge
+    const auto = !!billingProfile.auto_recharge_enabled;
+    document.getElementById('bill-autorecharge').checked = auto;
+    document.getElementById('bill-autorecharge-fields').hidden = !auto;
+    document.getElementById('bill-threshold').value = ((billingProfile.auto_recharge_threshold_c || 1000) / 100).toFixed(0);
+    document.getElementById('bill-amount').value    = ((billingProfile.auto_recharge_amount_c    || 5000) / 100).toFixed(0);
+
+    // Card
+    const hasCard = !!billingProfile.stripe_card_last4;
+    document.getElementById('bill-card-empty').hidden = hasCard;
+    document.getElementById('bill-card-saved').hidden = !hasCard;
+    if (hasCard) {
+      document.getElementById('bill-card-brand').textContent = (billingProfile.stripe_card_brand || 'CARD').toUpperCase();
+      document.getElementById('bill-card-display').textContent = '•••• ' + billingProfile.stripe_card_last4;
+      const m = String(billingProfile.stripe_card_exp_month || '').padStart(2, '0');
+      const y = String(billingProfile.stripe_card_exp_year || '');
+      document.getElementById('bill-card-exp').textContent = `${m}/${y}`;
+    }
+
+    // Phone number
+    const hasNum = !!billingProfile.twilio_phone_number;
+    document.getElementById('bill-phone-none').hidden   = hasNum;
+    document.getElementById('bill-phone-active').hidden = !hasNum;
+    if (hasNum) {
+      document.getElementById('bill-phone-display').textContent = formatPhone(billingProfile.twilio_phone_number);
+      // Next charge: 1st of next month
+      const d = new Date();
+      const next = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+      document.getElementById('bill-phone-next').textContent = next.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+    // Allow claiming a number only if balance covers a month + first call buffer
+    document.getElementById('bill-claim-number').disabled = bal < 400;
+  }
+
+  async function loadRecentTransactions() {
+    const { data, error } = await sb.from('credit_transactions')
+      .select('amount_cents, kind, description, created_at')
+      .eq('agent_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(10);
+    const listEl = document.getElementById('bill-tx-list');
+    if (error || !data || !data.length) {
+      listEl.innerHTML = '<p class="tx-empty">No transactions yet. Your top-ups and usage will appear here.</p>';
+      return;
+    }
+    listEl.innerHTML = data.map(tx => {
+      const positive = tx.amount_cents > 0;
+      const sign = positive ? '+' : '−';
+      const amount = fmtUsd(Math.abs(tx.amount_cents));
+      const date = new Date(tx.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+      return `<div class="tx-row tx-${positive ? 'credit' : 'debit'}">
+        <div class="tx-kind">
+          <span class="tx-dot"></span>
+          <div>
+            <div class="tx-label">${escapeHtml(prettyKind(tx.kind))}</div>
+            ${tx.description ? `<div class="tx-desc">${escapeHtml(tx.description)}</div>` : ''}
+          </div>
+        </div>
+        <div class="tx-amount">${sign}${amount}</div>
+        <div class="tx-date">${date}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function prettyKind(k) {
+    return {
+      topup:         'Top-up',
+      auto_topup:    'Auto top-up',
+      refund:        'Refund',
+      sms_out:       'Outbound SMS',
+      sms_in:        'Inbound SMS',
+      voice_out:     'Outbound call',
+      voice_in:      'Inbound call',
+      number_rental: 'Phone number rental',
+      adjustment:    'Adjustment',
+      chargeback:    'Chargeback reversal',
+    }[k] || k;
+  }
+
+  // Top-up button clicks (preset and custom)
+  document.querySelectorAll('.topup-amt').forEach(btn => {
+    btn.addEventListener('click', () => startTopup(Number(btn.dataset.topup)));
+  });
+  document.getElementById('topup-custom-go').addEventListener('click', () => {
+    const dollars = Number(document.getElementById('topup-custom-amt').value);
+    if (!dollars || dollars < 10) { alert('Minimum top-up is $10.'); return; }
+    startTopup(Math.round(dollars * 100));
+  });
+
+  async function startTopup(amountCents) {
+    // TODO: invoke a `create-checkout-session` edge function and redirect.
+    // For now we surface a clear placeholder so the UI flow is obvious.
+    alert(`Stripe Checkout for ${fmtUsd(amountCents)} will open here once Stripe is connected.\n\nNext build step wires this to the create-checkout-session edge function.`);
+  }
+
+  document.getElementById('bill-add-card').addEventListener('click', () => {
+    alert('Stripe SetupIntent flow goes here — saves a card on file for auto-recharge.');
+  });
+  document.getElementById('bill-update-card').addEventListener('click', () => {
+    alert('Stripe SetupIntent flow goes here — replaces the card on file.');
+  });
+  document.getElementById('bill-claim-number').addEventListener('click', () => {
+    alert('Twilio number picker opens here. We\'ll provision a number matching your default time-zone area code and deduct $2 from your credits.');
+  });
+  document.getElementById('bill-release-number').addEventListener('click', () => {
+    if (!confirm('Release this number? Leads who text or call it after release won\'t reach you.')) return;
+    alert('Number-release flow goes here — releases the number back to Twilio and stops the monthly rental.');
+  });
+
+  // Auto-recharge toggle reveals fields
+  document.getElementById('bill-autorecharge').addEventListener('change', (e) => {
+    document.getElementById('bill-autorecharge-fields').hidden = !e.target.checked;
+  });
+
+  // Save billing settings (auto-recharge prefs)
+  document.getElementById('bill-save').addEventListener('click', async () => {
+    const status = document.getElementById('bill-save-status');
+    const btn = document.getElementById('bill-save');
+    btn.disabled = true; btn.textContent = 'Saving…';
+    status.textContent = '';
+    status.classList.remove('error');
+
+    const payload = {
+      auto_recharge_enabled:     document.getElementById('bill-autorecharge').checked,
+      auto_recharge_threshold_c: Math.round(Number(document.getElementById('bill-threshold').value || 10) * 100),
+      auto_recharge_amount_c:    Math.round(Number(document.getElementById('bill-amount').value    || 50) * 100),
+    };
+    const { error } = await sb.from('profiles').update(payload).eq('id', user.id);
+    btn.disabled = false; btn.textContent = 'SAVE BILLING SETTINGS';
+    if (error) {
+      status.textContent = 'Save failed: ' + error.message;
+      status.classList.add('error');
+      return;
+    }
+    Object.assign(billingProfile, payload);
+    status.textContent = 'Saved ✓';
+    setTimeout(() => { status.textContent = ''; }, 1800);
+  });
 
   settingsForm.addEventListener('submit', async (e) => {
     e.preventDefault();
