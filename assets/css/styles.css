@@ -5613,10 +5613,16 @@ p {
 /* Make sure the parent containers don't clip the feathers */
 .user-chip, .account-profile-row, .account-avatar-lg { overflow: visible; }
 
-/* Builders page — embedded coaching video */
-.pb-video-wrap {
-  margin: 28px var(--gutter) 32px 0;
-  max-width: 900px;
+/* Builders page — embedded coaching videos (2-up grid for new-recruit sends) */
+.pb-video-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  margin: 18px var(--gutter) 36px 0;
+  max-width: 820px;
+}
+@media (max-width: 720px) {
+  .pb-video-grid { grid-template-columns: 1fr; }
 }
 .pb-video-frame {
   position: relative;
@@ -5624,9 +5630,9 @@ p {
   aspect-ratio: 16 / 9;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--r-lg);
+  border-radius: var(--r-md);
   overflow: hidden;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 .pb-video-frame iframe {
   position: absolute;
