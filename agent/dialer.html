@@ -1930,6 +1930,11 @@
 
     const { error, paymentIntent } = await stripeJs.confirmPayment({
       elements: activeElements,
+      // Klarna and Cash App Pay redirect off-site; the return_url is where
+      // Stripe sends the user back after they approve the payment.
+      confirmParams: {
+        return_url: window.location.href,
+      },
       redirect: 'if_required',
     });
     if (error) {

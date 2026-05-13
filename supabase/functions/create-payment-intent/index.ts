@@ -83,13 +83,18 @@ Deno.serve(async (req) => {
         .eq('id', user.id);
     }
 
-    // Create the PaymentIntent — also saves the card for future off-session use
+    // Create the PaymentIntent — also saves the card for future off-session use.
+    // We set setup_future_usage at the card level (not top level) to keep
+    // Stripe Link's enrollment section out of the form. Link's signup flow
+    // requires email + SMS verification and tends to hang.
     const pi = await stripe.paymentIntents.create({
       amount: amount_cents,
       currency: 'usd',
       customer: customerId,
-      setup_future_usage: 'off_session',
       automatic_payment_methods: { enabled: true },
+      payment_method_options: {
+        card: { setup_future_usage: 'off_session' },
+      },
       description: `First Class Agent credits — ${(amount_cents / 100).toFixed(2)} USD`,
       metadata: {
         agent_id: user.id,
