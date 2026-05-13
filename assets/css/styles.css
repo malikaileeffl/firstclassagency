@@ -5673,3 +5673,500 @@ p {
   color: var(--text-2);
   line-height: 1.5;
 }
+
+/* ==========================================================================
+   Dialer page — in-portal CRM v1
+   ========================================================================== */
+
+.dialer-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 8px var(--gutter) 24px 0;
+}
+@media (max-width: 700px) {
+  .dialer-stats { grid-template-columns: repeat(2, 1fr); }
+}
+.dialer-stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 14px 16px;
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+.dialer-stat-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 6px;
+}
+.dialer-stat-value {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.dialer-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr);
+  gap: 20px;
+  margin-right: var(--gutter);
+}
+@media (max-width: 980px) {
+  .dialer-grid { grid-template-columns: 1fr; }
+}
+
+/* Current lead card */
+.dialer-current {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 28px 30px;
+  min-height: 540px;
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+.dialer-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  min-height: 460px;
+  color: var(--text-3);
+}
+.dialer-empty h2 { color: var(--text-2); font-size: 1.2rem; margin: 0 0 6px; }
+.dialer-empty p  { margin: 0; }
+
+.dialer-lead-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+#lead-name {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 600;
+  margin: 6px 0 4px;
+}
+.dialer-lead-meta {
+  font-size: 0.86rem;
+  color: var(--text-3);
+}
+.dialer-edit-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+}
+.dialer-edit-btn:hover { background: var(--surface-hover); color: var(--text); }
+
+.dialer-call-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, #16a34a, #059669);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1.15rem;
+  border-radius: var(--r-md);
+  text-decoration: none;
+  margin-bottom: 22px;
+  box-shadow: 0 8px 24px rgba(22, 163, 74, 0.32);
+  transition: transform var(--dur-1) var(--ease), box-shadow var(--dur-1) var(--ease);
+}
+.dialer-call-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(22, 163, 74, 0.42);
+}
+
+.dialer-notes-block, .dialer-call-notes-block {
+  margin-bottom: 16px;
+}
+.dialer-notes-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--text-3);
+  margin-bottom: 6px;
+}
+.dialer-notes {
+  width: 100%;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 10px 12px;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 60px;
+  transition: border-color var(--dur-1) var(--ease);
+}
+.dialer-notes:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.dialer-save-status {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 0.72rem;
+  color: var(--text-3);
+}
+.dialer-save-status.error { color: #ef4444; }
+
+.dialer-disp-label {
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: var(--text-3);
+  margin: 10px 0 10px;
+}
+.dialer-dispositions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+}
+.disp-btn {
+  padding: 12px 14px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface-hover);
+  color: var(--text);
+  font: inherit;
+  font-weight: 500;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease), transform var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
+}
+.disp-btn:hover { transform: translateY(-1px); background: var(--surface); }
+.disp-btn:active { transform: translateY(0); }
+.disp-no-answer:hover, .disp-voicemail:hover { border-color: rgba(180, 180, 180, 0.5); }
+.disp-callback:hover { border-color: rgba(26, 163, 223, 0.6); color: var(--accent-bright); }
+.disp-not-interested:hover, .disp-bad-number:hover { border-color: rgba(220, 60, 70, 0.5); color: #ef4444; }
+.disp-quoted:hover { border-color: rgba(230, 179, 74, 0.6); color: #ffd86a; }
+.disp-sold {
+  background: linear-gradient(135deg, rgba(22, 163, 74, 0.18), rgba(5, 150, 105, 0.12));
+  border-color: rgba(22, 163, 74, 0.5);
+  color: #4ade80;
+}
+.disp-sold:hover { background: linear-gradient(135deg, rgba(22, 163, 74, 0.28), rgba(5, 150, 105, 0.18)); }
+
+/* Queue sidebar */
+.dialer-queue {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 540px;
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+.dialer-queue-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.dialer-queue-filter {
+  display: inline-flex;
+  background: var(--surface-hover);
+  border-radius: 999px;
+  padding: 2px;
+}
+.queue-filter-btn {
+  background: transparent;
+  border: 0;
+  color: var(--text-3);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.queue-filter-btn.is-active {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.dialer-queue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  max-height: 520px;
+}
+.dialer-queue-empty {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-3);
+  padding: 24px 0;
+}
+
+.queue-item {
+  text-align: left;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font: inherit;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
+}
+.queue-item:hover { background: var(--surface-hover); border-color: var(--border-strong); }
+.queue-item.is-current {
+  border-color: var(--accent);
+  background: rgba(0, 120, 171, 0.1);
+}
+.queue-item-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.queue-item-name {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+.queue-item-stage {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--surface-hover);
+  color: var(--text-3);
+  border: 1px solid var(--border);
+}
+.queue-item-stage.stage-new       { color: #1aa3df; border-color: rgba(26, 163, 223, 0.4); background: rgba(0, 120, 171, 0.1); }
+.queue-item-stage.stage-contacted { color: var(--text-2); }
+.queue-item-stage.stage-callback  { color: #ffd86a; border-color: rgba(230, 179, 74, 0.4); background: rgba(230, 179, 74, 0.1); }
+.queue-item-stage.stage-quoted    { color: #ffd86a; }
+.queue-item-stage.stage-sold      { color: #4ade80; border-color: rgba(22, 163, 74, 0.4); background: rgba(22, 163, 74, 0.1); }
+.queue-item-stage.stage-dead      { color: #ef4444; opacity: 0.7; }
+.queue-item-sub {
+  font-size: 0.76rem;
+  color: var(--text-3);
+}
+
+/* Lead add/edit + callback modal — shared styling */
+.lead-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity 280ms var(--ease);
+}
+.lead-modal.show { opacity: 1; }
+.lead-modal-backdrop { position: absolute; inset: 0; cursor: pointer; }
+.lead-modal-content {
+  position: relative;
+  background: var(--bg-1);
+  border: 1px solid var(--border-strong);
+  border-radius: 16px;
+  padding: 26px 28px;
+  max-width: 560px;
+  width: 92%;
+  max-height: 88vh;
+  overflow-y: auto;
+  transform: scale(0.94);
+  transition: transform 280ms cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+.lead-modal-narrow { max-width: 420px; }
+.lead-modal.show .lead-modal-content { transform: scale(1); }
+.lead-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--surface-hover);
+  color: var(--text);
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+.lead-modal-content h2 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  margin: 0 0 18px;
+}
+.lead-form { display: flex; flex-direction: column; gap: 12px; }
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 480px) { .field-row { grid-template-columns: 1fr; } }
+.lead-form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  gap: 12px;
+}
+.dialer-cb-sub {
+  margin: -8px 0 14px;
+  color: var(--text-2);
+  font-size: 0.9rem;
+}
+.cb-quick {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+/* Dialer page — CSV upload modal */
+.dialer-head-actions { display: inline-flex; gap: 10px; }
+
+.csv-help {
+  margin: -8px 0 16px;
+  font-size: 0.9rem;
+  color: var(--text-2);
+  line-height: 1.55;
+}
+.csv-help code {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.csv-drop {
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--r-md);
+  padding: 28px 20px;
+  text-align: center;
+  margin-bottom: 14px;
+  transition: background var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
+  background: var(--surface-hover);
+}
+.csv-drop.is-drag {
+  border-color: var(--accent);
+  background: rgba(0, 120, 171, 0.08);
+}
+.csv-drop-empty p { margin: 6px 0; color: var(--text-2); font-size: 0.92rem; }
+.csv-drop-empty p strong { color: var(--text); font-weight: 500; }
+.csv-drop-or { font-size: 0.85rem !important; color: var(--text-3) !important; }
+.csv-link-btn {
+  background: transparent;
+  border: 0;
+  color: var(--accent-bright);
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  padding: 0;
+}
+.csv-drop-file {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+.csv-file-name {
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+  color: var(--text);
+}
+
+.csv-preview {
+  margin: 0 0 14px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 14px 16px;
+}
+.csv-preview-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.csv-preview-count {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+.csv-preview-sub {
+  font-size: 0.78rem;
+  color: var(--text-3);
+}
+.csv-preview-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+}
+.csv-preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+}
+.csv-preview-table th,
+.csv-preview-table td {
+  padding: 7px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+.csv-preview-table th {
+  background: var(--surface);
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.csv-preview-table tr:last-child td { border-bottom: 0; }
+.csv-preview-more {
+  text-align: center;
+  font-style: italic;
+  color: var(--text-3);
+  padding: 8px !important;
+}
+.csv-preview-warn {
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  background: rgba(220, 60, 70, 0.1);
+  border: 1px solid rgba(220, 60, 70, 0.35);
+  color: #ef4444;
+  border-radius: var(--r-md);
+  font-size: 0.86rem;
+}

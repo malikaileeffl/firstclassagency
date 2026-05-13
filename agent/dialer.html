@@ -1,0 +1,955 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dialer — Agent portal</title>
+<meta name="robots" content="noindex,nofollow" />
+<meta name="theme-color" content="#0d0d0e" />
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="First Class" />
+<meta name="mobile-web-app-capable" content="yes" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/styles.css" />
+<script src="../assets/js/theme.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <a href="dashboard.html" class="brand">
+    <img class="brand-logo" src="../assets/img/logo.png" alt="First Class Agency" />
+    <span>First Class · Agent</span>
+  </a>
+  <div class="nav-cta">
+    <div class="user-menu" data-user-chip style="display:none;">
+      <button class="user-chip" data-user-chip-trigger type="button">
+        <span class="user-avatar" data-user-initial>—</span>
+        <span class="user-name">Hi, <strong data-user-name>—</strong></span>
+        <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="user-menu-dropdown" role="menu">
+        <a href="account.html" class="user-menu-item" role="menuitem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 14 0v1"/></svg>
+          Account
+        </a>
+        <div class="user-menu-divider"></div>
+        <button class="user-menu-item" data-logout type="button" role="menuitem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign out
+        </button>
+      </div>
+    </div>
+    <button class="nav-toggle" aria-label="Open menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</header>
+
+<nav class="mobile-nav" aria-label="Mobile">
+  <a href="dashboard.html">Dashboard</a>
+  <a href="training.html">Training</a>
+  <a href="dialer.html" data-dialer-only style="display:none;">Dialer</a>
+  <a href="quick-links.html">Quick Links</a>
+  <a href="portals.html">E-apps & Portals</a>
+  <a class="leads-soon"><span class="leads-text">Leads Center</span><span class="soon-pill">Soon</span></a>
+  <a href="promotion.html">Promotion & Comp</a>
+  <a href="carriers.html">Carrier Contacts</a>
+  <a href="resources.html">Agent Resources</a>
+  <a href="leaderboard.html">Leaderboard</a>
+  <a href="https://ww3.familyfirstlife.com/login" target="_blank" class="ip-report-link" rel="noopener noreferrer">IP Report</a>
+  <a href="builders.html" data-admin-only style="display:none;">Builders</a>
+  <a href="admin.html" data-admin-only style="display:none;">Admin</a>
+  <a href="account.html">Account</a>
+  <a href="#" data-logout class="btn btn--ghost mt-16">Sign out</a>
+</nav>
+
+<main class="container hub-shell">
+  <aside class="hub-side" aria-label="Agent navigation">
+    <a href="dashboard.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>
+      Dashboard
+    </a>
+    <a href="training.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      Training
+    </a>
+    <a href="dialer.html" class="active" data-dialer-only style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      Dialer
+    </a>
+    <a href="quick-links.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      Quick Links
+    </a>
+    <a href="portals.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20"/><path d="M6 7h.01"/></svg>
+      E-apps & Portals
+    </a>
+    <a class="leads-soon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <span class="leads-text">Leads Center</span>
+      <span class="soon-pill">Soon</span>
+    </a>
+    <a href="promotion.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+      Promotion & Comp
+    </a>
+    <a href="carriers.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Carrier Contacts
+    </a>
+    <a href="resources.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      Agent Resources
+    </a>
+    <a href="leaderboard.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="6" width="6" height="14" rx="1"/><rect x="2" y="12" width="6" height="8" rx="1"/><rect x="16" y="9" width="6" height="11" rx="1"/></svg>
+      Leaderboard
+    </a>
+    <a href="https://ww3.familyfirstlife.com/login" target="_blank" rel="noopener noreferrer" class="ip-report-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      IP Report
+    </a>
+    <a href="builders.html" data-admin-only style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><circle cx="5.5" cy="19" r="2.5"/><circle cx="18.5" cy="19" r="2.5"/><path d="M12 7.5 V14 M5.5 14 H18.5 M5.5 14 V16.5 M18.5 14 V16.5"/></svg>
+      Builders
+    </a>
+    <a href="admin.html" data-admin-only style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9.5-8 10-4.5-.5-8-5-8-10V6l8-4z"/><path d="m9 12 2 2 4-4"/></svg>
+      Admin
+    </a>
+  </aside>
+
+  <section class="hub-main">
+    <div class="hub-head">
+      <div>
+        <span class="eyebrow">Dialer</span>
+        <h1 class="mt-8">Work the list.</h1>
+      </div>
+      <div class="dialer-head-actions">
+        <button class="btn btn--ghost" id="upload-csv-btn" type="button">↑ Upload CSV</button>
+        <button class="btn btn--primary" id="add-lead-btn" type="button">+ Add lead</button>
+      </div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="dialer-stats reveal">
+      <div class="dialer-stat">
+        <span class="dialer-stat-label">Dials today</span>
+        <span class="dialer-stat-value" id="stat-dials">0</span>
+      </div>
+      <div class="dialer-stat">
+        <span class="dialer-stat-label">Contacts</span>
+        <span class="dialer-stat-value" id="stat-contacts">0</span>
+      </div>
+      <div class="dialer-stat">
+        <span class="dialer-stat-label">Sold</span>
+        <span class="dialer-stat-value" id="stat-sold">0</span>
+      </div>
+      <div class="dialer-stat">
+        <span class="dialer-stat-label">In queue</span>
+        <span class="dialer-stat-value" id="stat-queue">0</span>
+      </div>
+    </div>
+
+    <!-- Dialer + queue grid -->
+    <div class="dialer-grid">
+
+      <!-- Current lead card -->
+      <div class="dialer-current reveal" id="current-card">
+        <div class="dialer-empty" id="dialer-empty">
+          <h2>No leads in your queue.</h2>
+          <p>Hit "Add lead" up top to start dialing.</p>
+        </div>
+
+        <div class="dialer-lead" id="dialer-lead" hidden>
+          <div class="dialer-lead-head">
+            <div>
+              <span class="eyebrow">Current lead</span>
+              <h2 id="lead-name">—</h2>
+              <div class="dialer-lead-meta" id="lead-meta">—</div>
+            </div>
+            <button class="dialer-edit-btn" id="lead-edit-btn" type="button" title="Edit lead">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+          </div>
+
+          <a class="dialer-call-btn" id="dialer-call-btn" href="#">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span id="dialer-call-text">Call —</span>
+          </a>
+
+          <div class="dialer-notes-block">
+            <label for="lead-notes" class="dialer-notes-label">Notes for this lead</label>
+            <textarea id="lead-notes" rows="3" class="dialer-notes" placeholder="Anything important to remember about this lead…"></textarea>
+            <span class="dialer-save-status" id="lead-notes-status"></span>
+          </div>
+
+          <div class="dialer-call-notes-block">
+            <label for="call-notes" class="dialer-notes-label">This call's notes (optional)</label>
+            <textarea id="call-notes" rows="2" class="dialer-notes" placeholder="What happened on this call?"></textarea>
+          </div>
+
+          <div class="dialer-disp-label">Disposition · choose one to log this call and move to the next lead</div>
+          <div class="dialer-dispositions">
+            <button class="disp-btn disp-no-answer"     data-disp="no_answer"      type="button">No answer</button>
+            <button class="disp-btn disp-voicemail"     data-disp="voicemail"      type="button">Voicemail</button>
+            <button class="disp-btn disp-callback"      data-disp="callback"       type="button">Callback</button>
+            <button class="disp-btn disp-not-interested" data-disp="not_interested" type="button">Not interested</button>
+            <button class="disp-btn disp-bad-number"    data-disp="bad_number"     type="button">Bad number</button>
+            <button class="disp-btn disp-quoted"        data-disp="quoted"         type="button">Quoted</button>
+            <button class="disp-btn disp-sold"          data-disp="sold"           type="button">Sold ✓</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Queue -->
+      <aside class="dialer-queue reveal" aria-label="Lead queue">
+        <div class="dialer-queue-head">
+          <span class="eyebrow">Queue</span>
+          <span class="dialer-queue-filter">
+            <button class="queue-filter-btn is-active" data-filter="active" type="button">Active</button>
+            <button class="queue-filter-btn" data-filter="callback" type="button">Callbacks</button>
+            <button class="queue-filter-btn" data-filter="all" type="button">All</button>
+          </span>
+        </div>
+        <div class="dialer-queue-list" id="queue-list">
+          <div class="dialer-queue-empty">Loading…</div>
+        </div>
+      </aside>
+
+    </div>
+  </section>
+</main>
+
+<!-- Add / edit lead modal -->
+<div class="lead-modal" id="lead-modal" hidden>
+  <div class="lead-modal-backdrop" data-close-lead-modal></div>
+  <div class="lead-modal-content" role="dialog" aria-modal="true" aria-labelledby="lm-title">
+    <button class="lead-modal-close" type="button" data-close-lead-modal aria-label="Close">×</button>
+    <h2 id="lm-title">Add lead</h2>
+    <form id="lead-form" class="lead-form" autocomplete="off">
+      <input type="hidden" id="lead-id" />
+      <div class="field">
+        <label for="lf-name">Full name</label>
+        <input class="input" id="lf-name" type="text" required />
+      </div>
+      <div class="field">
+        <label for="lf-phone">Phone</label>
+        <input class="input" id="lf-phone" type="tel" placeholder="(555) 123-4567" required />
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="lf-email">Email</label>
+          <input class="input" id="lf-email" type="email" />
+        </div>
+        <div class="field">
+          <label for="lf-state">State</label>
+          <input class="input" id="lf-state" type="text" maxlength="2" placeholder="TX" />
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="lf-address">Address</label>
+          <input class="input" id="lf-address" type="text" />
+        </div>
+        <div class="field">
+          <label for="lf-dob">Date of birth</label>
+          <input class="input" id="lf-dob" type="date" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="lf-notes">Notes</label>
+        <textarea class="input" id="lf-notes" rows="3"></textarea>
+      </div>
+      <div class="lead-form-actions">
+        <button type="button" class="btn btn--ghost" id="lf-delete" hidden>Delete</button>
+        <button type="submit" class="btn btn--primary" id="lf-save">Save lead</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- CSV upload modal -->
+<div class="lead-modal" id="csv-modal" hidden>
+  <div class="lead-modal-backdrop" data-close-csv></div>
+  <div class="lead-modal-content" role="dialog" aria-modal="true" aria-labelledby="csv-title">
+    <button class="lead-modal-close" type="button" data-close-csv aria-label="Close">×</button>
+    <h2 id="csv-title">Upload leads from CSV</h2>
+    <p class="csv-help">Drop a CSV with at least <code>name</code> and <code>phone</code> columns. Other columns we'll recognize: <code>email</code>, <code>state</code>, <code>address</code>, <code>dob</code>, <code>notes</code>. Column names are case-insensitive and we'll do our best to auto-match.</p>
+
+    <div class="csv-drop" id="csv-drop">
+      <input type="file" id="csv-file" accept=".csv,text/csv" hidden />
+      <div class="csv-drop-empty" id="csv-drop-empty">
+        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <p><strong>Drop a CSV here</strong></p>
+        <p class="csv-drop-or">or <button type="button" class="csv-link-btn" id="csv-browse">browse for a file</button></p>
+      </div>
+      <div class="csv-drop-file" id="csv-drop-file" hidden>
+        <span class="csv-file-name" id="csv-file-name"></span>
+        <button type="button" class="csv-link-btn" id="csv-clear">remove</button>
+      </div>
+    </div>
+
+    <div class="csv-preview" id="csv-preview" hidden>
+      <div class="csv-preview-head">
+        <span class="csv-preview-count" id="csv-preview-count">—</span>
+        <span class="csv-preview-sub" id="csv-preview-sub">—</span>
+      </div>
+      <div class="csv-preview-table-wrap">
+        <table class="csv-preview-table" id="csv-preview-table"></table>
+      </div>
+      <p class="csv-preview-warn" id="csv-preview-warn" hidden></p>
+    </div>
+
+    <div class="lead-form-actions">
+      <button type="button" class="btn btn--ghost" data-close-csv>Cancel</button>
+      <button type="button" class="btn btn--primary" id="csv-import-btn" disabled>Import leads</button>
+    </div>
+  </div>
+</div>
+
+<!-- Callback time picker modal -->
+<div class="lead-modal" id="callback-modal" hidden>
+  <div class="lead-modal-backdrop" data-close-callback></div>
+  <div class="lead-modal-content lead-modal-narrow" role="dialog" aria-modal="true">
+    <button class="lead-modal-close" type="button" data-close-callback aria-label="Close">×</button>
+    <h2>Schedule callback</h2>
+    <p class="dialer-cb-sub">When do they want you to call back?</p>
+    <div class="cb-quick">
+      <button class="btn btn--ghost cb-quick-btn" data-cb-mins="60">In 1 hour</button>
+      <button class="btn btn--ghost cb-quick-btn" data-cb-mins="180">In 3 hours</button>
+      <button class="btn btn--ghost cb-quick-btn" data-cb-mins="1440">Tomorrow same time</button>
+      <button class="btn btn--ghost cb-quick-btn" data-cb-mins="4320">In 3 days</button>
+    </div>
+    <div class="field" style="margin-top:14px;">
+      <label for="cb-when">Or pick a specific time</label>
+      <input class="input" id="cb-when" type="datetime-local" />
+    </div>
+    <div class="lead-form-actions">
+      <button type="button" class="btn btn--primary" id="cb-confirm">Schedule callback</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/main.js"></script>
+<script src="../assets/js/ranks.js"></script>
+<script src="../assets/js/agent-auth.js"></script>
+
+<script>
+/* Dialer page logic.
+   - Loads agent's leads + today's stats
+   - Renders one "current lead" + a queue sidebar
+   - Click-to-dial uses tel: URI (opens phone app)
+   - Disposition buttons log a call_attempts row, update lead stage,
+     and auto-advance to the next lead in the queue. */
+(() => {
+  let sb = null;
+  let user = null;
+  let leads = [];
+  let currentLead = null;
+  let currentFilter = 'active';
+  let saveNotesTimer = null;
+  let pendingCallbackDisp = null;
+
+  document.addEventListener('fca:auth-ready', async (e) => {
+    sb = window.fcaSupabase;
+    user = e.detail && e.detail.user;
+    if (!sb || !user) return;
+    await Promise.all([refreshLeads(), refreshStats()]);
+  });
+
+  // ---------- DATA ----------------------------------------------------------
+
+  async function refreshLeads() {
+    const { data, error } = await sb.from('leads')
+      .select('*')
+      .eq('agent_id', user.id)
+      .order('created_at', { ascending: false });
+    if (error) {
+      console.error('[dialer] load leads failed:', error);
+      return;
+    }
+    leads = data || [];
+    renderQueue();
+    pickCurrentLead();
+    document.getElementById('stat-queue').textContent = leads.filter(isActive).length;
+  }
+
+  async function refreshStats() {
+    const { data, error } = await sb.rpc('get_dialer_today_stats');
+    if (error) {
+      console.warn('[dialer] stats rpc failed:', error);
+      return;
+    }
+    const row = Array.isArray(data) ? data[0] : data;
+    document.getElementById('stat-dials').textContent    = (row && row.dials)    || 0;
+    document.getElementById('stat-contacts').textContent = (row && row.contacts) || 0;
+    document.getElementById('stat-sold').textContent     = (row && row.sold)     || 0;
+  }
+
+  function isActive(l) {
+    if (l.stage === 'sold' || l.stage === 'dead') return false;
+    if (l.stage === 'callback' && l.callback_at && new Date(l.callback_at) > new Date()) return false;
+    return true;
+  }
+  function isCallback(l) {
+    return l.stage === 'callback';
+  }
+
+  function pickCurrentLead() {
+    const active = leads.filter(isActive);
+    if (!active.length) {
+      currentLead = null;
+      renderCurrent();
+      return;
+    }
+    // Prefer callbacks whose time has passed, then oldest-not-called leads
+    const dueCallbacks = active.filter(l => l.callback_at && new Date(l.callback_at) <= new Date());
+    if (dueCallbacks.length) {
+      currentLead = dueCallbacks.sort((a, b) => new Date(a.callback_at) - new Date(b.callback_at))[0];
+    } else {
+      currentLead = active.sort((a, b) => {
+        const aT = a.last_called_at ? new Date(a.last_called_at).getTime() : 0;
+        const bT = b.last_called_at ? new Date(b.last_called_at).getTime() : 0;
+        return aT - bT; // never-called first, then oldest-called
+      })[0];
+    }
+    renderCurrent();
+  }
+
+  // ---------- RENDER --------------------------------------------------------
+
+  function renderCurrent() {
+    const empty = document.getElementById('dialer-empty');
+    const card  = document.getElementById('dialer-lead');
+    if (!currentLead) {
+      empty.style.display = '';
+      card.hidden = true;
+      return;
+    }
+    empty.style.display = 'none';
+    card.hidden = false;
+
+    document.getElementById('lead-name').textContent = currentLead.full_name;
+    const meta = [];
+    if (currentLead.state) meta.push(currentLead.state);
+    if (currentLead.email) meta.push(currentLead.email);
+    if (currentLead.date_of_birth) meta.push('DOB: ' + currentLead.date_of_birth);
+    document.getElementById('lead-meta').textContent = meta.join(' · ') || '—';
+
+    const phone = currentLead.phone || '';
+    document.getElementById('dialer-call-text').textContent = 'Call ' + formatPhone(phone);
+    document.getElementById('dialer-call-btn').href = 'tel:' + phone.replace(/[^0-9+]/g, '');
+
+    document.getElementById('lead-notes').value = currentLead.notes || '';
+    document.getElementById('call-notes').value = '';
+  }
+
+  function renderQueue() {
+    const list = document.getElementById('queue-list');
+    let items = leads;
+    if (currentFilter === 'active')   items = leads.filter(isActive);
+    if (currentFilter === 'callback') items = leads.filter(isCallback);
+
+    if (!items.length) {
+      list.innerHTML = '<div class="dialer-queue-empty">No leads here.</div>';
+      return;
+    }
+    list.innerHTML = items.map(l => {
+      const isCurrent = currentLead && l.id === currentLead.id;
+      const cb = l.callback_at ? new Date(l.callback_at) : null;
+      const cbTxt = cb ? cb.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
+      return `
+        <button class="queue-item${isCurrent ? ' is-current' : ''}" data-id="${l.id}" type="button">
+          <div class="queue-item-main">
+            <span class="queue-item-name">${escapeHtml(l.full_name)}</span>
+            <span class="queue-item-stage stage-${l.stage}">${formatStage(l.stage)}</span>
+          </div>
+          <div class="queue-item-sub">
+            ${escapeHtml(formatPhone(l.phone))}${cbTxt ? ' · ↩ ' + cbTxt : ''}
+          </div>
+        </button>`;
+    }).join('');
+  }
+
+  // ---------- EVENTS --------------------------------------------------------
+
+  // Queue item click → swap current
+  document.getElementById('queue-list').addEventListener('click', (e) => {
+    const btn = e.target.closest('.queue-item');
+    if (!btn) return;
+    const lead = leads.find(l => l.id === btn.dataset.id);
+    if (lead) {
+      currentLead = lead;
+      renderCurrent();
+      renderQueue();
+    }
+  });
+
+  // Queue filter tabs
+  document.querySelector('.dialer-queue-filter').addEventListener('click', (e) => {
+    const btn = e.target.closest('.queue-filter-btn');
+    if (!btn) return;
+    document.querySelectorAll('.queue-filter-btn').forEach(b => b.classList.toggle('is-active', b === btn));
+    currentFilter = btn.dataset.filter;
+    renderQueue();
+  });
+
+  // Lead-notes debounced save
+  document.getElementById('lead-notes').addEventListener('input', () => {
+    if (!currentLead) return;
+    clearTimeout(saveNotesTimer);
+    const statusEl = document.getElementById('lead-notes-status');
+    statusEl.textContent = 'Saving…';
+    saveNotesTimer = setTimeout(async () => {
+      const v = document.getElementById('lead-notes').value;
+      const { error } = await sb.from('leads').update({ notes: v }).eq('id', currentLead.id);
+      if (error) {
+        statusEl.textContent = 'Save failed';
+        statusEl.classList.add('error');
+      } else {
+        currentLead.notes = v;
+        statusEl.textContent = 'Saved';
+        statusEl.classList.remove('error');
+        setTimeout(() => { statusEl.textContent = ''; }, 1200);
+      }
+    }, 700);
+  });
+
+  // Click-to-dial — track that we initiated a call (so disposition is "fresh")
+  document.getElementById('dialer-call-btn').addEventListener('click', async () => {
+    if (!currentLead) return;
+    await sb.from('leads').update({ last_called_at: new Date().toISOString() }).eq('id', currentLead.id);
+    currentLead.last_called_at = new Date().toISOString();
+  });
+
+  // Disposition buttons
+  document.querySelector('.dialer-dispositions').addEventListener('click', async (e) => {
+    const btn = e.target.closest('.disp-btn');
+    if (!btn || !currentLead) return;
+    const disp = btn.dataset.disp;
+
+    if (disp === 'callback') {
+      // Open the callback time picker instead of logging right away
+      pendingCallbackDisp = true;
+      openCallbackModal();
+      return;
+    }
+    await logDispositionAndAdvance(disp, null);
+  });
+
+  async function logDispositionAndAdvance(disp, callbackAt) {
+    const notes = document.getElementById('call-notes').value.trim() || null;
+    const newStage = stageFromDisposition(disp, currentLead.stage);
+
+    // Log the call
+    const { error: callErr } = await sb.from('call_attempts').insert({
+      lead_id:     currentLead.id,
+      agent_id:    user.id,
+      disposition: disp,
+      notes,
+    });
+    if (callErr) {
+      alert('Could not log call: ' + callErr.message);
+      return;
+    }
+
+    // Update lead stage + callback time
+    const updates = { stage: newStage, last_called_at: new Date().toISOString() };
+    if (callbackAt) updates.callback_at = callbackAt;
+    if (disp !== 'callback') updates.callback_at = null;
+    await sb.from('leads').update(updates).eq('id', currentLead.id);
+
+    // Local state update + refresh
+    Object.assign(currentLead, updates);
+    await Promise.all([refreshLeads(), refreshStats()]);
+  }
+
+  function stageFromDisposition(disp, currentStage) {
+    if (disp === 'sold')           return 'sold';
+    if (disp === 'not_interested') return 'dead';
+    if (disp === 'bad_number')     return 'dead';
+    if (disp === 'quoted')         return 'quoted';
+    if (disp === 'callback')       return 'callback';
+    if (disp === 'no_answer' || disp === 'voicemail') {
+      return currentStage === 'new' ? 'contacted' : currentStage;
+    }
+    return currentStage;
+  }
+
+  // ---------- LEAD MODAL (add / edit) --------------------------------------
+
+  const leadModal = document.getElementById('lead-modal');
+  document.getElementById('add-lead-btn').addEventListener('click', () => openLeadModal(null));
+  document.getElementById('lead-edit-btn').addEventListener('click', () => currentLead && openLeadModal(currentLead));
+  leadModal.querySelectorAll('[data-close-lead-modal]').forEach(el =>
+    el.addEventListener('click', () => closeLeadModal())
+  );
+
+  function openLeadModal(lead) {
+    document.getElementById('lm-title').textContent = lead ? 'Edit lead' : 'Add lead';
+    document.getElementById('lead-id').value      = lead ? lead.id : '';
+    document.getElementById('lf-name').value      = lead ? (lead.full_name || '') : '';
+    document.getElementById('lf-phone').value     = lead ? (lead.phone || '')     : '';
+    document.getElementById('lf-email').value     = lead ? (lead.email || '')     : '';
+    document.getElementById('lf-state').value     = lead ? (lead.state || '')     : '';
+    document.getElementById('lf-address').value   = lead ? (lead.address || '')   : '';
+    document.getElementById('lf-dob').value       = lead ? (lead.date_of_birth || '') : '';
+    document.getElementById('lf-notes').value     = lead ? (lead.notes || '')     : '';
+    document.getElementById('lf-delete').hidden   = !lead;
+    leadModal.hidden = false;
+    requestAnimationFrame(() => leadModal.classList.add('show'));
+    setTimeout(() => document.getElementById('lf-name').focus(), 100);
+  }
+  function closeLeadModal() {
+    leadModal.classList.remove('show');
+    setTimeout(() => { leadModal.hidden = true; }, 280);
+  }
+
+  document.getElementById('lead-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('lead-id').value;
+    const payload = {
+      full_name:     document.getElementById('lf-name').value.trim(),
+      phone:         document.getElementById('lf-phone').value.trim(),
+      email:         document.getElementById('lf-email').value.trim() || null,
+      state:         document.getElementById('lf-state').value.trim().toUpperCase() || null,
+      address:       document.getElementById('lf-address').value.trim() || null,
+      date_of_birth: document.getElementById('lf-dob').value || null,
+      notes:         document.getElementById('lf-notes').value.trim() || null,
+    };
+    const saveBtn = document.getElementById('lf-save');
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving…';
+    let err;
+    if (id) {
+      ({ error: err } = await sb.from('leads').update(payload).eq('id', id));
+    } else {
+      ({ error: err } = await sb.from('leads').insert({ ...payload, agent_id: user.id, source: 'manual' }));
+    }
+    saveBtn.disabled = false;
+    saveBtn.textContent = 'Save lead';
+    if (err) {
+      alert('Could not save lead: ' + err.message);
+      return;
+    }
+    closeLeadModal();
+    await refreshLeads();
+  });
+
+  document.getElementById('lf-delete').addEventListener('click', async () => {
+    const id = document.getElementById('lead-id').value;
+    if (!id) return;
+    if (!confirm('Delete this lead? This also deletes its call history.')) return;
+    const { error } = await sb.from('leads').delete().eq('id', id);
+    if (error) { alert('Delete failed: ' + error.message); return; }
+    closeLeadModal();
+    if (currentLead && currentLead.id === id) currentLead = null;
+    await refreshLeads();
+  });
+
+  // ---------- CALLBACK MODAL ------------------------------------------------
+
+  const cbModal = document.getElementById('callback-modal');
+  cbModal.querySelectorAll('[data-close-callback]').forEach(el =>
+    el.addEventListener('click', () => closeCallbackModal())
+  );
+  function openCallbackModal() {
+    document.getElementById('cb-when').value = '';
+    cbModal.hidden = false;
+    requestAnimationFrame(() => cbModal.classList.add('show'));
+  }
+  function closeCallbackModal() {
+    cbModal.classList.remove('show');
+    setTimeout(() => { cbModal.hidden = true; }, 280);
+    pendingCallbackDisp = null;
+  }
+
+  document.querySelectorAll('.cb-quick-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const mins = Number(btn.dataset.cbMins);
+      const when = new Date(Date.now() + mins * 60 * 1000).toISOString();
+      await logDispositionAndAdvance('callback', when);
+      closeCallbackModal();
+    });
+  });
+  document.getElementById('cb-confirm').addEventListener('click', async () => {
+    const v = document.getElementById('cb-when').value;
+    if (!v) { alert('Pick a time.'); return; }
+    const when = new Date(v).toISOString();
+    await logDispositionAndAdvance('callback', when);
+    closeCallbackModal();
+  });
+
+  // ---------- CSV UPLOAD ----------------------------------------------------
+
+  const csvModal      = document.getElementById('csv-modal');
+  const csvFileInput  = document.getElementById('csv-file');
+  const csvDrop       = document.getElementById('csv-drop');
+  const csvDropEmpty  = document.getElementById('csv-drop-empty');
+  const csvDropFile   = document.getElementById('csv-drop-file');
+  const csvFileName   = document.getElementById('csv-file-name');
+  const csvPreview    = document.getElementById('csv-preview');
+  const csvPreviewCnt = document.getElementById('csv-preview-count');
+  const csvPreviewSub = document.getElementById('csv-preview-sub');
+  const csvPreviewTbl = document.getElementById('csv-preview-table');
+  const csvPreviewWarn= document.getElementById('csv-preview-warn');
+  const csvImportBtn  = document.getElementById('csv-import-btn');
+  let csvParsedRows = []; // [{full_name, phone, email, state, address, date_of_birth, notes}]
+
+  document.getElementById('upload-csv-btn').addEventListener('click', openCsvModal);
+  csvModal.querySelectorAll('[data-close-csv]').forEach(el =>
+    el.addEventListener('click', closeCsvModal)
+  );
+  document.getElementById('csv-browse').addEventListener('click', () => csvFileInput.click());
+  document.getElementById('csv-clear').addEventListener('click', resetCsv);
+  csvFileInput.addEventListener('change', (e) => {
+    if (e.target.files && e.target.files[0]) handleCsvFile(e.target.files[0]);
+  });
+
+  // Drag-and-drop on the drop zone
+  ['dragover', 'dragenter'].forEach(ev => {
+    csvDrop.addEventListener(ev, (e) => { e.preventDefault(); csvDrop.classList.add('is-drag'); });
+  });
+  ['dragleave', 'drop'].forEach(ev => {
+    csvDrop.addEventListener(ev, (e) => { e.preventDefault(); csvDrop.classList.remove('is-drag'); });
+  });
+  csvDrop.addEventListener('drop', (e) => {
+    const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (file) handleCsvFile(file);
+  });
+
+  csvImportBtn.addEventListener('click', importCsv);
+
+  function openCsvModal() {
+    resetCsv();
+    csvModal.hidden = false;
+    requestAnimationFrame(() => csvModal.classList.add('show'));
+  }
+  function closeCsvModal() {
+    csvModal.classList.remove('show');
+    setTimeout(() => { csvModal.hidden = true; resetCsv(); }, 280);
+  }
+  function resetCsv() {
+    csvParsedRows = [];
+    csvFileInput.value = '';
+    csvDropEmpty.hidden = false;
+    csvDropFile.hidden = true;
+    csvPreview.hidden = true;
+    csvImportBtn.disabled = true;
+    csvImportBtn.textContent = 'Import leads';
+  }
+
+  function handleCsvFile(file) {
+    csvFileName.textContent = file.name;
+    csvDropEmpty.hidden = true;
+    csvDropFile.hidden = false;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target.result;
+      parseCsv(text);
+    };
+    reader.onerror = () => {
+      csvPreviewWarn.hidden = false;
+      csvPreviewWarn.textContent = 'Could not read file.';
+      csvPreview.hidden = false;
+    };
+    reader.readAsText(file);
+  }
+
+  // Minimal RFC-4180-ish CSV parser (handles quoted fields with commas/newlines).
+  function parseCsvRaw(text) {
+    const rows = [];
+    let row = [], field = '', inQuotes = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (inQuotes) {
+        if (c === '"') {
+          if (text[i + 1] === '"') { field += '"'; i++; }
+          else inQuotes = false;
+        } else field += c;
+      } else {
+        if (c === '"') inQuotes = true;
+        else if (c === ',') { row.push(field); field = ''; }
+        else if (c === '\n' || c === '\r') {
+          if (field || row.length) { row.push(field); rows.push(row); }
+          row = []; field = '';
+          if (c === '\r' && text[i + 1] === '\n') i++;
+        } else field += c;
+      }
+    }
+    if (field || row.length) { row.push(field); rows.push(row); }
+    return rows;
+  }
+
+  // Map common header variants to our DB column names.
+  const HEADER_MAP = {
+    'name': 'full_name', 'full name': 'full_name', 'fullname': 'full_name',
+    'first name': 'first_name_only', 'firstname': 'first_name_only',
+    'last name': 'last_name_only',  'lastname': 'last_name_only',
+    'phone': 'phone', 'phone number': 'phone', 'phonenumber': 'phone',
+    'mobile': 'phone', 'cell': 'phone', 'cell phone': 'phone',
+    'email': 'email', 'email address': 'email', 'e-mail': 'email',
+    'state': 'state', 'st': 'state',
+    'address': 'address', 'street': 'address', 'street address': 'address',
+    'dob': 'date_of_birth', 'date of birth': 'date_of_birth', 'birth date': 'date_of_birth', 'birthday': 'date_of_birth',
+    'notes': 'notes', 'note': 'notes', 'comment': 'notes', 'comments': 'notes',
+  };
+
+  function parseCsv(text) {
+    const rows = parseCsvRaw(text).filter(r => r.some(c => String(c).trim() !== ''));
+    if (rows.length < 2) {
+      csvPreviewWarn.hidden = false;
+      csvPreviewWarn.textContent = 'CSV needs a header row plus at least one data row.';
+      csvPreview.hidden = false;
+      csvImportBtn.disabled = true;
+      return;
+    }
+    const headers = rows[0].map(h => HEADER_MAP[String(h).trim().toLowerCase()] || null);
+    const phoneIdx = headers.indexOf('phone');
+    const nameIdx  = headers.indexOf('full_name');
+    const firstIdx = headers.indexOf('first_name_only');
+    const lastIdx  = headers.indexOf('last_name_only');
+
+    if (phoneIdx < 0) {
+      csvPreviewWarn.hidden = false;
+      csvPreviewWarn.textContent = 'No "phone" column found. Make sure your CSV has a header named phone, mobile, or cell.';
+      csvPreview.hidden = false;
+      csvImportBtn.disabled = true;
+      return;
+    }
+    if (nameIdx < 0 && firstIdx < 0 && lastIdx < 0) {
+      csvPreviewWarn.hidden = false;
+      csvPreviewWarn.textContent = 'No "name" column found. Make sure your CSV has a header named name, full name, or first/last name.';
+      csvPreview.hidden = false;
+      csvImportBtn.disabled = true;
+      return;
+    }
+
+    const out = [];
+    for (let r = 1; r < rows.length; r++) {
+      const cells = rows[r];
+      const phone = String(cells[phoneIdx] || '').trim();
+      if (!phone) continue;
+
+      let name;
+      if (nameIdx >= 0) name = String(cells[nameIdx] || '').trim();
+      else {
+        const fn = firstIdx >= 0 ? String(cells[firstIdx] || '').trim() : '';
+        const ln = lastIdx  >= 0 ? String(cells[lastIdx]  || '').trim() : '';
+        name = (fn + ' ' + ln).trim();
+      }
+      if (!name) continue;
+
+      const lead = { full_name: name, phone, source: 'csv' };
+      const setIf = (col, val) => { if (val && String(val).trim()) lead[col] = String(val).trim(); };
+      headers.forEach((col, i) => {
+        if (!col || col === 'first_name_only' || col === 'last_name_only' || col === 'phone' || col === 'full_name') return;
+        setIf(col, cells[i]);
+      });
+      if (lead.state) lead.state = lead.state.toUpperCase().slice(0, 2);
+      if (lead.date_of_birth) {
+        // Try to normalize to YYYY-MM-DD; if it fails, drop it
+        const d = new Date(lead.date_of_birth);
+        if (!isNaN(d.getTime())) {
+          lead.date_of_birth = d.toISOString().slice(0, 10);
+        } else delete lead.date_of_birth;
+      }
+      out.push(lead);
+    }
+
+    csvParsedRows = out;
+    if (!out.length) {
+      csvPreviewWarn.hidden = false;
+      csvPreviewWarn.textContent = 'No usable rows found (every row needs both a name and phone).';
+      csvPreview.hidden = false;
+      csvImportBtn.disabled = true;
+      return;
+    }
+    renderCsvPreview(out, headers, rows[0]);
+    csvImportBtn.disabled = false;
+    csvImportBtn.textContent = 'Import ' + out.length + ' lead' + (out.length === 1 ? '' : 's');
+  }
+
+  function renderCsvPreview(parsed, mapped, originalHeaders) {
+    csvPreviewWarn.hidden = true;
+    csvPreviewCnt.textContent = parsed.length + ' lead' + (parsed.length === 1 ? '' : 's') + ' detected';
+    const mappedCols = mapped.filter(Boolean);
+    const unknown = originalHeaders.filter((h, i) => !mapped[i] && String(h).trim());
+    let subBits = ['Mapped: ' + mappedCols.join(', ')];
+    if (unknown.length) subBits.push('Ignored: ' + unknown.join(', '));
+    csvPreviewSub.textContent = subBits.join(' · ');
+
+    const head = ['Name', 'Phone', 'Email', 'State', 'DOB'];
+    const previewRows = parsed.slice(0, 5);
+    const html = `<thead><tr>${head.map(h => `<th>${escapeHtml(h)}</th>`).join('')}</tr></thead>
+      <tbody>${previewRows.map(r => `
+        <tr>
+          <td>${escapeHtml(r.full_name || '')}</td>
+          <td>${escapeHtml(formatPhone(r.phone || ''))}</td>
+          <td>${escapeHtml(r.email || '')}</td>
+          <td>${escapeHtml(r.state || '')}</td>
+          <td>${escapeHtml(r.date_of_birth || '')}</td>
+        </tr>`).join('')}
+      ${parsed.length > 5 ? `<tr><td colspan="5" class="csv-preview-more">… and ${parsed.length - 5} more</td></tr>` : ''}
+      </tbody>`;
+    csvPreviewTbl.innerHTML = html;
+    csvPreview.hidden = false;
+  }
+
+  async function importCsv() {
+    if (!csvParsedRows.length) return;
+    csvImportBtn.disabled = true;
+    csvImportBtn.textContent = 'Importing…';
+    // Batched inserts (200/batch) so we don't hit Supabase request-size limits
+    const BATCH = 200;
+    let inserted = 0, failed = 0;
+    for (let i = 0; i < csvParsedRows.length; i += BATCH) {
+      const slice = csvParsedRows.slice(i, i + BATCH).map(l => ({ ...l, agent_id: user.id }));
+      const { error } = await sb.from('leads').insert(slice);
+      if (error) {
+        console.error('[dialer] csv batch failed:', error);
+        failed += slice.length;
+      } else {
+        inserted += slice.length;
+      }
+    }
+    csvImportBtn.textContent = 'Import leads';
+    if (failed > 0) {
+      alert(`Imported ${inserted} lead${inserted===1?'':'s'}. ${failed} failed — check console for details.`);
+    }
+    closeCsvModal();
+    await refreshLeads();
+  }
+
+  // ---------- HELPERS -------------------------------------------------------
+
+  function formatPhone(p) {
+    if (!p) return '';
+    const d = p.replace(/[^0-9]/g, '');
+    if (d.length === 10) return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
+    if (d.length === 11 && d[0] === '1') return `+1 (${d.slice(1,4)}) ${d.slice(4,7)}-${d.slice(7)}`;
+    return p;
+  }
+  function formatStage(s) {
+    return {
+      new: 'New', contacted: 'Contacted', callback: 'Callback',
+      quoted: 'Quoted', sold: 'Sold', dead: 'Dead',
+    }[s] || s;
+  }
+  function escapeHtml(s) {
+    return String(s || '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[c]);
+  }
+})();
+</script>
+
+</body>
+</html>

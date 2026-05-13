@@ -69,6 +69,24 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
     document.querySelectorAll('[data-admin-only]').forEach((el) => {
       el.style.display = isAdmin ? '' : 'none';
     });
+
+    // Dialer / SMS / billing system — locked to allowlisted accounts during
+    // the build phase. Anything with [data-dialer-only] is hidden for everyone
+    // else. To roll out broadly, delete this allowlist + the section below.
+    const DIALER_ALLOWLIST = [
+      'malikailee.ffl@gmail.com',
+      'dsmith511.ffl@gmail.com',
+    ];
+    const userEmail = (user.email || '').toLowerCase();
+    const hasDialerAccess = DIALER_ALLOWLIST.includes(userEmail);
+    document.querySelectorAll('[data-dialer-only]').forEach((el) => {
+      el.style.display = hasDialerAccess ? '' : 'none';
+    });
+    // Bounce non-allowlisted users off the dialer page itself
+    if (!hasDialerAccess && window.location.pathname.endsWith('/dialer.html')) {
+      window.location.replace('dashboard.html');
+      return;
+    }
     document.dispatchEvent(new CustomEvent('fca:auth-ready', {
       detail: { user, isAdmin, isSuperAdmin, role }
     }));
