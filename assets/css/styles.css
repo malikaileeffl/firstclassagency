@@ -6319,7 +6319,18 @@ body.dialer-fullwidth .hub-main { padding-left: 8px; }
   display: flex;
   flex-direction: column;
   gap: 10px;
+  opacity: 0;
+  transform: translateY(-6px) scale(0.97);
+  transform-origin: top left;
+  transition: opacity 180ms var(--ease), transform 180ms var(--ease);
+  pointer-events: none;
 }
+.filter-popover.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.filter-popover[hidden] { display: none !important; }
 .filter-popover-head {
   display: flex;
   justify-content: space-between;

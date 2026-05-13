@@ -881,11 +881,13 @@
 
   function openFilters() {
     filterPopover.hidden = false;
+    requestAnimationFrame(() => filterPopover.classList.add('show'));
     filterTrigger.setAttribute('aria-expanded', 'true');
   }
   function closeFilters() {
-    filterPopover.hidden = true;
+    filterPopover.classList.remove('show');
     filterTrigger.setAttribute('aria-expanded', 'false');
+    setTimeout(() => { filterPopover.hidden = true; }, 180);
   }
   filterTrigger.addEventListener('click', (e) => {
     e.stopPropagation();
