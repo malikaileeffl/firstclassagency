@@ -173,6 +173,32 @@
         <option value="sold">Sold</option>
         <option value="dead">Dead</option>
       </select>
+      <select class="dialer-stage-filter" id="dialer-state-filter">
+        <option value="">All states</option>
+        <option>AL</option><option>AK</option><option>AZ</option><option>AR</option>
+        <option>CA</option><option>CO</option><option>CT</option><option>DE</option>
+        <option>DC</option><option>FL</option><option>GA</option><option>HI</option>
+        <option>ID</option><option>IL</option><option>IN</option><option>IA</option>
+        <option>KS</option><option>KY</option><option>LA</option><option>ME</option>
+        <option>MD</option><option>MA</option><option>MI</option><option>MN</option>
+        <option>MS</option><option>MO</option><option>MT</option><option>NE</option>
+        <option>NV</option><option>NH</option><option>NJ</option><option>NM</option>
+        <option>NY</option><option>NC</option><option>ND</option><option>OH</option>
+        <option>OK</option><option>OR</option><option>PA</option><option>RI</option>
+        <option>SC</option><option>SD</option><option>TN</option><option>TX</option>
+        <option>UT</option><option>VT</option><option>VA</option><option>WA</option>
+        <option>WV</option><option>WI</option><option>WY</option>
+      </select>
+      <select class="dialer-stage-filter" id="dialer-tz-filter">
+        <option value="">All time zones</option>
+        <option value="eastern">Eastern</option>
+        <option value="central">Central</option>
+        <option value="mountain">Mountain</option>
+        <option value="arizona">Arizona</option>
+        <option value="pacific">Pacific</option>
+        <option value="alaska">Alaska</option>
+        <option value="hawaii">Hawaii</option>
+      </select>
     </div>
 
     <!-- Leads list (rendered by JS) -->
@@ -457,7 +483,20 @@
   let currentPage = 1;
   let searchQuery = '';
   let stageFilter = '';
+  let stateFilter = '';
+  let tzFilter = '';
   let pendingCallbackLead = null;
+
+  // US time zone → state list (used by the time-zone filter)
+  const TZ_STATES = {
+    eastern:  ['CT','DE','DC','FL','GA','IN','KY','ME','MD','MA','MI','NH','NJ','NY','NC','OH','PA','RI','SC','VT','VA','WV'],
+    central:  ['AL','AR','IL','IA','KS','LA','MN','MS','MO','NE','ND','OK','SD','TN','TX','WI'],
+    mountain: ['CO','ID','MT','NM','UT','WY'],
+    arizona:  ['AZ'],
+    pacific:  ['CA','NV','OR','WA'],
+    alaska:   ['AK'],
+    hawaii:   ['HI'],
+  };
   let dispositionTargetLead = null;
   const PAGE_SIZE = 100;
   const saveNotesTimers = new Map();
@@ -476,6 +515,12 @@
     const to = from + PAGE_SIZE - 1;
     let q = sb.from('leads').select('*', { count: 'exact' }).eq('agent_id', user.id);
     if (stageFilter) q = q.eq('stage', stageFilter);
+    if (stateFilter) q = q.eq('state', stateFilter);
+    if (tzFilter && TZ_STATES[tzFilter]) {
+      // If both a state and a TZ are picked, the state filter is the stricter one;
+      // we still apply both (the .eq('state', stateFilter) above will dominate).
+      q = q.in('state', TZ_STATES[tzFilter]);
+    }
     if (searchQuery) {
       const esc = searchQuery.replace(/[%,]/g, '');
       q = q.or(`full_name.ilike.%${esc}%,phone.ilike.%${esc}%,email.ilike.%${esc}%`);
@@ -504,7 +549,7 @@
   function renderList() {
     const listEl = document.getElementById('dialer-list');
     if (!leads.length) {
-      const msg = (searchQuery || stageFilter) ? 'No leads match your filter.' : 'No leads yet. Hit "+ Add lead" or "↑ Upload CSV" to start.';
+      const msg = (searchQuery || stageFilter || stateFilter || tzFilter) ? 'No leads match your filter.' : 'No leads yet. Hit "+ Add lead" or "↑ Upload CSV" to start.';
       listEl.innerHTML = `<div class="dialer-list-empty">${msg}</div>`;
       return;
     }
@@ -778,6 +823,16 @@
   });
   document.getElementById('dialer-stage-filter').addEventListener('change', (e) => {
     stageFilter = e.target.value;
+    currentPage = 1;
+    refreshLeads();
+  });
+  document.getElementById('dialer-state-filter').addEventListener('change', (e) => {
+    stateFilter = e.target.value;
+    currentPage = 1;
+    refreshLeads();
+  });
+  document.getElementById('dialer-tz-filter').addEventListener('change', (e) => {
+    tzFilter = e.target.value;
     currentPage = 1;
     refreshLeads();
   });

@@ -6243,6 +6243,7 @@ body.dialer-fullwidth .hub-main { padding-left: 8px; }
   gap: 12px;
   margin: 8px 0 16px;
   align-items: center;
+  flex-wrap: wrap;
 }
 .dialer-search {
   flex: 1;
