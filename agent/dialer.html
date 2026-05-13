@@ -164,41 +164,64 @@
     <!-- Toolbar -->
     <div class="dialer-toolbar">
       <input class="dialer-search" id="dialer-search" type="search" placeholder="Search by name, phone, or email…" />
-      <select class="dialer-stage-filter" id="dialer-stage-filter">
-        <option value="">All stages</option>
-        <option value="new">New</option>
-        <option value="contacted">Contacted</option>
-        <option value="callback">Callback</option>
-        <option value="quoted">Quoted</option>
-        <option value="sold">Sold</option>
-        <option value="dead">Dead</option>
-      </select>
-      <select class="dialer-stage-filter" id="dialer-state-filter">
-        <option value="">All states</option>
-        <option>AL</option><option>AK</option><option>AZ</option><option>AR</option>
-        <option>CA</option><option>CO</option><option>CT</option><option>DE</option>
-        <option>DC</option><option>FL</option><option>GA</option><option>HI</option>
-        <option>ID</option><option>IL</option><option>IN</option><option>IA</option>
-        <option>KS</option><option>KY</option><option>LA</option><option>ME</option>
-        <option>MD</option><option>MA</option><option>MI</option><option>MN</option>
-        <option>MS</option><option>MO</option><option>MT</option><option>NE</option>
-        <option>NV</option><option>NH</option><option>NJ</option><option>NM</option>
-        <option>NY</option><option>NC</option><option>ND</option><option>OH</option>
-        <option>OK</option><option>OR</option><option>PA</option><option>RI</option>
-        <option>SC</option><option>SD</option><option>TN</option><option>TX</option>
-        <option>UT</option><option>VT</option><option>VA</option><option>WA</option>
-        <option>WV</option><option>WI</option><option>WY</option>
-      </select>
-      <select class="dialer-stage-filter" id="dialer-tz-filter">
-        <option value="">All time zones</option>
-        <option value="eastern">Eastern</option>
-        <option value="central">Central</option>
-        <option value="mountain">Mountain</option>
-        <option value="arizona">Arizona</option>
-        <option value="pacific">Pacific</option>
-        <option value="alaska">Alaska</option>
-        <option value="hawaii">Hawaii</option>
-      </select>
+      <div class="filter-wrap">
+        <button class="filter-trigger" id="filter-trigger" type="button" aria-haspopup="true" aria-expanded="false">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          <span>Filters</span>
+          <span class="filter-count" id="filter-count" hidden>0</span>
+          <svg class="caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="filter-popover" id="filter-popover" hidden>
+          <div class="filter-popover-head">
+            <span>Filter leads</span>
+            <button type="button" class="filter-clear" id="filter-clear">Clear all</button>
+          </div>
+          <div class="filter-field">
+            <label for="dialer-stage-filter">Stage</label>
+            <select class="dialer-stage-filter" id="dialer-stage-filter">
+              <option value="">All stages</option>
+              <option value="new">New</option>
+              <option value="contacted">Contacted</option>
+              <option value="callback">Callback</option>
+              <option value="quoted">Quoted</option>
+              <option value="sold">Sold</option>
+              <option value="dead">Dead</option>
+            </select>
+          </div>
+          <div class="filter-field">
+            <label for="dialer-state-filter">State</label>
+            <select class="dialer-stage-filter" id="dialer-state-filter">
+              <option value="">All states</option>
+              <option>AL</option><option>AK</option><option>AZ</option><option>AR</option>
+              <option>CA</option><option>CO</option><option>CT</option><option>DE</option>
+              <option>DC</option><option>FL</option><option>GA</option><option>HI</option>
+              <option>ID</option><option>IL</option><option>IN</option><option>IA</option>
+              <option>KS</option><option>KY</option><option>LA</option><option>ME</option>
+              <option>MD</option><option>MA</option><option>MI</option><option>MN</option>
+              <option>MS</option><option>MO</option><option>MT</option><option>NE</option>
+              <option>NV</option><option>NH</option><option>NJ</option><option>NM</option>
+              <option>NY</option><option>NC</option><option>ND</option><option>OH</option>
+              <option>OK</option><option>OR</option><option>PA</option><option>RI</option>
+              <option>SC</option><option>SD</option><option>TN</option><option>TX</option>
+              <option>UT</option><option>VT</option><option>VA</option><option>WA</option>
+              <option>WV</option><option>WI</option><option>WY</option>
+            </select>
+          </div>
+          <div class="filter-field">
+            <label for="dialer-tz-filter">Time zone</label>
+            <select class="dialer-stage-filter" id="dialer-tz-filter">
+              <option value="">All time zones</option>
+              <option value="eastern">Eastern</option>
+              <option value="central">Central</option>
+              <option value="mountain">Mountain</option>
+              <option value="arizona">Arizona</option>
+              <option value="pacific">Pacific</option>
+              <option value="alaska">Alaska</option>
+              <option value="hawaii">Hawaii</option>
+            </select>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Leads list (rendered by JS) -->
@@ -825,16 +848,60 @@
     stageFilter = e.target.value;
     currentPage = 1;
     refreshLeads();
+    updateFilterCount();
   });
   document.getElementById('dialer-state-filter').addEventListener('change', (e) => {
     stateFilter = e.target.value;
     currentPage = 1;
     refreshLeads();
+    updateFilterCount();
   });
   document.getElementById('dialer-tz-filter').addEventListener('change', (e) => {
     tzFilter = e.target.value;
     currentPage = 1;
     refreshLeads();
+    updateFilterCount();
+  });
+
+  // ---------- FILTER POPOVER -----------------------------------------------
+
+  const filterTrigger = document.getElementById('filter-trigger');
+  const filterPopover = document.getElementById('filter-popover');
+  const filterCountEl = document.getElementById('filter-count');
+
+  function updateFilterCount() {
+    let n = 0;
+    if (stageFilter) n++;
+    if (stateFilter) n++;
+    if (tzFilter)    n++;
+    filterCountEl.textContent = n;
+    filterCountEl.hidden = n === 0;
+    filterTrigger.classList.toggle('has-active', n > 0);
+  }
+
+  function openFilters() {
+    filterPopover.hidden = false;
+    filterTrigger.setAttribute('aria-expanded', 'true');
+  }
+  function closeFilters() {
+    filterPopover.hidden = true;
+    filterTrigger.setAttribute('aria-expanded', 'false');
+  }
+  filterTrigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (filterPopover.hidden) openFilters(); else closeFilters();
+  });
+  filterPopover.addEventListener('click', (e) => e.stopPropagation());
+  document.addEventListener('click', () => { if (!filterPopover.hidden) closeFilters(); });
+
+  document.getElementById('filter-clear').addEventListener('click', () => {
+    stageFilter = stateFilter = tzFilter = '';
+    document.getElementById('dialer-stage-filter').value = '';
+    document.getElementById('dialer-state-filter').value = '';
+    document.getElementById('dialer-tz-filter').value = '';
+    currentPage = 1;
+    refreshLeads();
+    updateFilterCount();
   });
   document.getElementById('pagi-prev').addEventListener('click', () => {
     if (currentPage > 1) { currentPage--; refreshLeads(); window.scrollTo(0, 0); }
