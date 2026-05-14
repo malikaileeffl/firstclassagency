@@ -570,13 +570,21 @@
 
 <!-- Disposition popover (anchored to a row's disposition button) -->
 <div class="lr-disp-popover" id="lr-disp-popover" hidden>
-  <button class="disp-btn disp-no-answer"      data-disp="no_answer"      type="button">No answer</button>
-  <button class="disp-btn disp-voicemail"      data-disp="voicemail"      type="button">Voicemail</button>
-  <button class="disp-btn disp-callback"       data-disp="callback"       type="button">Callback</button>
-  <button class="disp-btn disp-not-interested" data-disp="not_interested" type="button">Not interested</button>
-  <button class="disp-btn disp-bad-number"     data-disp="bad_number"     type="button">Bad number</button>
-  <button class="disp-btn disp-quoted"         data-disp="quoted"         type="button">Quoted</button>
-  <button class="disp-btn disp-sold"           data-disp="sold"           type="button">Sold ✓</button>
+  <button class="disp-btn disp-sold"               data-disp="sold"                data-sms="1" type="button">Sold ✓ <span class="disp-sms">✉</span></button>
+  <button class="disp-btn disp-scheduled-appt"     data-disp="scheduled_appt"      data-sms="1" type="button">Scheduled Appt. <span class="disp-sms">✉</span></button>
+  <button class="disp-btn disp-think-about-it"     data-disp="think_about_it"      data-sms="1" type="button">Think About It <span class="disp-sms">✉</span></button>
+  <button class="disp-btn disp-social-objection"   data-disp="social_objection"    data-sms="1" type="button">Social Objection <span class="disp-sms">✉</span></button>
+  <button class="disp-btn disp-banking-objection"  data-disp="banking_objection"   data-sms="1" type="button">Banking Objection <span class="disp-sms">✉</span></button>
+  <button class="disp-btn disp-policy-lapse"       data-disp="policy_lapse"        data-sms="1" type="button">Policy Lapse <span class="disp-sms">✉</span></button>
+  <button class="disp-btn disp-missed-first-pmt"   data-disp="missed_first_payment" data-sms="1" type="button">Missed First Payment <span class="disp-sms">✉</span></button>
+  <div class="disp-divider"></div>
+  <button class="disp-btn disp-talk-to-spouse"     data-disp="talk_to_spouse"      type="button">Talk to Spouse</button>
+  <button class="disp-btn disp-pick-up-hang-up"    data-disp="pick_up_hang_up"     type="button">Pick Up Hang Up</button>
+  <button class="disp-btn disp-busy"               data-disp="busy"                type="button">Busy</button>
+  <div class="disp-divider"></div>
+  <button class="disp-btn disp-exclude-drips"      data-disp="exclude_all_drips"   type="button">Exclude From All Drips</button>
+  <button class="disp-btn disp-bad-number"         data-disp="bad_number"          type="button">Bad Number</button>
+  <button class="disp-btn disp-dnc"                data-disp="dnc"                 type="button">DNC</button>
 </div>
 
 <!-- Add / edit lead modal -->
@@ -709,8 +717,8 @@
   <div class="lead-modal-backdrop" data-close-callback></div>
   <div class="lead-modal-content lead-modal-narrow" role="dialog" aria-modal="true">
     <button class="lead-modal-close" type="button" data-close-callback aria-label="Close">×</button>
-    <h2>Schedule callback</h2>
-    <p class="dialer-cb-sub">When do they want you to call back?</p>
+    <h2 id="cb-title">Schedule appointment</h2>
+    <p class="dialer-cb-sub" id="cb-sub">When is the appointment scheduled for?</p>
     <div class="cb-quick">
       <button class="btn btn--ghost cb-quick-btn" data-cb-mins="60">In 1 hour</button>
       <button class="btn btn--ghost cb-quick-btn" data-cb-mins="180">In 3 hours</button>
@@ -1058,13 +1066,27 @@
       closeDispPopover();
     }
   });
+  // Dispositions that trigger SMS sends when Twilio is wired.
+  // Frontend just logs the disposition; the SMS-send edge function picks
+  // those rows up and dispatches the template for that disposition.
+  const SMS_TRIGGER_DISPOSITIONS = new Set([
+    'sold',
+    'scheduled_appt',
+    'think_about_it',
+    'social_objection',
+    'banking_objection',
+    'policy_lapse',
+    'missed_first_payment',
+  ]);
+
   dispPopover.addEventListener('click', async (e) => {
     const btn = e.target.closest('.disp-btn');
     if (!btn || !dispositionTargetLead) return;
     const disp = btn.dataset.disp;
     const lead = dispositionTargetLead;
     closeDispPopover();
-    if (disp === 'callback') { pendingCallbackLead = lead; openCallbackModal(); return; }
+    // Scheduled Appt. needs a time picker — reuse the callback modal.
+    if (disp === 'scheduled_appt') { pendingCallbackLead = lead; openCallbackModal(disp); return; }
     await logDisposition(lead, disp, null);
   });
 
@@ -1076,7 +1098,15 @@
     if (callErr) { alert('Could not log call: ' + callErr.message); return; }
     const updates = { stage: newStage, last_called_at: new Date().toISOString() };
     if (callbackAt) updates.callback_at = callbackAt;
-    if (disp !== 'callback') updates.callback_at = null;
+    if (disp !== 'scheduled_appt') updates.callback_at = null;
+
+    // Exclude From All Drips — turn off the SMS drip flag on the lead.
+    if (disp === 'exclude_all_drips') {
+      updates.sms_drip_enabled   = false;
+      updates.email_drip_enabled = false;
+    }
+
+    // Sold prompts for sale amount if not already set.
     if (disp === 'sold' && lead.sale_amount == null) {
       const v = prompt('Sale amount? (leave blank to skip)');
       if (v) { const n = Number(v); if (!isNaN(n)) updates.sale_amount = n; }
@@ -1087,14 +1117,20 @@
   }
 
   function stageFromDisposition(disp, currentStage) {
-    if (disp === 'sold')           return 'sold';
-    if (disp === 'not_interested') return 'dead';
-    if (disp === 'bad_number')     return 'dead';
-    if (disp === 'quoted')         return 'quoted';
-    if (disp === 'callback')       return 'callback';
-    if (disp === 'no_answer' || disp === 'voicemail') {
+    if (disp === 'sold')                return 'sold';
+    if (disp === 'bad_number')          return 'dead';
+    if (disp === 'dnc')                 return 'dead';
+    if (disp === 'scheduled_appt')      return 'callback';
+    if (disp === 'think_about_it')      return 'quoted';
+    if (disp === 'talk_to_spouse')      return 'quoted';
+    if (disp === 'social_objection')    return 'quoted';
+    if (disp === 'banking_objection')   return 'quoted';
+    if (disp === 'policy_lapse')        return 'quoted';
+    if (disp === 'missed_first_payment') return 'quoted';
+    if (disp === 'pick_up_hang_up' || disp === 'busy') {
       return currentStage === 'new' ? 'contacted' : currentStage;
     }
+    // 'exclude_all_drips' leaves the stage where it is — it's a setting, not an outcome.
     return currentStage;
   }
 
@@ -1277,11 +1313,16 @@
   // ---------- CALLBACK MODAL ------------------------------------------------
 
   const cbModal = document.getElementById('callback-modal');
+  let pendingCallbackDisp = 'scheduled_appt';
   cbModal.querySelectorAll('[data-close-callback]').forEach(el =>
     el.addEventListener('click', () => closeCallbackModal())
   );
-  function openCallbackModal() {
+  function openCallbackModal(disp) {
+    pendingCallbackDisp = disp || 'scheduled_appt';
     document.getElementById('cb-when').value = '';
+    document.getElementById('cb-title').textContent = 'Schedule appointment';
+    document.getElementById('cb-sub').textContent   = 'When is the appointment scheduled for?';
+    document.getElementById('cb-confirm').textContent = 'Schedule appointment';
     cbModal.hidden = false;
     requestAnimationFrame(() => cbModal.classList.add('show'));
   }
@@ -1296,7 +1337,7 @@
       if (!pendingCallbackLead) { closeCallbackModal(); return; }
       const mins = Number(btn.dataset.cbMins);
       const when = new Date(Date.now() + mins * 60 * 1000).toISOString();
-      await logDisposition(pendingCallbackLead, 'callback', when);
+      await logDisposition(pendingCallbackLead, pendingCallbackDisp, when);
       closeCallbackModal();
     });
   });
@@ -1305,7 +1346,7 @@
     const v = document.getElementById('cb-when').value;
     if (!v) { alert('Pick a time.'); return; }
     const when = new Date(v).toISOString();
-    await logDisposition(pendingCallbackLead, 'callback', when);
+    await logDisposition(pendingCallbackLead, pendingCallbackDisp, when);
     closeCallbackModal();
   });
 

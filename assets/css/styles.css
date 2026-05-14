@@ -6675,6 +6675,10 @@ body.dialer-fullwidth .hub-main { padding-left: 8px; }
 }
 .lr-disp-popover[hidden] { display: none; }
 .lr-disp-popover .disp-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
   padding: 8px 12px;
   text-align: left;
   font-size: 0.86rem;
@@ -6686,10 +6690,41 @@ body.dialer-fullwidth .hub-main { padding-left: 8px; }
   transition: background var(--dur-1) var(--ease);
 }
 .lr-disp-popover .disp-btn:hover { background: var(--surface-hover); }
-.lr-disp-popover .disp-sold { color: #4ade80; font-weight: 600; }
-.lr-disp-popover .disp-callback { color: #ffd86a; }
-.lr-disp-popover .disp-not-interested,
-.lr-disp-popover .disp-bad-number { color: #ef4444; }
+
+/* Tiny SMS envelope hint on dispositions that fire a templated text */
+.lr-disp-popover .disp-sms {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  background: rgba(0, 120, 171, 0.18);
+  color: var(--accent-bright);
+  font-size: 0.72rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.lr-disp-popover .disp-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px -4px;
+}
+
+/* Color groups — outcome dispositions */
+.lr-disp-popover .disp-sold              { color: #4ade80; font-weight: 600; }
+.lr-disp-popover .disp-scheduled-appt    { color: #ffd86a; }
+.lr-disp-popover .disp-think-about-it,
+.lr-disp-popover .disp-social-objection,
+.lr-disp-popover .disp-banking-objection,
+.lr-disp-popover .disp-policy-lapse,
+.lr-disp-popover .disp-missed-first-pmt  { color: var(--accent-bright); }
+.lr-disp-popover .disp-bad-number,
+.lr-disp-popover .disp-dnc               { color: #ef4444; }
+.lr-disp-popover .disp-exclude-drips     { color: #f59e0b; }
+.lr-disp-popover .disp-talk-to-spouse,
+.lr-disp-popover .disp-pick-up-hang-up,
+.lr-disp-popover .disp-busy              { color: var(--text-2); }
 
 /* =============================================================================
    Dialer — Settings modal
