@@ -165,6 +165,7 @@
 
     <nav class="settings-tabs" role="tablist">
       <button class="settings-tab is-active" type="button" data-tab="general" role="tab" aria-selected="true">General settings</button>
+      <button class="settings-tab"           type="button" data-tab="phone"   role="tab" aria-selected="false">Phone Setup</button>
       <button class="settings-tab"           type="button" data-tab="billing" role="tab" aria-selected="false">Billing</button>
       <!-- More tabs (Drip campaigns, SMS templates, etc.) will be added here. -->
     </nav>
@@ -175,11 +176,6 @@
 
           <!-- LEFT COLUMN -->
           <div class="settings-col">
-
-            <div class="field">
-              <label for="set-forward">Forward calls to</label>
-              <input class="input" id="set-forward" type="tel" inputmode="tel" placeholder="(555) 555-5555" />
-            </div>
 
             <div class="field">
               <label for="set-website">Agent website</label>
@@ -279,6 +275,95 @@
           <button type="submit" class="btn btn--primary" id="settings-save">UPDATE INFO</button>
         </div>
       </form>
+    </div>
+
+    <!-- ===== PHONE SETUP TAB ===== -->
+    <div class="settings-pane" data-pane="phone" hidden>
+
+      <!-- Current number card -->
+      <section class="phone-card" id="phone-current-card">
+        <div class="phone-card-head">
+          <span class="phone-card-eyebrow">Your dialer number</span>
+          <span class="phone-status-pill" id="phone-status-pill" data-state="none">No number</span>
+        </div>
+        <div class="phone-card-body" id="phone-card-body">
+          <div class="phone-card-none" id="phone-card-none">
+            <p class="phone-card-empty-title">You don't have a Twilio number yet.</p>
+            <p class="phone-card-empty-sub">Pick one below to start placing calls and texting leads. Numbers rent for $2/month, deducted from your prepaid credits.</p>
+          </div>
+          <div class="phone-card-active" id="phone-card-active" hidden>
+            <p class="phone-card-num" id="phone-card-num">—</p>
+            <p class="phone-card-meta">
+              <span>Active since <span id="phone-card-since">—</span></span>
+              <span class="phone-card-dot">•</span>
+              <span>$2.00/month · next charge <span id="phone-card-next">—</span></span>
+            </p>
+            <div class="phone-card-actions">
+              <button type="button" class="btn btn--ghost" id="phone-rotate-btn">Rotate to a new number</button>
+              <button type="button" class="btn btn--ghost btn--danger-ghost" id="phone-release-btn">Release number</button>
+            </div>
+            <p class="field-help" style="margin-top:10px;">Rotating swaps you to a fresh Twilio number and releases your current one. Existing message threads continue to work — but leads who try the old number after release won't reach you.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Routing / forwarding -->
+      <section class="phone-card">
+        <div class="phone-card-head">
+          <span class="phone-card-eyebrow">Where do calls to your Twilio number get routed?</span>
+        </div>
+        <div class="phone-card-body">
+          <p class="field-help" style="margin:0 0 12px;">When a lead calls or returns a call to your Twilio number, we forward the call to the number below. This is normally your personal cell so you never miss a callback. SMS replies always land in the CRM Messages tab regardless of routing.</p>
+          <div class="phone-routing-row">
+            <div class="field" style="flex:1;">
+              <label for="phone-forward">Forward to</label>
+              <input class="input" id="phone-forward" type="tel" inputmode="tel" placeholder="(555) 555-5555" />
+              <p class="field-help">Format: any US number, with or without dashes.</p>
+            </div>
+            <label class="settings-check phone-routing-check">
+              <input type="checkbox" id="phone-forward-enabled" />
+              <span>Forwarding enabled</span>
+            </label>
+          </div>
+          <div class="settings-actions" style="margin-top:6px;">
+            <span class="settings-save-status" id="phone-forward-status"></span>
+            <button type="button" class="btn btn--primary" id="phone-forward-save">SAVE ROUTING</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pick / search for a number -->
+      <section class="phone-card" id="phone-pick-card">
+        <div class="phone-card-head">
+          <span class="phone-card-eyebrow" id="phone-pick-title">Pick a number</span>
+        </div>
+        <div class="phone-card-body">
+          <p class="field-help" style="margin:0 0 12px;">Search by area code or city. We'll show you available numbers from Twilio's local inventory. The first month's $2 rental is deducted on claim.</p>
+          <div class="phone-search-row">
+            <div class="field" style="flex:1;">
+              <label for="phone-area-code">Area code</label>
+              <input class="input" id="phone-area-code" type="tel" inputmode="numeric" maxlength="3" placeholder="e.g. 615" />
+            </div>
+            <div class="field" style="flex:2;">
+              <label for="phone-city">City or contains digits (optional)</label>
+              <input class="input" id="phone-city" type="text" placeholder="e.g. Nashville or *FCA*" />
+            </div>
+            <div class="phone-search-action">
+              <button type="button" class="btn btn--primary" id="phone-search-btn">Search</button>
+            </div>
+          </div>
+
+          <div class="phone-results" id="phone-results" hidden>
+            <p class="phone-results-head" id="phone-results-head">—</p>
+            <ul class="phone-results-list" id="phone-results-list"></ul>
+          </div>
+
+          <p class="field-help" style="margin-top:14px;" id="phone-pick-warn" hidden>
+            You need at least $4.00 in credits to claim a number ($2 first month + $2 reserve).
+          </p>
+        </div>
+      </section>
+
     </div>
 
     <!-- ===== BILLING TAB ===== -->
@@ -409,24 +494,23 @@
         </div>
       </section>
 
-      <!-- Twilio phone number -->
+      <!-- Twilio phone number summary (full controls live in Phone Setup tab) -->
       <section class="billing-section">
         <h3 class="billing-section-title">Your dialer phone number</h3>
-        <p class="billing-section-help">Each agent gets a dedicated number so leads can call and text the same number back. The $2/month rental is deducted from your credits on the 1st of each month.</p>
         <div class="phone-number-row" id="bill-phone-row">
           <div class="phone-number-none" id="bill-phone-none">
             <div>
               <p><strong>No number assigned yet</strong></p>
-              <p class="field-help">Once you add credits, we'll provision a number with an area code matching your default time zone.</p>
+              <p class="field-help">Buy or rotate your number on the Phone Setup tab.</p>
             </div>
-            <button class="btn btn--ghost" type="button" id="bill-claim-number" disabled>Pick a number</button>
+            <button class="btn btn--ghost" type="button" data-go-tab="phone">Open Phone Setup →</button>
           </div>
           <div class="phone-number-active" id="bill-phone-active" hidden>
             <div>
               <p class="phone-num-display" id="bill-phone-display">—</p>
               <p class="field-help">$2.00/month · next charge <span id="bill-phone-next">—</span></p>
             </div>
-            <button class="btn btn--ghost" type="button" id="bill-release-number">Release number</button>
+            <button class="btn btn--ghost" type="button" data-go-tab="phone">Manage on Phone Setup →</button>
           </div>
         </div>
       </section>
@@ -582,7 +666,6 @@
     merged.preferences = Object.assign({}, DEFAULT_SETTINGS.preferences, general.preferences || {});
     merged.system_alerts = Object.assign({}, DEFAULT_SETTINGS.system_alerts, general.system_alerts || {});
 
-    document.getElementById('set-forward').value   = merged.forward_calls_to  || '';
     document.getElementById('set-website').value   = merged.agent_website     || '';
     document.getElementById('set-timezone').value  = merged.default_time_zone || 'Eastern';
     document.getElementById('set-agent-id').value  = merged.agent_id_display  || '';
@@ -608,7 +691,6 @@
       perDay[d.key] = sel ? sel.value : '20:00';
     });
     return {
-      forward_calls_to:  document.getElementById('set-forward').value.trim() || null,
       agent_website:     document.getElementById('set-website').value.trim() || null,
       default_time_zone: document.getElementById('set-timezone').value,
       agent_id_display:  document.getElementById('set-agent-id').value.trim() || null,
@@ -633,19 +715,24 @@
   document.getElementById('set-stop-mode').addEventListener('change', (e) => applyStopMode(e.target.value));
 
   // Tab switching (in-page)
-  document.querySelectorAll('.settings-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      const target = tab.dataset.tab;
-      document.querySelectorAll('.settings-tab').forEach(t => {
-        const on = t === tab;
-        t.classList.toggle('is-active', on);
-        t.setAttribute('aria-selected', on ? 'true' : 'false');
-      });
-      document.querySelectorAll('.settings-pane').forEach(p => {
-        p.hidden = p.dataset.pane !== target;
-      });
-      if (target === 'billing' && !billingLoaded) loadBilling();
+  function activateTab(target) {
+    document.querySelectorAll('.settings-tab').forEach(t => {
+      const on = t.dataset.tab === target;
+      t.classList.toggle('is-active', on);
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
     });
+    document.querySelectorAll('.settings-pane').forEach(p => {
+      p.hidden = p.dataset.pane !== target;
+    });
+    if (target === 'billing' && !billingLoaded) loadBilling();
+    if (target === 'phone'   && !phoneLoaded)   loadPhone();
+  }
+  document.querySelectorAll('.settings-tab').forEach(tab => {
+    tab.addEventListener('click', () => activateTab(tab.dataset.tab));
+  });
+  // "Open Phone Setup" buttons from the Billing pane
+  document.querySelectorAll('[data-go-tab]').forEach(btn => {
+    btn.addEventListener('click', () => activateTab(btn.dataset.goTab));
   });
 
   document.getElementById('settings-form').addEventListener('submit', async (e) => {
@@ -656,7 +743,11 @@
     status.textContent = '';
     status.classList.remove('error');
 
-    const general = collectSettings();
+    // Merge with existing general blob so we don't wipe phone-routing fields
+    // (forward_calls_to, forward_calls_enabled) that live in the same JSON.
+    const { data: existing } = await sb.from('profiles').select('dialer_settings').eq('id', user.id).maybeSingle();
+    const existingGeneral = (existing && existing.dialer_settings && existing.dialer_settings.general) || {};
+    const general = Object.assign({}, existingGeneral, collectSettings());
     const { error } = await sb.from('profiles').update({ dialer_settings: { general } }).eq('id', user.id);
 
     btn.disabled = false; btn.textContent = 'UPDATE INFO';
@@ -906,11 +997,6 @@
 
   document.getElementById('bill-add-card').addEventListener('click', () => alert('Stripe SetupIntent flow goes here — saves a card on file for auto-recharge.'));
   document.getElementById('bill-update-card').addEventListener('click', () => alert('Stripe SetupIntent flow goes here — replaces the card on file.'));
-  document.getElementById('bill-claim-number').addEventListener('click', () => alert('Twilio number picker opens here. We\'ll provision a number matching your default time-zone area code and deduct $2 from your credits.'));
-  document.getElementById('bill-release-number').addEventListener('click', () => {
-    if (!confirm('Release this number? Leads who text or call it after release won\'t reach you.')) return;
-    alert('Number-release flow goes here.');
-  });
 
   document.getElementById('bill-autorecharge').addEventListener('change', (e) => {
     document.getElementById('bill-autorecharge-fields').hidden = !e.target.checked;
@@ -946,6 +1032,166 @@
   function escapeHtml(s) {
     return String(s == null ? '' : s).replace(/[&<>"\']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "\'":'&#39;' })[c]);
   }
+
+  // ---------- PHONE SETUP TAB ----------------------------------------------
+  // Loads the agent's current Twilio number (if any), the forwarding number,
+  // and exposes the number picker / rotate / release controls. The actual
+  // Twilio provisioning calls go through an edge function (deferred — wired
+  // alongside the Twilio Voice phase). For now the UI is fully interactive
+  // with mocked results so we can ship the layout and rotation flow.
+
+  let phoneLoaded = false;
+  let phoneProfile = null;
+
+  async function loadPhone() {
+    const { data, error } = await sb.from('profiles')
+      .select('twilio_phone_number, twilio_number_purchased_at, credit_balance_cents, dialer_settings')
+      .eq('id', user.id).maybeSingle();
+    if (error) { console.warn('[phone] load failed:', error); return; }
+    phoneProfile = data || {};
+    renderPhone();
+    phoneLoaded = true;
+  }
+
+  function renderPhone() {
+    const hasNum = !!phoneProfile.twilio_phone_number;
+    const bal    = phoneProfile.credit_balance_cents || 0;
+
+    // Current number card
+    document.getElementById('phone-card-none').hidden   = hasNum;
+    document.getElementById('phone-card-active').hidden = !hasNum;
+    const pill = document.getElementById('phone-status-pill');
+    pill.dataset.state = hasNum ? 'active' : 'none';
+    pill.textContent = hasNum ? 'Active' : 'No number';
+
+    if (hasNum) {
+      document.getElementById('phone-card-num').textContent = formatPhone(phoneProfile.twilio_phone_number);
+      const since = phoneProfile.twilio_number_purchased_at ? new Date(phoneProfile.twilio_number_purchased_at) : null;
+      document.getElementById('phone-card-since').textContent = since ? since.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+      const next = new Date();
+      next.setMonth(next.getMonth() + 1, 1);
+      document.getElementById('phone-card-next').textContent = next.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    // Forwarding fields
+    const general = (phoneProfile.dialer_settings && phoneProfile.dialer_settings.general) || {};
+    document.getElementById('phone-forward').value = general.forward_calls_to || '';
+    document.getElementById('phone-forward-enabled').checked = general.forward_calls_enabled !== false;
+
+    // Picker affordability gate
+    const canAfford = bal >= 400;  // $4 minimum ($2 first month + $2 reserve)
+    document.getElementById('phone-pick-warn').hidden = canAfford;
+    document.getElementById('phone-search-btn').disabled = !canAfford;
+  }
+
+  // Mock number search — replaced by edge function call to Twilio's
+  // /AvailablePhoneNumbers/Local resource in the Twilio Voice phase.
+  function mockSearchNumbers(areaCode) {
+    const out = [];
+    const ac = String(areaCode || '615').replace(/[^0-9]/g, '').slice(0, 3) || '615';
+    for (let i = 0; i < 6; i++) {
+      const tail = String(2000000 + Math.floor(Math.random() * 7999999)).slice(0, 7);
+      const num = `+1${ac}${tail}`;
+      out.push(num);
+    }
+    return out;
+  }
+
+  document.getElementById('phone-search-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('phone-search-btn');
+    const area = document.getElementById('phone-area-code').value.trim();
+    const city = document.getElementById('phone-city').value.trim();
+    btn.disabled = true; btn.textContent = 'Searching…';
+
+    // ~600ms delay so it feels real even when mocked
+    await new Promise(r => setTimeout(r, 600));
+
+    const results = mockSearchNumbers(area);
+    const head = document.getElementById('phone-results-head');
+    const list = document.getElementById('phone-results-list');
+    head.textContent = results.length
+      ? `Showing ${results.length} available number${results.length === 1 ? '' : 's'}${area ? ` in area code ${area}` : ''}${city ? ` matching "${city}"` : ''}`
+      : 'No numbers matched. Try a different area code.';
+    list.innerHTML = results.map(n => `
+      <li class="phone-result-row">
+        <span class="phone-result-num">${escapeHtml(formatPhone(n))}</span>
+        <span class="phone-result-meta">Local · SMS + Voice · $2/mo</span>
+        <button type="button" class="btn btn--ghost phone-result-claim" data-num="${escapeHtml(n)}">Claim</button>
+      </li>
+    `).join('');
+    document.getElementById('phone-results').hidden = false;
+    btn.disabled = false; btn.textContent = 'Search';
+
+    // Wire claim buttons
+    list.querySelectorAll('.phone-result-claim').forEach(b => {
+      b.addEventListener('click', () => claimNumber(b.dataset.num));
+    });
+  });
+
+  async function claimNumber(num) {
+    if (!confirm(`Claim ${formatPhone(num)}? This will deduct $2 from your credits for the first month's rental.`)) return;
+    const isRotation = !!phoneProfile.twilio_phone_number;
+    if (isRotation && !confirm('You already have a number assigned. Rotating will release the old one. Continue?')) return;
+
+    // TODO: replace with edge-function call that:
+    //   1) Provisions the number on Twilio
+    //   2) Updates profiles.twilio_phone_number + twilio_number_purchased_at
+    //   3) Releases the old Twilio number if isRotation
+    //   4) Deducts $2 from credit_balance_cents in a transaction
+    alert(`Number-claim flow goes here.\n\nProvision ${formatPhone(num)} on Twilio, save to profile, deduct $2 from credits${isRotation ? ', release the old number' : ''}.`);
+
+    // Optimistic local update so the UI reflects the claim
+    phoneProfile.twilio_phone_number = num;
+    phoneProfile.twilio_number_purchased_at = new Date().toISOString();
+    document.getElementById('phone-results').hidden = true;
+    document.getElementById('phone-results-list').innerHTML = '';
+    document.getElementById('phone-area-code').value = '';
+    document.getElementById('phone-city').value = '';
+    renderPhone();
+  }
+
+  document.getElementById('phone-rotate-btn').addEventListener('click', () => {
+    // Scroll the picker into view + nudge the user
+    document.getElementById('phone-pick-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document.getElementById('phone-area-code').focus();
+  });
+
+  document.getElementById('phone-release-btn').addEventListener('click', async () => {
+    if (!phoneProfile.twilio_phone_number) return;
+    if (!confirm(`Release ${formatPhone(phoneProfile.twilio_phone_number)}? Leads who try this number after release won't reach you. Your CRM history stays.`)) return;
+    // TODO: edge-function call to release the Twilio number + clear the column.
+    alert('Number-release flow goes here.');
+    phoneProfile.twilio_phone_number = null;
+    phoneProfile.twilio_number_purchased_at = null;
+    renderPhone();
+  });
+
+  // Save routing (forwarding number + on/off)
+  document.getElementById('phone-forward-save').addEventListener('click', async () => {
+    const status = document.getElementById('phone-forward-status');
+    const btn    = document.getElementById('phone-forward-save');
+    btn.disabled = true; btn.textContent = 'Saving…';
+    status.textContent = ''; status.classList.remove('error');
+
+    // Merge into the existing dialer_settings.general blob so we don't blow away other fields
+    const { data: existing } = await sb.from('profiles').select('dialer_settings').eq('id', user.id).maybeSingle();
+    const existingGeneral = (existing && existing.dialer_settings && existing.dialer_settings.general) || {};
+    const nextGeneral = Object.assign({}, existingGeneral, {
+      forward_calls_to:      document.getElementById('phone-forward').value.trim() || null,
+      forward_calls_enabled: document.getElementById('phone-forward-enabled').checked,
+    });
+    const { error } = await sb.from('profiles').update({ dialer_settings: { general: nextGeneral } }).eq('id', user.id);
+
+    btn.disabled = false; btn.textContent = 'SAVE ROUTING';
+    if (error) {
+      status.textContent = 'Save failed: ' + error.message;
+      status.classList.add('error');
+      return;
+    }
+    status.textContent = 'Saved ✓';
+    setTimeout(() => { status.textContent = ''; }, 1800);
+  });
+
 })();
 </script>
 
