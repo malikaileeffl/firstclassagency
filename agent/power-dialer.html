@@ -212,6 +212,26 @@
     <!-- Subscribed state — the actual Power Dialer interface -->
     <div class="pd-active" id="pd-active" hidden>
 
+      <!-- Empty state before a session starts -->
+      <div class="pd-empty" id="pd-empty">
+        <div class="pd-empty-icon">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <h2>Ready when you are</h2>
+        <p>Pick a campaign above and hit Start dialing. The system queues your leads and walks you through one at a time. Disposition with the keyboard, drop voicemails with one tap, never lose your place.</p>
+        <div class="pd-shortcuts-card">
+          <span class="pd-shortcuts-title">Keyboard shortcuts</span>
+          <div class="pd-shortcuts-grid">
+            <div><kbd>1</kbd>–<kbd>9</kbd> Disposition</div>
+            <div><kbd>Space</kbd> Hangup</div>
+            <div><kbd>V</kbd> Drop voicemail</div>
+            <div><kbd>M</kbd> Mute</div>
+            <div><kbd>N</kbd> Skip to next</div>
+            <div><kbd>Esc</kbd> Pause</div>
+          </div>
+        </div>
+      </div>
+
       <!-- Top control bar: campaign picker + session stats + start/pause/stop -->
       <header class="pd-topbar">
         <div class="pd-topbar-left">
@@ -240,26 +260,6 @@
           <button class="btn btn--ghost pd-control pd-stop-btn" id="pd-stop" type="button" hidden>⏹ End session</button>
         </div>
       </header>
-
-      <!-- Empty state before a session starts -->
-      <div class="pd-empty" id="pd-empty">
-        <div class="pd-empty-icon">
-          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        </div>
-        <h2>Ready when you are</h2>
-        <p>Pick a campaign above and hit Start dialing. The system queues your leads and walks you through one at a time. Disposition with the keyboard, drop voicemails with one tap, never lose your place.</p>
-        <div class="pd-shortcuts-card">
-          <span class="pd-shortcuts-title">Keyboard shortcuts</span>
-          <div class="pd-shortcuts-grid">
-            <div><kbd>1</kbd>–<kbd>9</kbd> Disposition</div>
-            <div><kbd>Space</kbd> Hangup</div>
-            <div><kbd>V</kbd> Drop voicemail</div>
-            <div><kbd>M</kbd> Mute</div>
-            <div><kbd>N</kbd> Skip to next</div>
-            <div><kbd>Esc</kbd> Pause</div>
-          </div>
-        </div>
-      </div>
 
       <!-- Active session — visible by default as a layout preview below the
            empty state. JS hides the empty state and keeps this when a real
