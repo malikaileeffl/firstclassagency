@@ -136,8 +136,21 @@
   // Public — let other scripts trigger explosions on demand
   window.fcaMoneyExplosion = explode;
 
-  // Auto-fire the brand-blue burst when the dialer page mounts
-  function autoFire() { explode({ variant: 'brand' }); }
+  // Auto-fire the brand-blue burst ONLY when the user entered via the
+  // sidebar / mobile-nav Dialer icon (which carries ?fromSidebar=1).
+  // Switching CRM tabs (Leads → Messages → back to Leads) navigates to plain
+  // dialer.html with no param and skips the animation.
+  function autoFire() {
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('fromSidebar')) return;
+    // Clean the param out of the URL so refresh / share / bookmark doesn't
+    // re-trigger the animation.
+    params.delete('fromSidebar');
+    const qs = params.toString();
+    const cleanUrl = window.location.pathname + (qs ? '?' + qs : '') + window.location.hash;
+    history.replaceState(null, '', cleanUrl);
+    explode({ variant: 'brand' });
+  }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', autoFire);
   } else {
