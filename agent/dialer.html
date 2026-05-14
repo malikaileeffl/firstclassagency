@@ -213,6 +213,16 @@
             </select>
           </div>
           <div class="filter-field">
+            <label for="dialer-leadtype-filter">Lead type</label>
+            <select class="dialer-stage-filter" id="dialer-leadtype-filter">
+              <option value="">All lead types</option>
+              <option>Trucker IUL</option>
+              <option>Gen Life IUL</option>
+              <option>Gen Life</option>
+              <option>Veteran</option>
+            </select>
+          </div>
+          <div class="filter-field">
             <label for="dialer-state-filter">State</label>
             <select class="dialer-stage-filter" id="dialer-state-filter">
               <option value="">All states</option>
@@ -462,6 +472,7 @@
   let stageFilter = '';
   let stateFilter = '';
   let tzFilter = '';
+  let leadTypeFilter = '';
   let pendingCallbackLead = null;
 
   // US time zone → state list (used by the time-zone filter)
@@ -493,6 +504,7 @@
     let q = sb.from('leads').select('*', { count: 'exact' }).eq('agent_id', user.id);
     if (stageFilter) q = q.eq('stage', stageFilter);
     if (stateFilter) q = q.eq('state', stateFilter);
+    if (leadTypeFilter) q = q.eq('lead_type', leadTypeFilter);
     if (tzFilter && TZ_STATES[tzFilter]) {
       // If both a state and a TZ are picked, the state filter is the stricter one;
       // we still apply both (the .eq('state', stateFilter) above will dominate).
@@ -526,7 +538,7 @@
   function renderList() {
     const listEl = document.getElementById('dialer-list');
     if (!leads.length) {
-      const msg = (searchQuery || stageFilter || stateFilter || tzFilter) ? 'No leads match your filter.' : 'No leads yet. Hit "+ Add lead" or "↑ Upload CSV" to start.';
+      const msg = (searchQuery || stageFilter || stateFilter || tzFilter || leadTypeFilter) ? 'No leads match your filter.' : 'No leads yet. Hit "+ Add lead" or "↑ Upload CSV" to start.';
       listEl.innerHTML = `<div class="dialer-list-empty">${msg}</div>`;
       return;
     }
@@ -872,6 +884,12 @@
     refreshLeads();
     updateFilterCount();
   });
+  document.getElementById('dialer-leadtype-filter').addEventListener('change', (e) => {
+    leadTypeFilter = e.target.value;
+    currentPage = 1;
+    refreshLeads();
+    updateFilterCount();
+  });
 
   // ---------- FILTER POPOVER -----------------------------------------------
 
@@ -881,9 +899,10 @@
 
   function updateFilterCount() {
     let n = 0;
-    if (stageFilter) n++;
-    if (stateFilter) n++;
-    if (tzFilter)    n++;
+    if (stageFilter)    n++;
+    if (stateFilter)    n++;
+    if (tzFilter)       n++;
+    if (leadTypeFilter) n++;
     filterCountEl.textContent = n;
     filterCountEl.hidden = n === 0;
     filterTrigger.classList.toggle('has-active', n > 0);
@@ -907,10 +926,11 @@
   document.addEventListener('click', () => { if (!filterPopover.hidden) closeFilters(); });
 
   document.getElementById('filter-clear').addEventListener('click', () => {
-    stageFilter = stateFilter = tzFilter = '';
+    stageFilter = stateFilter = tzFilter = leadTypeFilter = '';
     document.getElementById('dialer-stage-filter').value = '';
     document.getElementById('dialer-state-filter').value = '';
     document.getElementById('dialer-tz-filter').value = '';
+    document.getElementById('dialer-leadtype-filter').value = '';
     currentPage = 1;
     refreshLeads();
     updateFilterCount();
