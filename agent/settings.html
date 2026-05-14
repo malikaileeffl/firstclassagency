@@ -1,0 +1,947 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Settings — Agent portal</title>
+<meta name="robots" content="noindex,nofollow" />
+<meta name="theme-color" content="#0d0d0e" />
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="First Class" />
+<meta name="mobile-web-app-capable" content="yes" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/styles.css" />
+<script src="../assets/js/theme.js"></script>
+</head>
+<body class="dialer-fullwidth">
+
+<header class="site-header">
+  <a href="dashboard.html" class="brand">
+    <img class="brand-logo" src="../assets/img/logo.png" alt="First Class Agency" />
+    <span>First Class · Agent</span>
+  </a>
+  <div class="nav-cta">
+    <div class="user-menu" data-user-chip style="display:none;">
+      <button class="user-chip" data-user-chip-trigger type="button">
+        <span class="user-avatar" data-user-initial>—</span>
+        <span class="user-name">Hi, <strong data-user-name>—</strong></span>
+        <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="user-menu-dropdown" role="menu">
+        <a href="account.html" class="user-menu-item" role="menuitem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 14 0v1"/></svg>
+          Account
+        </a>
+        <div class="user-menu-divider"></div>
+        <button class="user-menu-item" data-logout type="button" role="menuitem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign out
+        </button>
+      </div>
+    </div>
+    <button class="nav-toggle" aria-label="Open menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</header>
+
+<nav class="mobile-nav" aria-label="Mobile">
+  <a href="dashboard.html">Dashboard</a>
+  <a href="training.html">Training</a>
+  <a href="dialer.html" data-dialer-only style="display:none;">Dialer</a>
+  <a href="quick-links.html">Quick Links</a>
+  <a href="portals.html">E-apps & Portals</a>
+  <a class="leads-soon"><span class="leads-text">Leads Center</span><span class="soon-pill">Soon</span></a>
+  <a href="promotion.html">Promotion & Comp</a>
+  <a href="carriers.html">Carrier Contacts</a>
+  <a href="resources.html">Agent Resources</a>
+  <a href="leaderboard.html">Leaderboard</a>
+  <a href="https://ww3.familyfirstlife.com/login" target="_blank" class="ip-report-link" rel="noopener noreferrer">IP Report</a>
+  <a href="builders.html" data-admin-only style="display:none;">Builders</a>
+  <a href="admin.html" data-admin-only style="display:none;">Admin</a>
+  <a href="account.html">Account</a>
+  <a href="#" data-logout class="btn btn--ghost mt-16">Sign out</a>
+</nav>
+
+<main class="container hub-shell">
+  <aside class="hub-side" aria-label="Agent navigation">
+    <a href="dashboard.html" aria-label="Dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>
+      Dashboard
+    </a>
+    <a href="training.html" aria-label="Training">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      Training
+    </a>
+    <a href="dialer.html" class="active" data-dialer-only style="display:none;" aria-label="Dialer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      Dialer
+    </a>
+    <a href="quick-links.html" aria-label="Quick Links">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      Quick Links
+    </a>
+    <a href="portals.html" aria-label="E-apps & Portals">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20"/><path d="M6 7h.01"/></svg>
+      E-apps & Portals
+    </a>
+    <a class="leads-soon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="20" r="1.3"/><circle cx="16" cy="20" r="1.3"/><path d="M3 3h2l2.5 12.5a1.5 1.5 0 0 0 1.5 1.5h9a1.5 1.5 0 0 0 1.5-1.5L20 7H6"/></svg>
+      <span class="leads-text">Leads Center</span>
+      <span class="soon-pill">Soon</span>
+    </a>
+    <a href="promotion.html" aria-label="Promotion & Comp">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+      Promotion & Comp
+    </a>
+    <a href="carriers.html" aria-label="Carrier Contacts">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Carrier Contacts
+    </a>
+    <a href="resources.html" aria-label="Agent Resources">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      Agent Resources
+    </a>
+    <a href="leaderboard.html" aria-label="Leaderboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="6" width="6" height="14" rx="1"/><rect x="2" y="12" width="6" height="8" rx="1"/><rect x="16" y="9" width="6" height="11" rx="1"/></svg>
+      Leaderboard
+    </a>
+    <a href="https://ww3.familyfirstlife.com/login" target="_blank" rel="noopener noreferrer" class="ip-report-link" aria-label="IP Report">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      IP Report
+    </a>
+    <a href="builders.html" data-admin-only style="display:none;" aria-label="Builders">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><circle cx="5.5" cy="19" r="2.5"/><circle cx="18.5" cy="19" r="2.5"/><path d="M12 7.5 V14 M5.5 14 H18.5 M5.5 14 V16.5 M18.5 14 V16.5"/></svg>
+      Builders
+    </a>
+    <a href="admin.html" data-admin-only style="display:none;" aria-label="Admin">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9.5-8 10-4.5-.5-8-5-8-10V6l8-4z"/><path d="m9 12 2 2 4-4"/></svg>
+      Admin
+    </a>
+  </aside>
+
+  <section class="hub-main dialer-main">
+    <!-- CRM tab bar -->
+    <div class="crm-tabs">
+      <a class="crm-tab" href="dialer.html">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Leads
+      </a>
+      <a class="crm-tab" href="messages.html">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Messages
+        <span class="crm-tab-badge" id="crm-tab-unread" hidden>0</span>
+      </a>
+      <a class="crm-tab" href="team.html" data-admin-only style="display:none;">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Team
+        <span class="crm-tab-tag">Admin</span>
+      </a>
+      <a class="crm-tab is-active" href="settings.html">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </a>
+    </div>
+
+    <!-- Settings page body -->
+    <div class="settings-shell">
+    <div class="hub-head" style="margin-bottom:18px;">
+        <div>
+          <span class="eyebrow">CRM</span>
+          <h1 class="mt-8">Settings</h1>
+        </div>
+      </div>
+
+    <nav class="settings-tabs" role="tablist">
+      <button class="settings-tab is-active" type="button" data-tab="general" role="tab" aria-selected="true">General settings</button>
+      <button class="settings-tab"           type="button" data-tab="billing" role="tab" aria-selected="false">Billing</button>
+      <!-- More tabs (Drip campaigns, SMS templates, etc.) will be added here. -->
+    </nav>
+
+    <div class="settings-pane" data-pane="general">
+      <form id="settings-form" autocomplete="off">
+        <div class="settings-grid">
+
+          <!-- LEFT COLUMN -->
+          <div class="settings-col">
+
+            <div class="field">
+              <label for="set-forward">Forward calls to</label>
+              <input class="input" id="set-forward" type="tel" inputmode="tel" placeholder="(555) 555-5555" />
+            </div>
+
+            <div class="field">
+              <label for="set-website">Agent website</label>
+              <input class="input" id="set-website" type="url" placeholder="https://" />
+              <p class="field-help">This value is for your SMS / email templates when using the keyword <code>#my_business_website</code></p>
+            </div>
+
+            <div class="field">
+              <label for="set-stop-mode">Stop texting my leads for the night at <span class="req">*</span></label>
+              <select class="input" id="set-stop-mode">
+                <option value="custom">Custom times</option>
+                <option value="single">Same time every day</option>
+                <option value="never">Never stop</option>
+              </select>
+              <p class="field-help" id="set-stop-help">For each day of the week, select the time you wish to stop sending automated text messages. The time zone is with respect to each of your leads time zone.</p>
+            </div>
+
+            <div class="settings-days" id="set-days">
+              <!-- 7 day cells injected by JS -->
+            </div>
+
+            <div class="field" id="set-stop-single-wrap" hidden>
+              <label for="set-stop-single">Stop time</label>
+              <select class="input time-select" id="set-stop-single"></select>
+            </div>
+
+            <fieldset class="settings-fieldset">
+              <legend>Preferences</legend>
+              <label class="settings-check">
+                <input type="checkbox" id="pref-dark" />
+                <span>Dark mode.</span>
+              </label>
+              <label class="settings-check">
+                <input type="checkbox" id="pref-autosave" />
+                <span>Auto-save my lead notes.</span>
+              </label>
+              <label class="settings-check">
+                <input type="checkbox" id="pref-recording" />
+                <span>Keep call recording turned on.</span>
+              </label>
+              <label class="settings-check">
+                <input type="checkbox" id="pref-availability" />
+                <span>Allow me to set my availability so lead vendors can see when I am available.</span>
+              </label>
+            </fieldset>
+
+          </div>
+
+          <!-- RIGHT COLUMN -->
+          <div class="settings-col">
+
+            <div class="field">
+              <label for="set-timezone">Default time zone <span class="req">*</span></label>
+              <select class="input" id="set-timezone">
+                <option>Eastern</option>
+                <option>Central</option>
+                <option>Mountain</option>
+                <option>Arizona</option>
+                <option>Pacific</option>
+                <option>Alaska</option>
+                <option>Hawaii</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="set-agent-id">Agent ID</label>
+              <input class="input" id="set-agent-id" type="text" placeholder="" />
+              <p class="field-help">This can be exported with your reports</p>
+            </div>
+
+            <fieldset class="settings-fieldset">
+              <legend>System alerts <span class="legend-info" title="Browser notifications and in-app toasts.">ⓘ</span></legend>
+              <label class="settings-check">
+                <input type="checkbox" id="alert-new-lead" />
+                <span>Show system alerts each time a new lead comes in.</span>
+              </label>
+              <label class="settings-check">
+                <input type="checkbox" id="alert-new-text" />
+                <span>Show system alerts each time a new text message comes in.</span>
+              </label>
+              <label class="settings-check">
+                <input type="checkbox" id="alert-missed-call" />
+                <span>Show system alerts each time I receive a missed call.</span>
+              </label>
+              <label class="settings-check">
+                <input type="checkbox" id="alert-email-opened" />
+                <span>Show system alerts each time a lead opens an email I've sent.</span>
+              </label>
+            </fieldset>
+
+          </div>
+
+        </div>
+
+        <div class="settings-actions">
+          <span class="settings-save-status" id="settings-save-status"></span>
+          <button type="submit" class="btn btn--primary" id="settings-save">UPDATE INFO</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ===== BILLING TAB ===== -->
+    <div class="settings-pane" data-pane="billing" hidden>
+
+      <!-- Balance hero -->
+      <div class="billing-hero">
+        <div class="billing-hero-main">
+          <span class="billing-hero-label">Current balance</span>
+          <span class="billing-hero-amount" id="bill-balance">$0.00</span>
+          <span class="billing-hero-est" id="bill-est">No credits — top up to start calling and texting</span>
+        </div>
+        <div class="billing-hero-status" id="bill-status" data-state="empty">
+          <span class="billing-hero-dot"></span>
+          <span id="bill-status-label">Empty</span>
+        </div>
+      </div>
+
+      <!-- Quick top-up -->
+      <section class="billing-section">
+        <h3 class="billing-section-title">Add credits</h3>
+        <p class="billing-section-help">Credits never expire and only get used when you actually send a text or place a call. Hit zero and the dialer pauses — top up to resume.</p>
+        <div class="topup-grid">
+          <button class="topup-amt" type="button" data-topup="2500">
+            <span class="topup-amt-big">$25</span>
+            <span class="topup-amt-sub">~1,250 SMS</span>
+          </button>
+          <button class="topup-amt" type="button" data-topup="5000">
+            <span class="topup-amt-big">$50</span>
+            <span class="topup-amt-sub">~2,000 voice min</span>
+          </button>
+          <button class="topup-amt is-recommended" type="button" data-topup="10000">
+            <span class="topup-amt-tag">Most popular</span>
+            <span class="topup-amt-big">$100</span>
+            <span class="topup-amt-sub">~4,000 voice min</span>
+          </button>
+          <button class="topup-amt" type="button" data-topup="20000">
+            <span class="topup-amt-big">$200</span>
+            <span class="topup-amt-sub">~8,000 voice min</span>
+          </button>
+        </div>
+        <div class="topup-custom">
+          <label for="topup-custom-amt">Custom amount</label>
+          <div class="topup-custom-row">
+            <span class="topup-currency">$</span>
+            <input class="input" id="topup-custom-amt" type="number" min="10" max="1000" step="5" placeholder="50" />
+            <button class="btn btn--primary" id="topup-custom-go" type="button">Add credits</button>
+          </div>
+          <p class="field-help">Minimum $10. Payments are processed securely by Stripe.</p>
+        </div>
+
+        <!-- Inline Stripe Payment Element flow -->
+        <div class="topup-flow" id="topup-flow" hidden>
+          <div class="topup-flow-head">
+            <div>
+              <span class="topup-flow-label">Adding credits</span>
+              <span class="topup-flow-amount" id="topup-flow-amount">$0.00</span>
+            </div>
+            <button type="button" class="topup-flow-cancel" id="topup-flow-cancel" aria-label="Cancel">×</button>
+          </div>
+          <div class="topup-flow-mount" id="payment-element">
+            <p class="topup-loading">Loading secure payment form…</p>
+          </div>
+          <div class="topup-flow-actions">
+            <button type="button" class="btn btn--primary topup-flow-pay" id="topup-flow-pay" disabled>
+              <span class="topup-flow-pay-text">Pay <span id="topup-flow-pay-amount">$0.00</span></span>
+            </button>
+          </div>
+          <p class="topup-flow-status" id="topup-flow-status"></p>
+          <p class="topup-flow-trust">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Powered by Stripe · Your card details never touch our servers.
+          </p>
+        </div>
+      </section>
+
+      <!-- Auto-recharge -->
+      <section class="billing-section">
+        <div class="billing-section-head">
+          <h3 class="billing-section-title">Auto-recharge</h3>
+          <label class="settings-switch">
+            <input type="checkbox" id="bill-autorecharge" />
+            <span class="settings-switch-track"><span class="settings-switch-thumb"></span></span>
+          </label>
+        </div>
+        <p class="billing-section-help">Keep the dialer running without thinking about it. We'll charge your saved card automatically when your balance gets low. If the charge fails, auto-recharge turns off and you'll get an alert.</p>
+
+        <div class="autorecharge-fields" id="bill-autorecharge-fields" hidden>
+          <div class="field-row">
+            <div class="field">
+              <label for="bill-threshold">When balance drops below</label>
+              <div class="dollar-input">
+                <span>$</span>
+                <input class="input" id="bill-threshold" type="number" min="5" max="100" step="5" value="10" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="bill-amount">Automatically add</label>
+              <div class="dollar-input">
+                <span>$</span>
+                <input class="input" id="bill-amount" type="number" min="25" max="500" step="25" value="50" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Payment method -->
+      <section class="billing-section">
+        <h3 class="billing-section-title">Payment method</h3>
+        <div class="payment-method" id="bill-payment-method">
+          <div class="payment-method-empty" id="bill-card-empty">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            <div>
+              <p><strong>No card on file</strong></p>
+              <p class="field-help">Add a card to enable one-click top-ups and auto-recharge.</p>
+            </div>
+            <button class="btn btn--ghost" type="button" id="bill-add-card">Add card</button>
+          </div>
+          <div class="payment-method-saved" id="bill-card-saved" hidden>
+            <div class="card-brand-icon" id="bill-card-brand">VISA</div>
+            <div>
+              <p><strong id="bill-card-display">•••• 4242</strong></p>
+              <p class="field-help">Expires <span id="bill-card-exp">12/2028</span></p>
+            </div>
+            <button class="btn btn--ghost" type="button" id="bill-update-card">Update</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Twilio phone number -->
+      <section class="billing-section">
+        <h3 class="billing-section-title">Your dialer phone number</h3>
+        <p class="billing-section-help">Each agent gets a dedicated number so leads can call and text the same number back. The $2/month rental is deducted from your credits on the 1st of each month.</p>
+        <div class="phone-number-row" id="bill-phone-row">
+          <div class="phone-number-none" id="bill-phone-none">
+            <div>
+              <p><strong>No number assigned yet</strong></p>
+              <p class="field-help">Once you add credits, we'll provision a number with an area code matching your default time zone.</p>
+            </div>
+            <button class="btn btn--ghost" type="button" id="bill-claim-number" disabled>Pick a number</button>
+          </div>
+          <div class="phone-number-active" id="bill-phone-active" hidden>
+            <div>
+              <p class="phone-num-display" id="bill-phone-display">—</p>
+              <p class="field-help">$2.00/month · next charge <span id="bill-phone-next">—</span></p>
+            </div>
+            <button class="btn btn--ghost" type="button" id="bill-release-number">Release number</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Rate card -->
+      <section class="billing-section">
+        <details class="billing-rates">
+          <summary>
+            <h3 class="billing-section-title" style="display:inline;">Current rates</h3>
+            <span class="rate-summary">$0.020 / SMS · $0.025 / min</span>
+          </summary>
+          <table class="rate-table">
+            <tr><td>Outbound SMS</td><td class="rate-num">$0.020 per text</td></tr>
+            <tr><td>Inbound SMS (replies)</td><td class="rate-num">$0.015 per text</td></tr>
+            <tr><td>Outbound voice</td><td class="rate-num">$0.025 per minute</td></tr>
+            <tr><td>Inbound voice (callbacks)</td><td class="rate-num">$0.015 per minute</td></tr>
+            <tr><td>Phone number rental</td><td class="rate-num">$2.00 per month</td></tr>
+            <tr><td>Multi-segment SMS (>160 chars)</td><td class="rate-num">$0.020 per 160-char segment</td></tr>
+          </table>
+          <p class="field-help">Rates are subject to a 30-day notice in writing for adjustments. Calls are billed only when the recipient picks up — no charge for rings or no-answers.</p>
+        </details>
+      </section>
+
+      <!-- Recent activity -->
+      <section class="billing-section">
+        <h3 class="billing-section-title">Recent activity</h3>
+        <div class="tx-list" id="bill-tx-list">
+          <p class="tx-empty">No transactions yet. Your top-ups and usage will appear here.</p>
+        </div>
+      </section>
+
+      <div class="settings-actions">
+        <span class="settings-save-status" id="bill-save-status"></span>
+        <button type="button" class="btn btn--primary" id="bill-save">SAVE BILLING SETTINGS</button>
+      </div>
+
+    </div>
+
+  </div>
+
+    </div><!-- /.settings-shell -->
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://js.stripe.com/v3/"></script>
+<script src="../assets/js/main.js"></script>
+<script src="../assets/js/ranks.js"></script>
+<script src="../assets/js/agent-auth.js"></script>
+
+<script>
+/* Settings page — General + Billing.
+   Both are tabbed within the page. General loads on mount, Billing loads
+   lazily the first time the Billing tab is clicked. */
+(() => {
+  let sb = null;
+  let user = null;
+
+  document.addEventListener('fca:auth-ready', async (e) => {
+    sb = window.fcaSupabase;
+    user = e.detail && e.detail.user;
+    if (!sb || !user) return;
+    await loadSettings();
+  });
+
+  // ---------- GENERAL SETTINGS ----------------------------------------------
+
+  const DAYS = [
+    { key: 'sun', label: 'Sunday' },
+    { key: 'mon', label: 'Monday' },
+    { key: 'tue', label: 'Tuesday' },
+    { key: 'wed', label: 'Wednesday' },
+    { key: 'thu', label: 'Thursday' },
+    { key: 'fri', label: 'Friday' },
+    { key: 'sat', label: 'Saturday' },
+  ];
+  const DEFAULT_SETTINGS = {
+    forward_calls_to:  '',
+    agent_website:     '',
+    default_time_zone: 'Eastern',
+    agent_id_display:  '',
+    stop_texting_mode: 'custom',
+    stop_texting_single: '20:00',
+    stop_texting_per_day: { sun:'20:00',mon:'20:00',tue:'20:00',wed:'20:00',thu:'20:00',fri:'20:00',sat:'20:00' },
+    preferences: { dark_mode:false, auto_save_notes:true, keep_call_recording:false, allow_availability:false },
+    system_alerts: { new_lead:true, new_text:true, missed_call:false, email_opened:false },
+  };
+
+  function buildTimeOptions(selectEl, selected) {
+    const frag = document.createDocumentFragment();
+    for (let h = 0; h < 24; h++) {
+      for (let m = 0; m < 60; m += 30) {
+        const hh = String(h).padStart(2,'0');
+        const mm = String(m).padStart(2,'0');
+        const val = `${hh}:${mm}`;
+        const opt = document.createElement('option');
+        opt.value = val;
+        opt.textContent = formatTimeLabel(val);
+        if (val === selected) opt.selected = true;
+        frag.appendChild(opt);
+      }
+    }
+    selectEl.innerHTML = '';
+    selectEl.appendChild(frag);
+  }
+  function formatTimeLabel(hhmm) {
+    const [h, m] = hhmm.split(':').map(Number);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    return m === 0 ? `${h12} ${ampm}` : `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
+  }
+  function buildDays(perDay) {
+    const wrap = document.getElementById('set-days');
+    wrap.innerHTML = '';
+    DAYS.forEach(d => {
+      const cell = document.createElement('div');
+      cell.className = 'settings-day';
+      cell.innerHTML = `
+        <label for="day-${d.key}">${d.label}<span class="req">*</span></label>
+        <select class="input time-select" id="day-${d.key}" data-day="${d.key}"></select>
+      `;
+      wrap.appendChild(cell);
+      const sel = cell.querySelector('select');
+      buildTimeOptions(sel, perDay[d.key] || '20:00');
+    });
+  }
+  function applyStopMode(mode) {
+    const daysWrap = document.getElementById('set-days');
+    const singleWrap = document.getElementById('set-stop-single-wrap');
+    const help = document.getElementById('set-stop-help');
+    if (mode === 'custom') {
+      daysWrap.hidden = false;
+      singleWrap.hidden = true;
+      help.textContent = 'For each day of the week, select the time you wish to stop sending automated text messages. The time zone is with respect to each of your leads time zone.';
+    } else if (mode === 'single') {
+      daysWrap.hidden = true;
+      singleWrap.hidden = false;
+      help.textContent = 'Same stop time every day. The time zone is with respect to each of your leads time zone.';
+    } else {
+      daysWrap.hidden = true;
+      singleWrap.hidden = true;
+      help.textContent = 'Automated texts will NOT be paused at night. Use with caution — TCPA rules apply.';
+    }
+  }
+
+  async function loadSettings() {
+    const { data, error } = await sb.from('profiles').select('dialer_settings').eq('id', user.id).maybeSingle();
+    if (error) console.warn('[settings] load failed:', error);
+    const general = (data && data.dialer_settings && data.dialer_settings.general) || {};
+    const merged = Object.assign({}, DEFAULT_SETTINGS, general);
+    merged.stop_texting_per_day = Object.assign({}, DEFAULT_SETTINGS.stop_texting_per_day, general.stop_texting_per_day || {});
+    merged.preferences = Object.assign({}, DEFAULT_SETTINGS.preferences, general.preferences || {});
+    merged.system_alerts = Object.assign({}, DEFAULT_SETTINGS.system_alerts, general.system_alerts || {});
+
+    document.getElementById('set-forward').value   = merged.forward_calls_to  || '';
+    document.getElementById('set-website').value   = merged.agent_website     || '';
+    document.getElementById('set-timezone').value  = merged.default_time_zone || 'Eastern';
+    document.getElementById('set-agent-id').value  = merged.agent_id_display  || '';
+    document.getElementById('set-stop-mode').value = merged.stop_texting_mode || 'custom';
+    buildDays(merged.stop_texting_per_day);
+    buildTimeOptions(document.getElementById('set-stop-single'), merged.stop_texting_single || '20:00');
+    applyStopMode(merged.stop_texting_mode || 'custom');
+
+    document.getElementById('pref-dark').checked         = !!merged.preferences.dark_mode;
+    document.getElementById('pref-autosave').checked     = !!merged.preferences.auto_save_notes;
+    document.getElementById('pref-recording').checked    = !!merged.preferences.keep_call_recording;
+    document.getElementById('pref-availability').checked = !!merged.preferences.allow_availability;
+    document.getElementById('alert-new-lead').checked     = !!merged.system_alerts.new_lead;
+    document.getElementById('alert-new-text').checked     = !!merged.system_alerts.new_text;
+    document.getElementById('alert-missed-call').checked  = !!merged.system_alerts.missed_call;
+    document.getElementById('alert-email-opened').checked = !!merged.system_alerts.email_opened;
+  }
+
+  function collectSettings() {
+    const perDay = {};
+    DAYS.forEach(d => {
+      const sel = document.getElementById(`day-${d.key}`);
+      perDay[d.key] = sel ? sel.value : '20:00';
+    });
+    return {
+      forward_calls_to:  document.getElementById('set-forward').value.trim() || null,
+      agent_website:     document.getElementById('set-website').value.trim() || null,
+      default_time_zone: document.getElementById('set-timezone').value,
+      agent_id_display:  document.getElementById('set-agent-id').value.trim() || null,
+      stop_texting_mode: document.getElementById('set-stop-mode').value,
+      stop_texting_single: document.getElementById('set-stop-single').value,
+      stop_texting_per_day: perDay,
+      preferences: {
+        dark_mode:           document.getElementById('pref-dark').checked,
+        auto_save_notes:     document.getElementById('pref-autosave').checked,
+        keep_call_recording: document.getElementById('pref-recording').checked,
+        allow_availability:  document.getElementById('pref-availability').checked,
+      },
+      system_alerts: {
+        new_lead:     document.getElementById('alert-new-lead').checked,
+        new_text:     document.getElementById('alert-new-text').checked,
+        missed_call:  document.getElementById('alert-missed-call').checked,
+        email_opened: document.getElementById('alert-email-opened').checked,
+      },
+    };
+  }
+
+  document.getElementById('set-stop-mode').addEventListener('change', (e) => applyStopMode(e.target.value));
+
+  // Tab switching (in-page)
+  document.querySelectorAll('.settings-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      document.querySelectorAll('.settings-tab').forEach(t => {
+        const on = t === tab;
+        t.classList.toggle('is-active', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      document.querySelectorAll('.settings-pane').forEach(p => {
+        p.hidden = p.dataset.pane !== target;
+      });
+      if (target === 'billing' && !billingLoaded) loadBilling();
+    });
+  });
+
+  document.getElementById('settings-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('settings-save');
+    const status = document.getElementById('settings-save-status');
+    btn.disabled = true; btn.textContent = 'Saving…';
+    status.textContent = '';
+    status.classList.remove('error');
+
+    const general = collectSettings();
+    const { error } = await sb.from('profiles').update({ dialer_settings: { general } }).eq('id', user.id);
+
+    btn.disabled = false; btn.textContent = 'UPDATE INFO';
+    if (error) {
+      status.textContent = 'Save failed: ' + error.message;
+      status.classList.add('error');
+      return;
+    }
+    status.textContent = 'Saved ✓';
+    setTimeout(() => { status.textContent = ''; }, 1800);
+  });
+
+  // ---------- BILLING TAB ---------------------------------------------------
+
+  let billingLoaded = false;
+  let billingProfile = null;
+  const RATES_C = { sms_out: 2.0, sms_in: 1.5, voice_out_per_min: 2.5, voice_in_per_min: 1.5, number_month: 200 };
+
+  function fmtUsd(cents) { return '$' + (Math.max(0, cents) / 100).toFixed(2); }
+  function estimateUsage(balCents) {
+    const sms = Math.floor(balCents / RATES_C.sms_out);
+    const min = Math.floor(balCents / RATES_C.voice_out_per_min);
+    if (balCents <= 0) return 'No credits — top up to start calling and texting';
+    return `≈ ${sms.toLocaleString()} SMS · ${min.toLocaleString()} voice minutes`;
+  }
+  function statusForBalance(balCents) {
+    if (balCents <= 0)   return { state: 'empty',   label: 'Empty' };
+    if (balCents < 500)  return { state: 'low',     label: 'Low — top up soon' };
+    if (balCents < 2500) return { state: 'okay',    label: 'Active' };
+    return                      { state: 'healthy', label: 'Healthy' };
+  }
+
+  async function loadBilling() {
+    const { data, error } = await sb.from('profiles')
+      .select('credit_balance_cents, stripe_customer_id, stripe_card_brand, stripe_card_last4, stripe_card_exp_month, stripe_card_exp_year, auto_recharge_enabled, auto_recharge_threshold_c, auto_recharge_amount_c, twilio_phone_number, twilio_number_purchased_at, billing_frozen')
+      .eq('id', user.id).maybeSingle();
+    if (error) { console.warn('[billing] load failed:', error); return; }
+    billingProfile = data || {};
+    renderBilling();
+    await loadRecentTransactions();
+    billingLoaded = true;
+  }
+
+  function renderBilling() {
+    const bal = billingProfile.credit_balance_cents || 0;
+    document.getElementById('bill-balance').textContent = fmtUsd(bal);
+    document.getElementById('bill-est').textContent = estimateUsage(bal);
+    const st = statusForBalance(bal);
+    document.getElementById('bill-status').dataset.state = st.state;
+    document.getElementById('bill-status-label').textContent = st.label;
+
+    const auto = !!billingProfile.auto_recharge_enabled;
+    document.getElementById('bill-autorecharge').checked = auto;
+    document.getElementById('bill-autorecharge-fields').hidden = !auto;
+    document.getElementById('bill-threshold').value = ((billingProfile.auto_recharge_threshold_c || 1000) / 100).toFixed(0);
+    document.getElementById('bill-amount').value    = ((billingProfile.auto_recharge_amount_c    || 5000) / 100).toFixed(0);
+
+    const hasCard = !!billingProfile.stripe_card_last4;
+    document.getElementById('bill-card-empty').hidden = hasCard;
+    document.getElementById('bill-card-saved').hidden = !hasCard;
+    if (hasCard) {
+      document.getElementById('bill-card-brand').textContent = (billingProfile.stripe_card_brand || 'CARD').toUpperCase();
+      document.getElementById('bill-card-display').textContent = '•••• ' + billingProfile.stripe_card_last4;
+      const m = String(billingProfile.stripe_card_exp_month || '').padStart(2, '0');
+      const y = String(billingProfile.stripe_card_exp_year || '');
+      document.getElementById('bill-card-exp').textContent = `${m}/${y}`;
+    }
+
+    const hasNum = !!billingProfile.twilio_phone_number;
+    document.getElementById('bill-phone-none').hidden   = hasNum;
+    document.getElementById('bill-phone-active').hidden = !hasNum;
+    if (hasNum) {
+      document.getElementById('bill-phone-display').textContent = formatPhone(billingProfile.twilio_phone_number);
+      const d = new Date();
+      const next = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+      document.getElementById('bill-phone-next').textContent = next.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+    document.getElementById('bill-claim-number').disabled = bal < 400;
+  }
+
+  async function loadRecentTransactions() {
+    const { data, error } = await sb.from('credit_transactions')
+      .select('amount_cents, kind, description, created_at')
+      .eq('agent_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(10);
+    const listEl = document.getElementById('bill-tx-list');
+    if (error || !data || !data.length) {
+      listEl.innerHTML = '<p class="tx-empty">No transactions yet. Your top-ups and usage will appear here.</p>';
+      return;
+    }
+    listEl.innerHTML = data.map(tx => {
+      const positive = tx.amount_cents > 0;
+      const sign = positive ? '+' : '−';
+      const amount = fmtUsd(Math.abs(tx.amount_cents));
+      const date = new Date(tx.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+      return `<div class="tx-row tx-${positive ? 'credit' : 'debit'}">
+        <div class="tx-kind">
+          <span class="tx-dot"></span>
+          <div>
+            <div class="tx-label">${escapeHtml(prettyKind(tx.kind))}</div>
+            ${tx.description ? `<div class="tx-desc">${escapeHtml(tx.description)}</div>` : ''}
+          </div>
+        </div>
+        <div class="tx-amount">${sign}${amount}</div>
+        <div class="tx-date">${date}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function prettyKind(k) {
+    return { topup:'Top-up', auto_topup:'Auto top-up', refund:'Refund', sms_out:'Outbound SMS', sms_in:'Inbound SMS', voice_out:'Outbound call', voice_in:'Inbound call', number_rental:'Phone number rental', adjustment:'Adjustment', chargeback:'Chargeback reversal' }[k] || k;
+  }
+
+  // ---- Stripe Payment Element top-up flow ----
+  const STRIPE_PUBLISHABLE_KEY = 'pk_test_51RIzHkGzTRNP3Po0EmNzRE6OCKOyw1hkYfMUsTMRY8WHznztp9akCYflnw6oRpjX5yvJZn8pYanDDE5VcjttHSo000Ci9b2Q5U';
+  const stripeJs = (typeof Stripe !== 'undefined') ? Stripe(STRIPE_PUBLISHABLE_KEY) : null;
+  let activeElements = null;
+  let activePaymentEl = null;
+  let activeAmountCents = 0;
+
+  document.querySelectorAll('.topup-amt').forEach(btn => {
+    btn.addEventListener('click', () => startTopup(Number(btn.dataset.topup)));
+  });
+  document.getElementById('topup-custom-go').addEventListener('click', () => {
+    const dollars = Number(document.getElementById('topup-custom-amt').value);
+    if (!dollars || dollars < 10) { alert('Minimum top-up is $10.'); return; }
+    startTopup(Math.round(dollars * 100));
+  });
+
+  async function startTopup(amountCents) {
+    if (!stripeJs) { alert('Stripe.js failed to load. Refresh and try again.'); return; }
+    if (amountCents < 1000) { alert('Minimum top-up is $10.'); return; }
+    if (amountCents > 100000) { alert('Maximum single top-up is $1,000.'); return; }
+
+    activeAmountCents = amountCents;
+    document.getElementById('topup-flow-amount').textContent     = fmtUsd(amountCents);
+    document.getElementById('topup-flow-pay-amount').textContent = fmtUsd(amountCents);
+    document.getElementById('topup-flow-status').textContent     = '';
+    document.getElementById('topup-flow-status').className       = 'topup-flow-status';
+    document.getElementById('topup-flow-pay').disabled           = true;
+    document.getElementById('payment-element').innerHTML         = '<p class="topup-loading">Loading secure payment form…</p>';
+
+    document.getElementById('topup-flow').hidden = false;
+    document.getElementById('topup-flow').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    try {
+      const { data: { session } } = await sb.auth.getSession();
+      const res = await fetch(`${sb.supabaseUrl}/functions/v1/create-payment-intent`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${session?.access_token}`, 'Content-Type': 'application/json', 'apikey': sb.supabaseKey },
+        body: JSON.stringify({ amount_cents: amountCents }),
+      });
+      if (!res.ok) { const t = await res.text(); throw new Error(t || ('HTTP ' + res.status)); }
+      const { client_secret } = await res.json();
+
+      activeElements = stripeJs.elements({ clientSecret: client_secret, appearance: stripeAppearance() });
+      document.getElementById('payment-element').innerHTML = '';
+      activePaymentEl = activeElements.create('payment', {
+        layout: { type: 'tabs', defaultCollapsed: false },
+        fields: { billingDetails: { address: { country: 'never', postalCode: 'auto' } } },
+      });
+      activePaymentEl.mount('#payment-element');
+      activePaymentEl.on('ready', () => { document.getElementById('topup-flow-pay').disabled = false; });
+      activePaymentEl.on('change', (e) => {
+        if (e.error) showTopupStatus(e.error.message, 'error');
+        else document.getElementById('topup-flow-status').textContent = '';
+      });
+    } catch (e) {
+      console.error('[topup] failed:', e);
+      showTopupStatus('Could not start checkout: ' + e.message, 'error');
+    }
+  }
+
+  function stripeAppearance() {
+    const isDark = (document.documentElement.dataset.theme || 'dark') !== 'light';
+    return {
+      theme: isDark ? 'night' : 'stripe',
+      variables: { colorPrimary:'#0078ab', colorBackground: isDark ? '#181a1c' : '#ffffff', colorText: isDark ? '#e9ebef' : '#1e1e1e', colorDanger:'#ef4444', fontFamily:'Inter, system-ui, sans-serif', spacingUnit:'4px', borderRadius:'8px' },
+    };
+  }
+
+  document.getElementById('topup-flow-cancel').addEventListener('click', cancelTopup);
+  function cancelTopup() {
+    if (activePaymentEl) { try { activePaymentEl.destroy(); } catch(_) {} }
+    activePaymentEl = null; activeElements = null; activeAmountCents = 0;
+    document.getElementById('topup-flow').hidden = true;
+  }
+
+  document.getElementById('topup-flow-pay').addEventListener('click', async () => {
+    if (!activeElements) return;
+    const btn = document.getElementById('topup-flow-pay');
+    btn.disabled = true;
+    btn.querySelector('.topup-flow-pay-text').textContent = 'Processing…';
+    showTopupStatus('', null);
+
+    const { error, paymentIntent } = await stripeJs.confirmPayment({
+      elements: activeElements,
+      confirmParams: {
+        return_url: window.location.href,
+        payment_method_data: { billing_details: { address: { country: 'US' } } },
+      },
+      redirect: 'if_required',
+    });
+    if (error) {
+      btn.disabled = false;
+      btn.querySelector('.topup-flow-pay-text').innerHTML = 'Pay <span id="topup-flow-pay-amount">' + fmtUsd(activeAmountCents) + '</span>';
+      showTopupStatus(error.message || 'Payment failed.', 'error');
+      return;
+    }
+    if (paymentIntent && paymentIntent.status === 'succeeded') {
+      showTopupStatus('Payment successful — adding credits to your balance…', 'success');
+      btn.innerHTML = '<span class="topup-flow-pay-text">Paid ✓</span>';
+      billingProfile.credit_balance_cents = (billingProfile.credit_balance_cents || 0) + activeAmountCents;
+      renderBilling();
+      pollBalanceAfterTopup(activeAmountCents);
+    } else {
+      showTopupStatus('Payment is processing. Credits will appear shortly.', 'success');
+    }
+  });
+
+  function showTopupStatus(msg, kind) {
+    const el = document.getElementById('topup-flow-status');
+    el.textContent = msg;
+    el.className = 'topup-flow-status' + (kind ? ' is-' + kind : '');
+  }
+
+  async function pollBalanceAfterTopup(expectedDeltaCents) {
+    const startBalance = (billingProfile.credit_balance_cents || 0) - expectedDeltaCents;
+    const deadline = Date.now() + 30000;
+    while (Date.now() < deadline) {
+      await new Promise(r => setTimeout(r, 1500));
+      const { data } = await sb.from('profiles')
+        .select('credit_balance_cents, stripe_card_brand, stripe_card_last4, stripe_card_exp_month, stripe_card_exp_year')
+        .eq('id', user.id).maybeSingle();
+      if (data && data.credit_balance_cents >= startBalance + expectedDeltaCents) {
+        Object.assign(billingProfile, data);
+        renderBilling();
+        await loadRecentTransactions();
+        cancelTopup();
+        showTopupStatus(`+${fmtUsd(expectedDeltaCents)} added · new balance ${fmtUsd(data.credit_balance_cents)}`, 'success');
+        return;
+      }
+    }
+    showTopupStatus('Credits should land within a minute. Refresh if they don\'t appear.', 'success');
+  }
+
+  document.getElementById('bill-add-card').addEventListener('click', () => alert('Stripe SetupIntent flow goes here — saves a card on file for auto-recharge.'));
+  document.getElementById('bill-update-card').addEventListener('click', () => alert('Stripe SetupIntent flow goes here — replaces the card on file.'));
+  document.getElementById('bill-claim-number').addEventListener('click', () => alert('Twilio number picker opens here. We\'ll provision a number matching your default time-zone area code and deduct $2 from your credits.'));
+  document.getElementById('bill-release-number').addEventListener('click', () => {
+    if (!confirm('Release this number? Leads who text or call it after release won\'t reach you.')) return;
+    alert('Number-release flow goes here.');
+  });
+
+  document.getElementById('bill-autorecharge').addEventListener('change', (e) => {
+    document.getElementById('bill-autorecharge-fields').hidden = !e.target.checked;
+  });
+
+  document.getElementById('bill-save').addEventListener('click', async () => {
+    const status = document.getElementById('bill-save-status');
+    const btn = document.getElementById('bill-save');
+    btn.disabled = true; btn.textContent = 'Saving…';
+    status.textContent = ''; status.classList.remove('error');
+
+    const payload = {
+      auto_recharge_enabled:     document.getElementById('bill-autorecharge').checked,
+      auto_recharge_threshold_c: Math.round(Number(document.getElementById('bill-threshold').value || 10) * 100),
+      auto_recharge_amount_c:    Math.round(Number(document.getElementById('bill-amount').value    || 50) * 100),
+    };
+    const { error } = await sb.from('profiles').update(payload).eq('id', user.id);
+    btn.disabled = false; btn.textContent = 'SAVE BILLING SETTINGS';
+    if (error) { status.textContent = 'Save failed: ' + error.message; status.classList.add('error'); return; }
+    Object.assign(billingProfile, payload);
+    status.textContent = 'Saved ✓';
+    setTimeout(() => { status.textContent = ''; }, 1800);
+  });
+
+  // ---- Helpers ----
+  function formatPhone(p) {
+    if (!p) return '';
+    const d = p.replace(/[^0-9]/g, '');
+    if (d.length === 10) return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
+    if (d.length === 11 && d[0] === '1') return `+1 (${d.slice(1,4)}) ${d.slice(4,7)}-${d.slice(7)}`;
+    return p;
+  }
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"\']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "\'":'&#39;' })[c]);
+  }
+})();
+</script>
+
+</body>
+</html>
