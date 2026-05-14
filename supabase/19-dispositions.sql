@@ -8,7 +8,13 @@
 -- Idempotent — safe to re-run.
 -- =============================================================================
 
--- 1) Migrate existing rows from old dispositions → new analogs.
+-- 1) Drop the original check constraint FIRST.
+--    The migration UPDATEs below would otherwise fail because the old
+--    constraint doesn't recognize the new disposition values.
+alter table public.call_attempts
+  drop constraint if exists call_attempts_disposition_check;
+
+-- 2) Migrate existing rows from old dispositions → new analogs.
 --    Old values were: no_answer, voicemail, callback, not_interested, quoted, sold, bad_number
 update public.call_attempts set disposition = 'scheduled_appt'   where disposition = 'callback';
 update public.call_attempts set disposition = 'dnc'              where disposition = 'not_interested';
@@ -16,10 +22,6 @@ update public.call_attempts set disposition = 'think_about_it'   where dispositi
 -- 'no_answer' and 'voicemail' don't have direct analogs. Map them to
 -- 'pick_up_hang_up' since both imply the agent failed to engage the lead.
 update public.call_attempts set disposition = 'pick_up_hang_up'  where disposition in ('no_answer','voicemail');
-
--- 2) Drop the original check constraint
-alter table public.call_attempts
-  drop constraint if exists call_attempts_disposition_check;
 
 -- 3) Add the new constraint allowing the 13 current dispositions.
 alter table public.call_attempts
