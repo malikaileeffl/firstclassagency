@@ -56,8 +56,7 @@
           </svg>
         </span>
         <span class="credits-pause-label">
-          <span class="credits-pause-title">Pause spending</span>
-          <span class="credits-pause-sub" data-pause-sub>${paused ? 'Currently paused' : 'All credit actions active'}</span>
+          <span class="credits-pause-title">Master Switch</span>
         </span>
         <span class="credits-pause-switch">
           <input type="checkbox" data-pause-check ${paused ? 'checked' : ''} />
@@ -89,7 +88,6 @@
           return;
         }
         paused = newVal;
-        row.querySelector('[data-pause-sub]').textContent = paused ? 'Currently paused' : 'All credit actions active';
         updateChipBadge();
         // Let other code on the page react if it cares
         document.dispatchEvent(new CustomEvent('fca:credits-pause-changed', { detail: { paused } }));
