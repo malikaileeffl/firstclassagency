@@ -6740,12 +6740,16 @@ body.dialer-fullwidth .hub-main { padding-left: 8px; }
   z-index: 9999;
   pointer-events: none;
   overflow: hidden;
+  perspective: 1200px;
+  transform-style: preserve-3d;
 }
 .money-bill {
   position: absolute;
   user-select: none;
   will-change: transform, opacity;
   transform-origin: center;
+  transform-style: preserve-3d;
+  backface-visibility: visible;
   line-height: 0;
   filter: drop-shadow(0 6px 14px rgba(0, 120, 171, 0.5));
 }
