@@ -30,8 +30,12 @@ const sb = createClient(
 );
 
 Deno.serve(async (req) => {
+  console.log('[webhook] request received, method:', req.method);
   const signature = req.headers.get('Stripe-Signature');
-  if (!signature) return new Response('Missing signature', { status: 400 });
+  if (!signature) {
+    console.log('[webhook] missing signature header');
+    return new Response('Missing signature', { status: 400 });
+  }
 
   const body = await req.text();
   let event: Stripe.Event;
@@ -41,10 +45,12 @@ Deno.serve(async (req) => {
     console.error('[webhook] signature invalid:', e);
     return new Response('Invalid signature', { status: 400 });
   }
+  console.log('[webhook] verified event type:', event.type, 'id:', event.id);
 
   try {
     switch (event.type) {
       case 'payment_intent.succeeded': {
+        console.log('[webhook] dispatching to handlePaymentSucceeded');
         await handlePaymentSucceeded(event.data.object as Stripe.PaymentIntent);
         break;
       }
@@ -54,11 +60,12 @@ Deno.serve(async (req) => {
         break;
       }
       case 'charge.dispute.created': {
+        console.log('[webhook] dispatching to handleDisputeCreated');
         await handleDisputeCreated(event.data.object as Stripe.Dispute);
         break;
       }
       default:
-        // Quietly ignore everything else
+        console.log('[webhook] no handler for event type:', event.type);
         break;
     }
   } catch (e) {
@@ -66,14 +73,19 @@ Deno.serve(async (req) => {
     return new Response('Handler error', { status: 500 });
   }
 
+  console.log('[webhook] returning 200');
   return new Response('ok', { status: 200 });
 });
 
 async function handlePaymentSucceeded(pi: Stripe.PaymentIntent) {
+  console.log('[webhook] PI id:', pi.id, 'amount:', pi.amount, 'metadata:', JSON.stringify(pi.metadata || {}));
   const agentId = pi.metadata?.agent_id;
   const purpose = pi.metadata?.purpose;
   const kind    = pi.metadata?.kind || 'topup';
-  if (!agentId || purpose !== 'credit_topup') return;
+  if (!agentId || purpose !== 'credit_topup') {
+    console.log('[webhook] skipping: agentId=', agentId, 'purpose=', purpose);
+    return;
+  }
 
   // Idempotency: don't credit the same PaymentIntent twice
   const { data: existing } = await sb.from('credit_transactions')
