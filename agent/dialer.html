@@ -633,21 +633,36 @@
   <div class="lead-modal-content" role="dialog" aria-modal="true" aria-labelledby="csv-title">
     <button class="lead-modal-close" type="button" data-close-csv aria-label="Close">×</button>
     <h2 id="csv-title">Upload leads from CSV</h2>
-    <p class="csv-help">Drop a CSV with at least <code>name</code> and <code>phone</code> columns. Other columns we'll recognize: <code>email</code>, <code>state</code>, <code>address</code>, <code>dob</code>, <code>notes</code>. Column names are case-insensitive and we'll do our best to auto-match.</p>
+    <p class="csv-help">Upload any CSV. On the next step you'll tell us which column matches each lead field — no need to rename anything in your file.</p>
 
-    <div class="csv-drop" id="csv-drop">
-      <input type="file" id="csv-file" accept=".csv,text/csv" hidden />
-      <div class="csv-drop-empty" id="csv-drop-empty">
-        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        <p><strong>Drop a CSV here</strong></p>
-        <p class="csv-drop-or">or <button type="button" class="csv-link-btn" id="csv-browse">browse for a file</button></p>
-      </div>
-      <div class="csv-drop-file" id="csv-drop-file" hidden>
-        <span class="csv-file-name" id="csv-file-name"></span>
-        <button type="button" class="csv-link-btn" id="csv-clear">remove</button>
+    <!-- Step 1: drop the file -->
+    <div class="csv-step" id="csv-step-upload">
+      <div class="csv-drop" id="csv-drop">
+        <input type="file" id="csv-file" accept=".csv,text/csv" hidden />
+        <div class="csv-drop-empty" id="csv-drop-empty">
+          <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <p><strong>Drop a CSV here</strong></p>
+          <p class="csv-drop-or">or <button type="button" class="csv-link-btn" id="csv-browse">browse for a file</button></p>
+        </div>
+        <div class="csv-drop-file" id="csv-drop-file" hidden>
+          <span class="csv-file-name" id="csv-file-name"></span>
+          <button type="button" class="csv-link-btn" id="csv-clear">remove</button>
+        </div>
       </div>
     </div>
 
+    <!-- Step 2: column mapping -->
+    <div class="csv-step" id="csv-step-mapping" hidden>
+      <div class="csv-preview-head" style="margin-bottom:12px;">
+        <span class="csv-preview-count" id="csv-mapping-count">—</span>
+        <span class="csv-preview-sub" id="csv-mapping-sub">—</span>
+      </div>
+      <p class="field-help">Pick the column in your CSV that matches each lead field. We've guessed where we can.</p>
+      <div class="csv-mapper" id="csv-mapper"></div>
+      <p class="csv-preview-warn" id="csv-mapping-warn" hidden></p>
+    </div>
+
+    <!-- Step 3: preview -->
     <div class="csv-preview" id="csv-preview" hidden>
       <div class="csv-preview-head">
         <span class="csv-preview-count" id="csv-preview-count">—</span>
@@ -656,11 +671,11 @@
       <div class="csv-preview-table-wrap">
         <table class="csv-preview-table" id="csv-preview-table"></table>
       </div>
-      <p class="csv-preview-warn" id="csv-preview-warn" hidden></p>
     </div>
 
     <div class="lead-form-actions">
       <button type="button" class="btn btn--ghost" data-close-csv>Cancel</button>
+      <button type="button" class="btn btn--ghost" id="csv-back-btn" hidden>← Back</button>
       <button type="button" class="btn btn--primary" id="csv-import-btn" disabled>Import leads</button>
     </div>
   </div>
@@ -1246,21 +1261,29 @@
     closeCallbackModal();
   });
 
-  // ---------- CSV UPLOAD ----------------------------------------------------
+  // ---------- CSV UPLOAD (with explicit column mapping) ---------------------
 
-  const csvModal      = document.getElementById('csv-modal');
-  const csvFileInput  = document.getElementById('csv-file');
-  const csvDrop       = document.getElementById('csv-drop');
-  const csvDropEmpty  = document.getElementById('csv-drop-empty');
-  const csvDropFile   = document.getElementById('csv-drop-file');
-  const csvFileName   = document.getElementById('csv-file-name');
-  const csvPreview    = document.getElementById('csv-preview');
-  const csvPreviewCnt = document.getElementById('csv-preview-count');
-  const csvPreviewSub = document.getElementById('csv-preview-sub');
-  const csvPreviewTbl = document.getElementById('csv-preview-table');
-  const csvPreviewWarn= document.getElementById('csv-preview-warn');
-  const csvImportBtn  = document.getElementById('csv-import-btn');
-  let csvParsedRows = []; // [{full_name, phone, email, state, address, date_of_birth, notes}]
+  const csvModal       = document.getElementById('csv-modal');
+  const csvFileInput   = document.getElementById('csv-file');
+  const csvDrop        = document.getElementById('csv-drop');
+  const csvDropEmpty   = document.getElementById('csv-drop-empty');
+  const csvDropFile    = document.getElementById('csv-drop-file');
+  const csvFileName    = document.getElementById('csv-file-name');
+  const csvStepUpload  = document.getElementById('csv-step-upload');
+  const csvStepMapping = document.getElementById('csv-step-mapping');
+  const csvPreview     = document.getElementById('csv-preview');
+  const csvPreviewCnt  = document.getElementById('csv-preview-count');
+  const csvPreviewSub  = document.getElementById('csv-preview-sub');
+  const csvPreviewTbl  = document.getElementById('csv-preview-table');
+  const csvMapper      = document.getElementById('csv-mapper');
+  const csvMapWarn     = document.getElementById('csv-mapping-warn');
+  const csvBackBtn     = document.getElementById('csv-back-btn');
+  const csvImportBtn   = document.getElementById('csv-import-btn');
+
+  let csvRawHeaders = [];        // header row from the CSV
+  let csvRawRows    = [];        // data rows (after header)
+  let csvMapping    = {};        // { full_name: idx, phone: idx, ... }
+  let csvParsedRows = [];        // built from mapping, ready to insert
 
   document.getElementById('upload-csv-btn').addEventListener('click', openCsvModal);
   csvModal.querySelectorAll('[data-close-csv]').forEach(el =>
@@ -1285,6 +1308,14 @@
   });
 
   csvImportBtn.addEventListener('click', importCsv);
+  csvBackBtn.addEventListener('click', () => {
+    // From preview → back to mapping step
+    csvPreview.hidden = true;
+    csvStepMapping.hidden = false;
+    csvImportBtn.disabled = true;
+    csvImportBtn.textContent = 'Continue';
+    csvBackBtn.hidden = true;
+  });
 
   function openCsvModal() {
     resetCsv();
@@ -1296,50 +1327,44 @@
     setTimeout(() => { csvModal.hidden = true; resetCsv(); }, 280);
   }
   function resetCsv() {
-    csvParsedRows = [];
+    csvParsedRows = []; csvRawRows = []; csvRawHeaders = []; csvMapping = {};
     csvFileInput.value = '';
     csvDropEmpty.hidden = false;
-    csvDropFile.hidden = true;
-    csvPreview.hidden = true;
+    csvDropFile.hidden  = true;
+    csvStepUpload.hidden  = false;
+    csvStepMapping.hidden = true;
+    csvPreview.hidden     = true;
+    csvBackBtn.hidden     = true;
     csvImportBtn.disabled = true;
     csvImportBtn.textContent = 'Import leads';
+    csvMapWarn.hidden = true;
   }
 
   function handleCsvFile(file) {
     csvFileName.textContent = file.name;
     csvDropEmpty.hidden = true;
-    csvDropFile.hidden = false;
+    csvDropFile.hidden  = false;
     const reader = new FileReader();
-    reader.onload = (e) => {
-      const text = e.target.result;
-      parseCsv(text);
-    };
-    reader.onerror = () => {
-      csvPreviewWarn.hidden = false;
-      csvPreviewWarn.textContent = 'Could not read file.';
-      csvPreview.hidden = false;
-    };
+    reader.onload = (e) => loadCsvForMapping(e.target.result);
+    reader.onerror = () => alert('Could not read file.');
     reader.readAsText(file);
   }
 
-  // Minimal RFC-4180-ish CSV parser (handles quoted fields with commas/newlines).
+  // RFC-4180-ish parser
   function parseCsvRaw(text) {
-    const rows = [];
-    let row = [], field = '', inQuotes = false;
+    const rows = []; let row = [], field = '', inQuotes = false;
     for (let i = 0; i < text.length; i++) {
       const c = text[i];
       if (inQuotes) {
-        if (c === '"') {
-          if (text[i + 1] === '"') { field += '"'; i++; }
-          else inQuotes = false;
-        } else field += c;
+        if (c === '"') { if (text[i+1] === '"') { field += '"'; i++; } else inQuotes = false; }
+        else field += c;
       } else {
         if (c === '"') inQuotes = true;
         else if (c === ',') { row.push(field); field = ''; }
         else if (c === '\n' || c === '\r') {
           if (field || row.length) { row.push(field); rows.push(row); }
           row = []; field = '';
-          if (c === '\r' && text[i + 1] === '\n') i++;
+          if (c === '\r' && text[i+1] === '\n') i++;
         } else field += c;
       }
     }
@@ -1347,107 +1372,178 @@
     return rows;
   }
 
-  // Map common header variants to our DB column names.
-  const HEADER_MAP = {
-    'name': 'full_name', 'full name': 'full_name', 'fullname': 'full_name',
-    'first name': 'first_name_only', 'firstname': 'first_name_only',
-    'last name': 'last_name_only',  'lastname': 'last_name_only',
-    'phone': 'phone', 'phone number': 'phone', 'phonenumber': 'phone',
-    'mobile': 'phone', 'cell': 'phone', 'cell phone': 'phone',
-    'email': 'email', 'email address': 'email', 'e-mail': 'email',
-    'state': 'state', 'st': 'state',
-    'address': 'address', 'street': 'address', 'street address': 'address',
-    'dob': 'date_of_birth', 'date of birth': 'date_of_birth', 'birth date': 'date_of_birth', 'birthday': 'date_of_birth',
-    'notes': 'notes', 'note': 'notes', 'comment': 'notes', 'comments': 'notes',
+  // Header-name hints — used to auto-suggest a mapping. The user can override.
+  const CSV_HEADER_HINTS = {
+    full_name:     ['name','full name','fullname','customer name','lead name','contact name'],
+    first_name:    ['first name','firstname','first','given name'],
+    last_name:     ['last name','lastname','last','surname','family name'],
+    phone:         ['phone','phone number','phonenumber','mobile','cell','cell phone','number','tel','telephone'],
+    email:         ['email','email address','e-mail','mail'],
+    state:         ['state','st','province','region'],
+    address:       ['address','street','street address','address 1','address line 1','addr'],
+    date_of_birth: ['dob','date of birth','birthday','birth date','birthdate'],
+    notes:         ['notes','note','comment','comments','memo','remarks'],
   };
 
-  function parseCsv(text) {
+  // System fields shown in the mapper UI (in order).
+  const CSV_SYSTEM_FIELDS = [
+    { key: 'full_name',     label: 'Full name',     required: true,  note: 'Required unless you map First + Last separately.' },
+    { key: 'first_name',    label: 'First name',    required: false, note: '' },
+    { key: 'last_name',     label: 'Last name',     required: false, note: '' },
+    { key: 'phone',         label: 'Phone',         required: true,  note: '' },
+    { key: 'email',         label: 'Email',         required: false, note: '' },
+    { key: 'state',         label: 'State',         required: false, note: 'Will be normalized to a 2-letter code.' },
+    { key: 'address',       label: 'Address',       required: false, note: '' },
+    { key: 'date_of_birth', label: 'Date of birth', required: false, note: 'Any common date format.' },
+    { key: 'notes',         label: 'Notes',         required: false, note: '' },
+  ];
+
+  function guessCsvMapping(headers) {
+    const map = {};
+    const lowered = headers.map(h => String(h || '').trim().toLowerCase());
+    Object.keys(CSV_HEADER_HINTS).forEach(field => {
+      const hints = CSV_HEADER_HINTS[field];
+      map[field] = lowered.findIndex(h => hints.includes(h));
+    });
+    return map;
+  }
+
+  function loadCsvForMapping(text) {
     const rows = parseCsvRaw(text).filter(r => r.some(c => String(c).trim() !== ''));
     if (rows.length < 2) {
-      csvPreviewWarn.hidden = false;
-      csvPreviewWarn.textContent = 'CSV needs a header row plus at least one data row.';
-      csvPreview.hidden = false;
-      csvImportBtn.disabled = true;
+      alert('CSV needs a header row plus at least one data row.');
       return;
     }
-    const headers = rows[0].map(h => HEADER_MAP[String(h).trim().toLowerCase()] || null);
-    const phoneIdx = headers.indexOf('phone');
-    const nameIdx  = headers.indexOf('full_name');
-    const firstIdx = headers.indexOf('first_name_only');
-    const lastIdx  = headers.indexOf('last_name_only');
+    csvRawHeaders = rows[0];
+    csvRawRows    = rows.slice(1);
+    csvMapping    = guessCsvMapping(csvRawHeaders);
 
-    if (phoneIdx < 0) {
-      csvPreviewWarn.hidden = false;
-      csvPreviewWarn.textContent = 'No "phone" column found. Make sure your CSV has a header named phone, mobile, or cell.';
-      csvPreview.hidden = false;
-      csvImportBtn.disabled = true;
+    document.getElementById('csv-mapping-count').textContent =
+      `${csvRawRows.length} row${csvRawRows.length === 1 ? '' : 's'} found`;
+    document.getElementById('csv-mapping-sub').textContent =
+      `${csvRawHeaders.length} column${csvRawHeaders.length === 1 ? '' : 's'} detected`;
+
+    renderCsvMapper();
+    csvStepUpload.hidden = true;
+    csvStepMapping.hidden = false;
+    csvPreview.hidden = true;
+    csvBackBtn.hidden = true;
+    csvImportBtn.disabled = false;
+    csvImportBtn.textContent = 'Continue';
+  }
+
+  function renderCsvMapper() {
+    const opts = ['<option value="-1">(skip — leave blank)</option>']
+      .concat(csvRawHeaders.map((h, i) =>
+        `<option value="${i}">${escapeHtml(h || `Column ${i+1}`)}</option>`))
+      .join('');
+    csvMapper.innerHTML = CSV_SYSTEM_FIELDS.map(f => {
+      const cur = csvMapping[f.key] ?? -1;
+      const sel = opts.replace(`value="${cur}">`, `value="${cur}" selected>`);
+      return `
+        <div class="csv-map-row">
+          <div class="csv-map-label">
+            <span>${escapeHtml(f.label)}${f.required ? ' <span class="req">*</span>' : ''}</span>
+            ${f.note ? `<span class="csv-map-note">${escapeHtml(f.note)}</span>` : ''}
+          </div>
+          <select class="input csv-map-select" data-field="${f.key}">${sel}</select>
+        </div>`;
+    }).join('');
+    csvMapper.querySelectorAll('select').forEach(sel => {
+      sel.addEventListener('change', (e) => {
+        csvMapping[e.target.dataset.field] = Number(e.target.value);
+      });
+    });
+  }
+
+  // The big primary button switches roles:
+  //   Step "mapping"  → label "Continue", click applies mapping + shows preview
+  //   Step "preview"  → label "Import N leads", click runs the actual insert
+  let csvFlowStep = 'upload'; // 'upload' | 'mapping' | 'preview'
+
+  // We override the import-btn click to first apply the mapping, then become "Import"
+  csvImportBtn.removeEventListener('click', importCsv);
+  csvImportBtn.addEventListener('click', async () => {
+    if (csvStepMapping.hidden === false) {
+      // Still on mapping step — apply mapping then move to preview.
+      applyCsvMapping();
+    } else {
+      // We're showing the preview — do the actual import.
+      await importCsv();
+    }
+  });
+
+  function applyCsvMapping() {
+    const phoneIdx = csvMapping.phone;
+    const fullIdx  = csvMapping.full_name;
+    const firstIdx = csvMapping.first_name;
+    const lastIdx  = csvMapping.last_name;
+
+    if (phoneIdx == null || phoneIdx < 0) {
+      csvMapWarn.hidden = false;
+      csvMapWarn.textContent = 'Phone is required — pick the column with phone numbers.';
       return;
     }
-    if (nameIdx < 0 && firstIdx < 0 && lastIdx < 0) {
-      csvPreviewWarn.hidden = false;
-      csvPreviewWarn.textContent = 'No "name" column found. Make sure your CSV has a header named name, full name, or first/last name.';
-      csvPreview.hidden = false;
-      csvImportBtn.disabled = true;
+    const hasFull = fullIdx != null && fullIdx >= 0;
+    const hasFirstLast = (firstIdx != null && firstIdx >= 0) && (lastIdx != null && lastIdx >= 0);
+    if (!hasFull && !hasFirstLast) {
+      csvMapWarn.hidden = false;
+      csvMapWarn.textContent = 'Name is required — map Full name, or both First + Last name.';
       return;
     }
+    csvMapWarn.hidden = true;
 
     const out = [];
-    for (let r = 1; r < rows.length; r++) {
-      const cells = rows[r];
+    for (const cells of csvRawRows) {
       const phone = String(cells[phoneIdx] || '').trim();
       if (!phone) continue;
-
       let name;
-      if (nameIdx >= 0) name = String(cells[nameIdx] || '').trim();
-      else {
-        const fn = firstIdx >= 0 ? String(cells[firstIdx] || '').trim() : '';
-        const ln = lastIdx  >= 0 ? String(cells[lastIdx]  || '').trim() : '';
+      if (hasFull) name = String(cells[fullIdx] || '').trim();
+      if (!name && hasFirstLast) {
+        const fn = String(cells[firstIdx] || '').trim();
+        const ln = String(cells[lastIdx]  || '').trim();
         name = (fn + ' ' + ln).trim();
       }
       if (!name) continue;
-
       const lead = { full_name: name, phone, source: 'csv' };
-      const setIf = (col, val) => { if (val && String(val).trim()) lead[col] = String(val).trim(); };
-      headers.forEach((col, i) => {
-        if (!col || col === 'first_name_only' || col === 'last_name_only' || col === 'phone' || col === 'full_name') return;
-        setIf(col, cells[i]);
+      const pull = (key, normalize) => {
+        const idx = csvMapping[key];
+        if (idx == null || idx < 0) return;
+        const v = String(cells[idx] || '').trim();
+        if (!v) return;
+        lead[key] = normalize ? normalize(v) : v;
+      };
+      pull('email');
+      pull('state', v => v.toUpperCase().slice(0, 2));
+      pull('address');
+      pull('notes');
+      pull('date_of_birth', v => {
+        const d = new Date(v);
+        return !isNaN(d.getTime()) ? d.toISOString().slice(0, 10) : null;
       });
-      if (lead.state) lead.state = lead.state.toUpperCase().slice(0, 2);
-      if (lead.date_of_birth) {
-        // Try to normalize to YYYY-MM-DD; if it fails, drop it
-        const d = new Date(lead.date_of_birth);
-        if (!isNaN(d.getTime())) {
-          lead.date_of_birth = d.toISOString().slice(0, 10);
-        } else delete lead.date_of_birth;
-      }
+      if (lead.date_of_birth === null) delete lead.date_of_birth;
       out.push(lead);
     }
-
-    csvParsedRows = out;
     if (!out.length) {
-      csvPreviewWarn.hidden = false;
-      csvPreviewWarn.textContent = 'No usable rows found (every row needs both a name and phone).';
-      csvPreview.hidden = false;
-      csvImportBtn.disabled = true;
+      csvMapWarn.hidden = false;
+      csvMapWarn.textContent = 'No usable rows — make sure the Phone column actually has values.';
       return;
     }
-    renderCsvPreview(out, headers, rows[0]);
+    csvParsedRows = out;
+    renderCsvPreview(out);
+    csvStepMapping.hidden = true;
+    csvPreview.hidden = false;
+    csvBackBtn.hidden = false;
+    csvImportBtn.textContent = `Import ${out.length} lead${out.length === 1 ? '' : 's'}`;
     csvImportBtn.disabled = false;
-    csvImportBtn.textContent = 'Import ' + out.length + ' lead' + (out.length === 1 ? '' : 's');
   }
 
-  function renderCsvPreview(parsed, mapped, originalHeaders) {
-    csvPreviewWarn.hidden = true;
-    csvPreviewCnt.textContent = parsed.length + ' lead' + (parsed.length === 1 ? '' : 's') + ' detected';
-    const mappedCols = mapped.filter(Boolean);
-    const unknown = originalHeaders.filter((h, i) => !mapped[i] && String(h).trim());
-    let subBits = ['Mapped: ' + mappedCols.join(', ')];
-    if (unknown.length) subBits.push('Ignored: ' + unknown.join(', '));
-    csvPreviewSub.textContent = subBits.join(' · ');
-
+  function renderCsvPreview(parsed) {
+    csvPreviewCnt.textContent = `${parsed.length} lead${parsed.length === 1 ? '' : 's'} ready`;
+    csvPreviewSub.textContent = `${csvRawRows.length - parsed.length} skipped (missing name or phone)`;
     const head = ['Name', 'Phone', 'Email', 'State', 'DOB'];
     const previewRows = parsed.slice(0, 5);
-    const html = `<thead><tr>${head.map(h => `<th>${escapeHtml(h)}</th>`).join('')}</tr></thead>
+    csvPreviewTbl.innerHTML = `<thead><tr>${head.map(h => `<th>${escapeHtml(h)}</th>`).join('')}</tr></thead>
       <tbody>${previewRows.map(r => `
         <tr>
           <td>${escapeHtml(r.full_name || '')}</td>
@@ -1458,15 +1554,12 @@
         </tr>`).join('')}
       ${parsed.length > 5 ? `<tr><td colspan="5" class="csv-preview-more">… and ${parsed.length - 5} more</td></tr>` : ''}
       </tbody>`;
-    csvPreviewTbl.innerHTML = html;
-    csvPreview.hidden = false;
   }
 
   async function importCsv() {
     if (!csvParsedRows.length) return;
     csvImportBtn.disabled = true;
     csvImportBtn.textContent = 'Importing…';
-    // Batched inserts (200/batch) so we don't hit Supabase request-size limits
     const BATCH = 200;
     let inserted = 0, failed = 0;
     for (let i = 0; i < csvParsedRows.length; i += BATCH) {

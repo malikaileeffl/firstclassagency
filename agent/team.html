@@ -286,6 +286,23 @@
       </div>
     </div>
 
+    <!-- Step 1.5: column mapping -->
+    <div class="distribute-step" id="dist-step-mapping" hidden>
+      <h3 class="distribute-section-title">Map your CSV columns</h3>
+      <p class="field-help">Tell us which column in your file matches each lead field. We've guessed where we can — adjust anything that's wrong, then continue.</p>
+
+      <div class="csv-mapper" id="dist-mapper">
+        <!-- mapping rows injected by JS -->
+      </div>
+
+      <p class="csv-preview-warn" id="dist-mapping-warn" hidden></p>
+
+      <div class="lead-form-actions">
+        <button type="button" class="btn btn--ghost" id="dist-mapping-back">← Choose different file</button>
+        <button type="button" class="btn btn--primary" id="dist-mapping-continue">Continue →</button>
+      </div>
+    </div>
+
     <!-- Step 2: distribution choice (revealed after a successful CSV parse) -->
     <div class="distribute-step" id="dist-step-mode" hidden>
       <h3 class="distribute-section-title">How should we distribute?</h3>
@@ -532,7 +549,10 @@
   // ---------- DISTRIBUTE MODAL ---------------------------------------------
 
   const distModal = document.getElementById('distribute-modal');
-  let distParsedRows = [];
+  let distParsedRows  = [];       // final mapped lead objects
+  let distRawRows     = [];       // raw CSV rows after parse
+  let distRawHeaders  = [];       // header row from CSV
+  let distMapping     = {};       // { full_name: headerIdx | -1, phone: headerIdx, ... }
 
   document.getElementById('open-distribute-btn').addEventListener('click', () => {
     resetDistribute();
@@ -547,11 +567,12 @@
   );
 
   function resetDistribute() {
-    distParsedRows = [];
+    distParsedRows = []; distRawRows = []; distRawHeaders = []; distMapping = {};
     document.getElementById('dist-file').value = '';
     document.getElementById('dist-drop-empty').hidden = false;
     document.getElementById('dist-drop-file').hidden  = true;
     document.getElementById('dist-preview').hidden    = true;
+    document.getElementById('dist-step-mapping').hidden = true;
     document.getElementById('dist-step-mode').hidden  = true;
     document.getElementById('dist-confirm').disabled  = true;
     document.getElementById('dist-confirm').textContent = 'Distribute leads';
@@ -577,11 +598,11 @@
     document.getElementById('dist-drop-empty').hidden = true;
     document.getElementById('dist-drop-file').hidden  = false;
     const reader = new FileReader();
-    reader.onload = (ev) => parseCsv(ev.target.result);
+    reader.onload = (ev) => loadCsvForMapping(ev.target.result);
     reader.readAsText(file);
   }
 
-  // Mirror of the parser in dialer.html — small enough to inline here.
+  // ---- CSV-parser primitives (RFC-4180-ish) ------------------------------
   function parseCsvRaw(text) {
     const rows = []; let row = [], field = '', inQuotes = false;
     for (let i = 0; i < text.length; i++) {
@@ -602,18 +623,48 @@
     if (field || row.length) { row.push(field); rows.push(row); }
     return rows;
   }
-  const HEADER_MAP = {
-    'name':'full_name','full name':'full_name','fullname':'full_name',
-    'first name':'first_name_only','firstname':'first_name_only',
-    'last name':'last_name_only','lastname':'last_name_only',
-    'phone':'phone','phone number':'phone','phonenumber':'phone','mobile':'phone','cell':'phone','cell phone':'phone',
-    'email':'email','email address':'email','e-mail':'email',
-    'state':'state','st':'state',
-    'address':'address','street':'address','street address':'address',
-    'dob':'date_of_birth','date of birth':'date_of_birth','birthday':'date_of_birth',
-    'notes':'notes','note':'notes',
+
+  // Header-name → system-field hints. Used to auto-suggest a default mapping.
+  // The user can override every guess in the UI.
+  const HEADER_HINTS = {
+    full_name:      ['name','full name','fullname','customer name','lead name','contact name'],
+    first_name:     ['first name','firstname','first','given name'],
+    last_name:      ['last name','lastname','last','surname','family name'],
+    phone:          ['phone','phone number','phonenumber','mobile','cell','cell phone','number','tel','telephone'],
+    email:          ['email','email address','e-mail','mail'],
+    state:          ['state','st','province','region'],
+    address:        ['address','street','street address','address 1','address line 1','addr'],
+    date_of_birth:  ['dob','date of birth','birthday','birth date','birthdate'],
+    notes:          ['notes','note','comment','comments','memo','remarks'],
   };
-  function parseCsv(text) {
+
+  // System fields shown in the mapper. Required ones get an asterisk.
+  const SYSTEM_FIELDS = [
+    { key: 'full_name',     label: 'Full name',     required: true,  note: 'Required unless you map First + Last separately.' },
+    { key: 'first_name',    label: 'First name',    required: false, note: '' },
+    { key: 'last_name',     label: 'Last name',     required: false, note: '' },
+    { key: 'phone',         label: 'Phone',         required: true,  note: '' },
+    { key: 'email',         label: 'Email',         required: false, note: '' },
+    { key: 'state',         label: 'State',         required: false, note: 'Will be normalized to a 2-letter code.' },
+    { key: 'address',       label: 'Address',       required: false, note: '' },
+    { key: 'date_of_birth', label: 'Date of birth', required: false, note: 'Any common date format.' },
+    { key: 'notes',         label: 'Notes',         required: false, note: '' },
+  ];
+
+  function guessMapping(headers) {
+    // For each system field, find the first CSV header whose lower-cased text
+    // matches one of the hints exactly.
+    const map = {};
+    const lowered = headers.map(h => String(h || '').trim().toLowerCase());
+    Object.keys(HEADER_HINTS).forEach(field => {
+      const hints = HEADER_HINTS[field];
+      const idx = lowered.findIndex(h => hints.includes(h));
+      map[field] = idx; // -1 if not found
+    });
+    return map;
+  }
+
+  function loadCsvForMapping(text) {
     const warn = document.getElementById('dist-preview-warn');
     const preview = document.getElementById('dist-preview');
     const rows = parseCsvRaw(text).filter(r => r.some(c => String(c).trim() !== ''));
@@ -622,53 +673,119 @@
       preview.hidden = false;
       return;
     }
-    const headers = rows[0].map(h => HEADER_MAP[String(h).trim().toLowerCase()] || null);
-    const phoneIdx = headers.indexOf('phone');
-    const nameIdx  = headers.indexOf('full_name');
-    const firstIdx = headers.indexOf('first_name_only');
-    const lastIdx  = headers.indexOf('last_name_only');
-    if (phoneIdx < 0) { warn.hidden = false; warn.textContent = 'No "phone" column found.'; preview.hidden = false; return; }
-    if (nameIdx < 0 && firstIdx < 0 && lastIdx < 0) { warn.hidden = false; warn.textContent = 'No "name" column found.'; preview.hidden = false; return; }
+    distRawHeaders = rows[0];
+    distRawRows    = rows.slice(1);
+    distMapping    = guessMapping(distRawHeaders);
 
+    // Show summary
+    warn.hidden = true;
+    document.getElementById('dist-preview-count').textContent =
+      `${distRawRows.length} row${distRawRows.length === 1 ? '' : 's'} found`;
+    document.getElementById('dist-preview-sub').textContent =
+      `${distRawHeaders.length} column${distRawHeaders.length === 1 ? '' : 's'} detected`;
+    preview.hidden = false;
+
+    renderMapping();
+    document.getElementById('dist-step-mapping').hidden = false;
+    document.getElementById('dist-step-mode').hidden    = true;
+  }
+
+  function renderMapping() {
+    const wrap = document.getElementById('dist-mapper');
+    const opts = ['<option value="-1">(skip — leave blank)</option>']
+      .concat(distRawHeaders.map((h, i) =>
+        `<option value="${i}">${escapeHtml(h || `Column ${i+1}`)}</option>`))
+      .join('');
+    wrap.innerHTML = SYSTEM_FIELDS.map(f => {
+      const cur = distMapping[f.key] ?? -1;
+      const sel = opts.replace(`value="${cur}">`, `value="${cur}" selected>`);
+      return `
+        <div class="csv-map-row">
+          <div class="csv-map-label">
+            <span>${escapeHtml(f.label)}${f.required ? ' <span class="req">*</span>' : ''}</span>
+            ${f.note ? `<span class="csv-map-note">${escapeHtml(f.note)}</span>` : ''}
+          </div>
+          <select class="input csv-map-select" data-field="${f.key}">${sel}</select>
+        </div>`;
+    }).join('');
+    wrap.querySelectorAll('select').forEach(sel => {
+      sel.addEventListener('change', (e) => {
+        distMapping[e.target.dataset.field] = Number(e.target.value);
+      });
+    });
+  }
+
+  document.getElementById('dist-mapping-back').addEventListener('click', () => {
+    resetDistribute();
+  });
+
+  document.getElementById('dist-mapping-continue').addEventListener('click', () => {
+    const warn = document.getElementById('dist-mapping-warn');
+    const phoneIdx = distMapping.phone;
+    const fullIdx  = distMapping.full_name;
+    const firstIdx = distMapping.first_name;
+    const lastIdx  = distMapping.last_name;
+
+    if (phoneIdx == null || phoneIdx < 0) {
+      warn.hidden = false; warn.textContent = 'Phone is required — pick the column with phone numbers.';
+      return;
+    }
+    const hasFull = fullIdx != null && fullIdx >= 0;
+    const hasFirstLast = (firstIdx != null && firstIdx >= 0) && (lastIdx != null && lastIdx >= 0);
+    if (!hasFull && !hasFirstLast) {
+      warn.hidden = false; warn.textContent = 'Name is required — map Full name, or both First + Last name.';
+      return;
+    }
+    warn.hidden = true;
+
+    // Build the mapped lead rows
     const out = [];
-    for (let r = 1; r < rows.length; r++) {
-      const cells = rows[r];
+    for (const cells of distRawRows) {
       const phone = String(cells[phoneIdx] || '').trim();
       if (!phone) continue;
       let name;
-      if (nameIdx >= 0) name = String(cells[nameIdx] || '').trim();
-      else {
-        const fn = firstIdx >= 0 ? String(cells[firstIdx] || '').trim() : '';
-        const ln = lastIdx  >= 0 ? String(cells[lastIdx]  || '').trim() : '';
+      if (hasFull) name = String(cells[fullIdx] || '').trim();
+      if (!name && hasFirstLast) {
+        const fn = String(cells[firstIdx] || '').trim();
+        const ln = String(cells[lastIdx]  || '').trim();
         name = (fn + ' ' + ln).trim();
       }
       if (!name) continue;
       const lead = { full_name: name, phone };
-      const setIf = (col, val) => { if (val && String(val).trim()) lead[col] = String(val).trim(); };
-      headers.forEach((col, i) => {
-        if (!col || col === 'first_name_only' || col === 'last_name_only' || col === 'phone' || col === 'full_name') return;
-        setIf(col, cells[i]);
+      const pull = (key, normalize) => {
+        const idx = distMapping[key];
+        if (idx == null || idx < 0) return;
+        const v = String(cells[idx] || '').trim();
+        if (!v) return;
+        lead[key] = normalize ? normalize(v) : v;
+      };
+      pull('email');
+      pull('state', v => v.toUpperCase().slice(0, 2));
+      pull('address');
+      pull('notes');
+      pull('date_of_birth', v => {
+        const d = new Date(v);
+        return !isNaN(d.getTime()) ? d.toISOString().slice(0, 10) : null;
       });
-      if (lead.state) lead.state = lead.state.toUpperCase().slice(0, 2);
-      if (lead.date_of_birth) {
-        const d = new Date(lead.date_of_birth);
-        lead.date_of_birth = !isNaN(d.getTime()) ? d.toISOString().slice(0, 10) : null;
-      }
+      if (lead.date_of_birth === null) delete lead.date_of_birth;
       out.push(lead);
     }
-    distParsedRows = out;
     if (!out.length) {
-      warn.hidden = false; warn.textContent = 'No usable rows (need both name and phone).';
-      preview.hidden = false;
+      warn.hidden = false;
+      warn.textContent = 'No usable rows — make sure the Phone column actually has values.';
       return;
     }
-    warn.hidden = true;
-    document.getElementById('dist-preview-count').textContent = `${out.length} lead${out.length === 1 ? '' : 's'} parsed`;
-    document.getElementById('dist-preview-sub').textContent = `${rows.length - 1 - out.length} skipped`;
-    preview.hidden = false;
-    document.getElementById('dist-step-mode').hidden = false;
-    document.getElementById('dist-confirm').disabled = false;
-  }
+    distParsedRows = out;
+    document.getElementById('dist-preview-count').textContent =
+      `${out.length} lead${out.length === 1 ? '' : 's'} ready`;
+    document.getElementById('dist-preview-sub').textContent =
+      `${distRawRows.length - out.length} skipped (missing name or phone)`;
+
+    // Reveal the distribution-mode step
+    document.getElementById('dist-step-mapping').hidden = true;
+    document.getElementById('dist-step-mode').hidden    = false;
+    document.getElementById('dist-confirm').disabled    = false;
+  });
 
   document.querySelectorAll('input[name="dist-mode"]').forEach(r => r.addEventListener('change', (e) => {
     document.getElementById('dist-target-single').hidden      = e.target.value !== 'single';

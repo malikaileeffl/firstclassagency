@@ -7895,3 +7895,46 @@ body.dialer-fullwidth .hub-main { padding-left: 8px; }
   cursor: pointer;
 }
 .distribute-agent-check input { accent-color: var(--accent-bright); cursor: pointer; }
+
+/* =============================================================================
+   CSV column mapper (shared by dialer + team CSV import)
+   ============================================================================= */
+
+.csv-step { display: block; }
+.csv-mapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0 14px;
+  max-height: 360px;
+  overflow-y: auto;
+  padding: 4px;
+}
+.csv-map-row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+}
+@media (max-width: 520px) {
+  .csv-map-row { grid-template-columns: 1fr; gap: 4px; }
+}
+.csv-map-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+.csv-map-note {
+  font-size: 0.74rem;
+  color: var(--text-3);
+}
+.csv-map-select {
+  padding: 8px 10px;
+  font-size: 0.88rem;
+}
