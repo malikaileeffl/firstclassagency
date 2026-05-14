@@ -6731,6 +6731,31 @@ body.dialer-fullwidth .hub-main { padding-left: 8px; }
 .lr-disp-popover.is-sold-lead .disp-exclude-drips { color: var(--text-2); }
 
 /* =============================================================================
+   Money explosion — fires on dialer page load (assets/js/money-explosion.js)
+   ============================================================================= */
+
+.money-explosion {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  overflow: hidden;
+}
+.money-bill {
+  position: absolute;
+  user-select: none;
+  will-change: transform, opacity;
+  transform-origin: center;
+  line-height: 0;
+  filter: drop-shadow(0 6px 14px rgba(0, 120, 171, 0.5));
+}
+.money-bill svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* =============================================================================
    Dialer — Settings modal
    ============================================================================= */
 
