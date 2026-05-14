@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Power Dialer — Agent portal</title>
+<meta name="robots" content="noindex,nofollow" />
+<meta name="theme-color" content="#0d0d0e" />
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="First Class" />
+<meta name="mobile-web-app-capable" content="yes" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/styles.css" />
+<script src="../assets/js/theme.js"></script>
+</head>
+<body class="dialer-fullwidth">
+
+<header class="site-header">
+  <a href="dashboard.html" class="brand">
+    <img class="brand-logo" src="../assets/img/logo.png" alt="First Class Agency" />
+    <span>First Class · Agent</span>
+  </a>
+  <div class="nav-cta">
+    <div class="user-menu" data-user-chip style="display:none;">
+      <button class="user-chip" data-user-chip-trigger type="button">
+        <span class="user-avatar" data-user-initial>—</span>
+        <span class="user-name">Hi, <strong data-user-name>—</strong></span>
+        <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="user-menu-dropdown" role="menu">
+        <a href="account.html" class="user-menu-item" role="menuitem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 14 0v1"/></svg>
+          Account
+        </a>
+        <div class="user-menu-divider"></div>
+        <button class="user-menu-item" data-logout type="button" role="menuitem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign out
+        </button>
+      </div>
+    </div>
+    <button class="nav-toggle" aria-label="Open menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</header>
+
+<nav class="mobile-nav" aria-label="Mobile">
+  <a href="dashboard.html">Dashboard</a>
+  <a href="training.html">Training</a>
+  <a href="dialer.html?fromSidebar=1" data-dialer-only style="display:none;">Dialer</a>
+  <a href="quick-links.html">Quick Links</a>
+  <a href="portals.html">E-apps & Portals</a>
+  <a class="leads-soon"><span class="leads-text">Leads Center</span><span class="soon-pill">Soon</span></a>
+  <a href="promotion.html">Promotion & Comp</a>
+  <a href="carriers.html">Carrier Contacts</a>
+  <a href="resources.html">Agent Resources</a>
+  <a href="leaderboard.html">Leaderboard</a>
+  <a href="https://ww3.familyfirstlife.com/login" target="_blank" class="ip-report-link" rel="noopener noreferrer">IP Report</a>
+  <a href="builders.html" data-admin-only style="display:none;">Builders</a>
+  <a href="admin.html" data-admin-only style="display:none;">Admin</a>
+  <a href="account.html">Account</a>
+  <a href="#" data-logout class="btn btn--ghost mt-16">Sign out</a>
+</nav>
+
+<main class="container hub-shell">
+  <aside class="hub-side" aria-label="Agent navigation">
+    <a href="dashboard.html" aria-label="Dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>
+      Dashboard
+    </a>
+    <a href="training.html" aria-label="Training">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      Training
+    </a>
+    <a href="dialer.html?fromSidebar=1" class="active" data-dialer-only style="display:none;" aria-label="Dialer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      Dialer
+    </a>
+    <a href="quick-links.html" aria-label="Quick Links">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      Quick Links
+    </a>
+    <a href="portals.html" aria-label="E-apps & Portals">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20"/><path d="M6 7h.01"/></svg>
+      E-apps & Portals
+    </a>
+    <a class="leads-soon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="20" r="1.3"/><circle cx="16" cy="20" r="1.3"/><path d="M3 3h2l2.5 12.5a1.5 1.5 0 0 0 1.5 1.5h9a1.5 1.5 0 0 0 1.5-1.5L20 7H6"/></svg>
+      <span class="leads-text">Leads Center</span>
+      <span class="soon-pill">Soon</span>
+    </a>
+    <a href="promotion.html" aria-label="Promotion & Comp">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+      Promotion & Comp
+    </a>
+    <a href="carriers.html" aria-label="Carrier Contacts">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Carrier Contacts
+    </a>
+    <a href="resources.html" aria-label="Agent Resources">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      Agent Resources
+    </a>
+    <a href="leaderboard.html" aria-label="Leaderboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="6" width="6" height="14" rx="1"/><rect x="2" y="12" width="6" height="8" rx="1"/><rect x="16" y="9" width="6" height="11" rx="1"/></svg>
+      Leaderboard
+    </a>
+    <a href="https://ww3.familyfirstlife.com/login" target="_blank" rel="noopener noreferrer" class="ip-report-link" aria-label="IP Report">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      IP Report
+    </a>
+    <a href="builders.html" data-admin-only style="display:none;" aria-label="Builders">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><circle cx="5.5" cy="19" r="2.5"/><circle cx="18.5" cy="19" r="2.5"/><path d="M12 7.5 V14 M5.5 14 H18.5 M5.5 14 V16.5 M18.5 14 V16.5"/></svg>
+      Builders
+    </a>
+    <a href="admin.html" data-admin-only style="display:none;" aria-label="Admin">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9.5-8 10-4.5-.5-8-5-8-10V6l8-4z"/><path d="m9 12 2 2 4-4"/></svg>
+      Admin
+    </a>
+  </aside>
+
+  <section class="hub-main dialer-main">
+    <!-- CRM tab bar -->
+    <div class="crm-tabs">
+      <a class="crm-tab" href="dialer.html">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Leads
+      </a>
+      <a class="crm-tab is-active" href="power-dialer.html">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Power Dialer
+        <span class="crm-tab-tag pd-tab-tag">Pro</span>
+      </a>
+      <a class="crm-tab" href="messages.html">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Messages
+        <span class="crm-tab-badge" id="crm-tab-unread" hidden>0</span>
+      </a>
+      <a class="crm-tab" href="team.html" data-admin-only style="display:none;">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Team
+        <span class="crm-tab-tag">Admin</span>
+      </a>
+      <a class="crm-tab" href="settings.html">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </a>
+    </div>
+
+    <!-- Paywall (default state for non-subscribers) -->
+    <div class="pd-paywall" id="pd-paywall">
+      <div class="pd-paywall-card reveal">
+        <div class="pd-paywall-icon">
+          <svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <span class="eyebrow">Power Dialer · Pro upgrade</span>
+        <h1 class="pd-paywall-title">Stop clicking. Start closing.</h1>
+        <p class="pd-paywall-sub">Auto-dial through your lead list, drop voicemails with one tap, and never lose your rhythm waiting on the next pick-up. Built on the same prepaid balance you already top up — Power Dialer just lets you actually use it.</p>
+
+        <ul class="pd-feature-list">
+          <li><span class="pd-feat-check">✓</span> Auto-dial mode — set a list, hit start, the system queues every number in sequence</li>
+          <li><span class="pd-feat-check">✓</span> One-click voicemail drop with pre-recorded messages</li>
+          <li><span class="pd-feat-check">✓</span> Call recording for every connect, stored for 60 days</li>
+          <li><span class="pd-feat-check">✓</span> Live call coaching — your manager can listen, whisper, or barge from the Team tab</li>
+          <li><span class="pd-feat-check">✓</span> Disposition shortcuts — log + advance to the next lead in a single keystroke</li>
+          <li><span class="pd-feat-check">✓</span> Smart pacing — adjusts dial speed to your contact rate so you're not eating dead air</li>
+        </ul>
+
+        <div class="pd-price-card">
+          <div class="pd-price-row">
+            <div>
+              <div class="pd-price-amount">$110<span class="pd-price-period">/month</span></div>
+              <div class="pd-price-billing">Billed monthly · Cancel anytime · Pro-rated on signup</div>
+            </div>
+            <button class="btn btn--primary pd-cta" id="pd-subscribe-btn" type="button">
+              Unlock Power Dialer →
+            </button>
+          </div>
+          <div class="pd-price-foot">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Secure checkout by Stripe. Same card as your credit top-ups (or add a new one at checkout).
+          </div>
+        </div>
+
+        <details class="pd-faq">
+          <summary>How does this work with my existing credits?</summary>
+          <p>Your prepaid SMS/voice credits are separate from this subscription. Power Dialer doesn't replace your credits — it just gives you the auto-dial engine that consumes them faster. You'll still see every charge on the Billing tab.</p>
+        </details>
+        <details class="pd-faq">
+          <summary>Can I cancel anytime?</summary>
+          <p>Yes. Cancel from the Billing tab anytime. Your Power Dialer access stays active until the end of the current billing period, then reverts to standard click-to-call.</p>
+        </details>
+        <details class="pd-faq">
+          <summary>When does it actually launch?</summary>
+          <p>The Power Dialer engine is in build right now — it requires Twilio Voice + a 1-2 week A2P 10DLC approval window. Subscribers are notified the moment it goes live and don't get charged until then.</p>
+        </details>
+      </div>
+    </div>
+
+    <!-- Subscribed state (locked until subscription is active) -->
+    <div class="pd-active" id="pd-active" hidden>
+      <div class="hub-head" style="margin-bottom:18px;">
+        <div>
+          <span class="eyebrow">Power Dialer</span>
+          <h1 class="mt-8">Auto-dial mode</h1>
+        </div>
+        <div class="dialer-head-actions">
+          <button class="btn btn--ghost" id="pd-start-btn" type="button">Start dialing →</button>
+        </div>
+      </div>
+      <div class="pd-active-placeholder">
+        <p>Power Dialer engine will live here. Build pending Twilio Voice integration (Phase 4).</p>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/main.js"></script>
+<script src="../assets/js/ranks.js"></script>
+<script src="../assets/js/agent-auth.js"></script>
+
+<script>
+(() => {
+  let sb = null;
+  let user = null;
+
+  document.addEventListener('fca:auth-ready', async (e) => {
+    sb = window.fcaSupabase;
+    user = e.detail && e.detail.user;
+    if (!sb || !user) return;
+    await checkSubscription();
+  });
+
+  async function checkSubscription() {
+    const { data, error } = await sb.from('profiles')
+      .select('power_dialer_subscribed, power_dialer_renews_at')
+      .eq('id', user.id)
+      .maybeSingle();
+    if (error) { console.warn('[power-dialer] check failed:', error); return; }
+    const subscribed = !!(data && data.power_dialer_subscribed);
+    document.getElementById('pd-paywall').hidden = subscribed;
+    document.getElementById('pd-active').hidden  = !subscribed;
+  }
+
+  document.getElementById('pd-subscribe-btn').addEventListener('click', () => {
+    // TODO: open Stripe subscription checkout — will wire alongside the
+    // existing create-payment-intent edge function once we add a
+    // create-subscription endpoint.
+    alert('Stripe subscription checkout opens here. Wiring this is the next build step — alongside Twilio Voice integration.');
+  });
+})();
+</script>
+
+</body>
+</html>

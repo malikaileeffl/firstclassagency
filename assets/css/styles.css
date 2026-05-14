@@ -6765,6 +6765,192 @@ body.dialer-fullwidth .hub-main { padding-left: 8px; }
 }
 
 /* =============================================================================
+   Power Dialer — Pro tab + paywall
+   ============================================================================= */
+
+.pd-tab-tag {
+  background: linear-gradient(135deg, rgba(255, 216, 106, 0.18), rgba(245, 158, 11, 0.15));
+  color: #ffd86a;
+  border: 1px solid rgba(255, 216, 106, 0.4);
+}
+
+.pd-paywall {
+  display: flex;
+  justify-content: center;
+  padding: 24px 0 60px;
+}
+.pd-paywall-card {
+  max-width: 720px;
+  width: 100%;
+  padding: 40px 44px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.pd-paywall-card::before {
+  /* subtle brand glow in the top-left corner */
+  content: '';
+  position: absolute;
+  inset: -40% 60% 60% -40%;
+  background: radial-gradient(circle, rgba(0, 120, 171, 0.18), transparent 60%);
+  pointer-events: none;
+}
+@media (max-width: 600px) {
+  .pd-paywall-card { padding: 28px 22px; }
+}
+
+.pd-paywall-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--accent-bright), var(--accent));
+  color: #fff;
+  margin-bottom: 18px;
+  box-shadow: 0 8px 24px rgba(0, 120, 171, 0.35);
+  position: relative;
+}
+
+.pd-paywall-title {
+  font-family: var(--font-display);
+  font-size: 2.1rem;
+  line-height: 1.15;
+  margin: 6px 0 12px;
+  color: var(--text);
+}
+.pd-paywall-sub {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-2);
+  margin: 0 0 26px;
+  max-width: 56ch;
+}
+
+.pd-feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pd-feature-list li {
+  display: flex;
+  gap: 12px;
+  font-size: 0.94rem;
+  color: var(--text);
+  line-height: 1.5;
+}
+.pd-feat-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(74, 222, 128, 0.16);
+  color: #4ade80;
+  font-size: 0.84rem;
+  font-weight: 700;
+  margin-top: 1px;
+}
+
+/* Price card */
+.pd-price-card {
+  padding: 22px 24px;
+  background: linear-gradient(135deg, rgba(0, 120, 171, 0.10), rgba(0, 120, 171, 0.04));
+  border: 1px solid rgba(0, 120, 171, 0.32);
+  border-radius: 14px;
+  margin-bottom: 24px;
+}
+.pd-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 12px;
+}
+@media (max-width: 580px) {
+  .pd-price-row { flex-direction: column; align-items: flex-start; }
+}
+.pd-price-amount {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+.pd-price-period {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--text-3);
+  font-weight: 500;
+}
+.pd-price-billing {
+  font-size: 0.82rem;
+  color: var(--text-3);
+  margin-top: 6px;
+}
+.pd-cta {
+  padding: 14px 24px;
+  font-size: 0.94rem;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+.pd-price-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--text-3);
+}
+
+.pd-faq {
+  border-top: 1px solid var(--border);
+  padding: 14px 0 0;
+  margin-top: 4px;
+}
+.pd-faq summary {
+  cursor: pointer;
+  font-size: 0.92rem;
+  color: var(--text);
+  padding: 6px 0;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.pd-faq summary::-webkit-details-marker { display: none; }
+.pd-faq summary::after {
+  content: '+';
+  font-size: 1.2rem;
+  color: var(--text-3);
+  transition: transform var(--dur-1) var(--ease);
+}
+.pd-faq[open] summary::after { transform: rotate(45deg); }
+.pd-faq p {
+  margin: 6px 0 10px;
+  font-size: 0.88rem;
+  color: var(--text-2);
+  line-height: 1.55;
+}
+
+/* Active state (when subscribed) — placeholder block until the real engine ships */
+.pd-active-placeholder {
+  padding: 60px 30px;
+  text-align: center;
+  border: 2px dashed var(--border);
+  border-radius: var(--r-md);
+  color: var(--text-3);
+  font-size: 0.92rem;
+}
+
+/* =============================================================================
    Dialer — Settings modal
    ============================================================================= */
 
