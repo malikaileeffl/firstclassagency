@@ -2,7 +2,7 @@
 -- First Class Agency — Lead type
 -- Run AFTER 17-lead-distribution.sql.
 -- Adds a `lead_type` column on leads (Trucker IUL / Gen Life IUL / Gen Life /
--- Veteran IUL — admins can add new values whenever). Quote field is no longer
+-- Veteran — admins can add new values whenever). Quote field is no longer
 -- displayed but the column stays in case we want it later.
 -- Idempotent — safe to re-run.
 -- =============================================================================
