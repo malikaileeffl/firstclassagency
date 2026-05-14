@@ -212,25 +212,6 @@
     <!-- Subscribed state — the actual Power Dialer interface -->
     <div class="pd-active" id="pd-active" hidden>
 
-      <!-- Empty state before a session starts -->
-      <div class="pd-empty" id="pd-empty">
-        <div class="pd-empty-icon">
-          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        </div>
-        <h2>Ready when you are</h2>
-        <p>Pick a campaign above and hit Start dialing. The system queues your leads and walks you through one at a time. Disposition with the keyboard, drop voicemails with one tap, never lose your place.</p>
-        <div class="pd-shortcuts-card">
-          <span class="pd-shortcuts-title">Keyboard shortcuts</span>
-          <div class="pd-shortcuts-grid">
-            <div><kbd>1</kbd>–<kbd>9</kbd> Disposition</div>
-            <div><kbd>Space</kbd> Hangup</div>
-            <div><kbd>V</kbd> Drop voicemail</div>
-            <div><kbd>M</kbd> Mute</div>
-            <div><kbd>N</kbd> Skip to next</div>
-            <div><kbd>Esc</kbd> Pause</div>
-          </div>
-        </div>
-      </div>
 
       <!-- Top control bar: campaign picker + session stats + start/pause/stop -->
       <header class="pd-topbar">
@@ -255,6 +236,9 @@
           <div class="pd-stat"><span class="pd-stat-label">Talk time</span><span class="pd-stat-val" id="pd-stat-talk">0:00</span></div>
         </div>
         <div class="pd-topbar-controls">
+          <button class="btn btn--ghost pd-help-btn" id="pd-help" type="button" title="Keyboard shortcuts & tips" aria-label="Help">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </button>
           <button class="btn btn--primary pd-control pd-start-btn" id="pd-start" type="button">▶ Start dialing</button>
           <button class="btn btn--ghost pd-control pd-pause-btn" id="pd-pause" type="button" hidden>⏸ Pause</button>
           <button class="btn btn--ghost pd-control pd-stop-btn" id="pd-stop" type="button" hidden>⏹ End session</button>
@@ -354,6 +338,30 @@
   </section>
 </main>
 
+<!-- Help modal: keyboard shortcuts + quick how-to -->
+<div class="lead-modal" id="pd-help-modal" hidden>
+  <div class="lead-modal-backdrop" data-close-pd-help></div>
+  <div class="lead-modal-content lead-modal-narrow" role="dialog" aria-modal="true">
+    <button class="lead-modal-close" type="button" data-close-pd-help aria-label="Close">×</button>
+    <h2>Power Dialer tips</h2>
+    <p class="csv-help">Pick a campaign at the top, hit Start dialing, and the system queues every matching lead. Talk, disposition, repeat. Use the keyboard so your hands never leave the home row.</p>
+    <div class="pd-shortcuts-card" style="display:block;margin-top:8px;">
+      <span class="pd-shortcuts-title">Keyboard shortcuts</span>
+      <div class="pd-shortcuts-grid">
+        <div><kbd>1</kbd>–<kbd>9</kbd> Disposition</div>
+        <div><kbd>Space</kbd> Hangup</div>
+        <div><kbd>V</kbd> Drop voicemail</div>
+        <div><kbd>M</kbd> Mute</div>
+        <div><kbd>N</kbd> Skip to next</div>
+        <div><kbd>Esc</kbd> Pause</div>
+      </div>
+    </div>
+    <div class="lead-form-actions" style="justify-content:flex-end;">
+      <button type="button" class="btn btn--primary" data-close-pd-help>Got it</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/main.js"></script>
 <script src="../assets/js/ranks.js"></script>
@@ -400,6 +408,19 @@
     active.hidden  = !active.hidden;
   });
 
+  // Help modal — keyboard shortcuts + quick how-to
+  const pdHelpModal = document.getElementById('pd-help-modal');
+  document.getElementById('pd-help').addEventListener('click', () => {
+    pdHelpModal.hidden = false;
+    requestAnimationFrame(() => pdHelpModal.classList.add('show'));
+  });
+  pdHelpModal.querySelectorAll('[data-close-pd-help]').forEach(el =>
+    el.addEventListener('click', () => {
+      pdHelpModal.classList.remove('show');
+      setTimeout(() => { pdHelpModal.hidden = true; }, 280);
+    })
+  );
+
   // =========================================================================
   // POWER DIALER ENGINE (mock for now — wires to Twilio Voice in Phase 4)
   // =========================================================================
@@ -426,6 +447,7 @@
   let pendingAdvanceTimer = null;
   let muted = false;
   let onHold = false;
+  let isSessionLive = false;   // gates keyboard shortcuts
 
   const SMS_TRIGGER_DISPOSITIONS = new Set([
     'sold','scheduled_appt','think_about_it','social_objection',
@@ -542,7 +564,7 @@
     sessionStats = { dials: 0, contacts: 0, sold: 0 };
     renderStats();
 
-    document.getElementById('pd-empty').hidden = true;
+    isSessionLive = true;
     document.getElementById('pd-start').hidden = true;
     document.getElementById('pd-pause').hidden = false;
     document.getElementById('pd-stop').hidden  = false;
@@ -555,6 +577,7 @@
     // recording a disposition. Agent can resume by hitting Start again.
     if (pendingAdvanceTimer) { clearTimeout(pendingAdvanceTimer); pendingAdvanceTimer = null; }
     if (callTimerInterval)    { clearInterval(callTimerInterval); callTimerInterval = null; }
+    isSessionLive = false;
     setCallState('paused', 'Paused');
     document.getElementById('pd-pause').hidden = true;
     document.getElementById('pd-start').hidden = false;
@@ -564,6 +587,7 @@
   function stopSession() {
     if (pendingAdvanceTimer) { clearTimeout(pendingAdvanceTimer); pendingAdvanceTimer = null; }
     if (callTimerInterval)    { clearInterval(callTimerInterval); callTimerInterval = null; }
+    isSessionLive = false;
     queue = [];
     activeLead = null;
     currentCallStartedAt = null;
@@ -571,7 +595,6 @@
     setCallState('idle', 'Connecting…');
     document.getElementById('pd-call-timer').textContent = '0:00';
     renderQueue();
-    document.getElementById('pd-empty').hidden = false;
     document.getElementById('pd-start').hidden = false;
     document.getElementById('pd-pause').hidden = true;
     document.getElementById('pd-stop').hidden  = true;
@@ -710,8 +733,8 @@
   // ---------- KEYBOARD SHORTCUTS --------------------------------------------
 
   document.addEventListener('keydown', (e) => {
-    // Only fire shortcuts while a session is live (skip when empty state is visible)
-    if (!document.getElementById('pd-empty').hidden) return;
+    // Only fire shortcuts while a session is live
+    if (!isSessionLive) return;
     // Don't intercept while typing in the notes field
     if (e.target.matches('textarea, input, select')) return;
 

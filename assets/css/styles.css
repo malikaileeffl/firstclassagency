@@ -7027,8 +7027,19 @@ body.dialer-fullwidth .hub-main { padding-left: 8px; }
   font-weight: 600;
   color: var(--text);
 }
-.pd-topbar-controls { display: flex; gap: 8px; }
+.pd-topbar-controls { display: flex; gap: 8px; align-items: center; }
 .pd-control { padding: 11px 18px; font-size: 0.92rem; }
+.pd-help-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--text-3);
+}
+.pd-help-btn:hover { color: var(--accent-bright); }
 
 /* Empty state before session starts */
 .pd-empty {
