@@ -7108,6 +7108,14 @@ body.dialer-fullwidth .hub-main { padding-left: 8px; }
 .credits-pause-switch input:checked + .credits-pause-switch-track .credits-pause-switch-thumb {
   transform: translateX(16px);
 }
+/* Locked-by-empty-balance: switch is disabled and visually dimmed */
+.credits-pause-switch.is-locked {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.credits-pause-switch.is-locked .credits-pause-switch-track {
+  background: #ef4444;
+}
 
 /* When paused, color the row subtly red on hover and bump the title */
 .credits-pause-row:has(input:checked) .credits-pause-title {

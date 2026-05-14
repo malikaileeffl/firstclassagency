@@ -14,21 +14,30 @@
 (() => {
   // Cached state, refreshed on auth-ready
   let paused = false;
+  let balanceCents = 0;
   let sb = null;
   let user = null;
 
-  // Expose a synchronous check + a setter so other JS can refresh after toggle
+  // Expose a synchronous check.
+  // Returns true if EITHER the manual flag is set OR the balance is empty.
+  // The database trigger also auto-flips the flag on the empty transition,
+  // so these two conditions usually agree — but checking both gives us instant
+  // client feedback without waiting for a refetch.
   window.fcAuth = window.fcAuth || {};
-  window.fcAuth.isCreditsPaused = () => paused;
+  window.fcAuth.isCreditsPaused = () => paused || balanceCents <= 0;
 
   document.addEventListener('fca:auth-ready', async (e) => {
     sb = window.fcaSupabase;
     user = e.detail && e.detail.user;
     if (!sb || !user) return;
 
-    // Load the current pause state
-    const { data } = await sb.from('profiles').select('credits_paused').eq('id', user.id).maybeSingle();
+    // Load the current pause state + balance
+    const { data } = await sb.from('profiles')
+      .select('credits_paused, credit_balance_cents')
+      .eq('id', user.id)
+      .maybeSingle();
     paused = !!(data && data.credits_paused);
+    balanceCents = (data && data.credit_balance_cents) || 0;
 
     injectToggle();
     updateChipBadge();
@@ -49,6 +58,8 @@
       const row = document.createElement('label');
       row.className = 'user-menu-item credits-pause-row';
       row.setAttribute('role', 'menuitemcheckbox');
+      const effectivePaused = paused || balanceCents <= 0;
+      const lockedByBalance = balanceCents <= 0;
       row.innerHTML = `
         <span class="credits-pause-icon">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -58,8 +69,8 @@
         <span class="credits-pause-label">
           <span class="credits-pause-title">Master Switch</span>
         </span>
-        <span class="credits-pause-switch">
-          <input type="checkbox" data-pause-check ${paused ? 'checked' : ''} />
+        <span class="credits-pause-switch ${lockedByBalance ? 'is-locked' : ''}" title="${lockedByBalance ? 'Auto-paused: balance is $0. Top up to unlock.' : ''}">
+          <input type="checkbox" data-pause-check ${effectivePaused ? 'checked' : ''} ${lockedByBalance ? 'disabled' : ''} />
           <span class="credits-pause-switch-track"><span class="credits-pause-switch-thumb"></span></span>
         </span>
       `;
