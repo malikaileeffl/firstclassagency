@@ -202,8 +202,8 @@
           <p>We're building the engine now. It needs Twilio Voice plus a 1-2 week A2P 10DLC approval. We won't charge you until launch and you'll get an email the moment it goes live.</p>
         </details>
 
-        <p class="pd-super-print" data-super-admin-only style="display:none;">
-          Super admin only ·
+        <p class="pd-super-print" data-admin-only style="display:none;">
+          Admin only ·
           <button type="button" class="pd-super-btn" id="pd-super-preview">Preview unlocked page</button>
         </p>
       </div>
@@ -242,14 +242,8 @@
   document.addEventListener('fca:auth-ready', async (e) => {
     sb = window.fcaSupabase;
     user = e.detail && e.detail.user;
-    isSuperAdmin = !!(e.detail && e.detail.isSuperAdmin);
     if (!sb || !user) return;
-
-    // Reveal the super-admin preview link only for super admins
-    document.querySelectorAll('[data-super-admin-only]').forEach(el => {
-      el.style.display = isSuperAdmin ? '' : 'none';
-    });
-
+    // data-admin-only elements are revealed by agent-auth.js automatically.
     await checkSubscription();
   });
 
