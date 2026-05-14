@@ -261,8 +261,10 @@
         </div>
       </div>
 
-      <!-- Active session -->
-      <div class="pd-session" id="pd-session" hidden>
+      <!-- Active session — visible by default as a layout preview below the
+           empty state. JS hides the empty state and keeps this when a real
+           session starts. -->
+      <div class="pd-session" id="pd-session">
 
         <!-- Main call panel -->
         <section class="pd-call-panel">
@@ -540,11 +542,10 @@
     sessionStats = { dials: 0, contacts: 0, sold: 0 };
     renderStats();
 
-    document.getElementById('pd-empty').hidden   = true;
-    document.getElementById('pd-session').hidden = false;
-    document.getElementById('pd-start').hidden   = true;
-    document.getElementById('pd-pause').hidden   = false;
-    document.getElementById('pd-stop').hidden    = false;
+    document.getElementById('pd-empty').hidden = true;
+    document.getElementById('pd-start').hidden = true;
+    document.getElementById('pd-pause').hidden = false;
+    document.getElementById('pd-stop').hidden  = false;
 
     dialNext();
   }
@@ -566,11 +567,14 @@
     queue = [];
     activeLead = null;
     currentCallStartedAt = null;
-    document.getElementById('pd-session').hidden = true;
-    document.getElementById('pd-empty').hidden   = false;
-    document.getElementById('pd-start').hidden   = false;
-    document.getElementById('pd-pause').hidden   = true;
-    document.getElementById('pd-stop').hidden    = true;
+    // Reset the lead card + queue to empty placeholders, keep session visible as preview
+    setCallState('idle', 'Connecting…');
+    document.getElementById('pd-call-timer').textContent = '0:00';
+    renderQueue();
+    document.getElementById('pd-empty').hidden = false;
+    document.getElementById('pd-start').hidden = false;
+    document.getElementById('pd-pause').hidden = true;
+    document.getElementById('pd-stop').hidden  = true;
     document.getElementById('pd-start').textContent = '▶ Start dialing';
   }
 
@@ -706,8 +710,8 @@
   // ---------- KEYBOARD SHORTCUTS --------------------------------------------
 
   document.addEventListener('keydown', (e) => {
-    // Only fire shortcuts when the active dialer session is visible
-    if (document.getElementById('pd-session').hidden) return;
+    // Only fire shortcuts while a session is live (skip when empty state is visible)
+    if (!document.getElementById('pd-empty').hidden) return;
     // Don't intercept while typing in the notes field
     if (e.target.matches('textarea, input, select')) return;
 
