@@ -442,6 +442,7 @@
 <script src="../assets/js/main.js"></script>
 <script src="../assets/js/ranks.js"></script>
 <script src="../assets/js/agent-auth.js"></script>
+<script src="../assets/js/credits-pause.js"></script>
 <script src="../assets/js/money-explosion.js"></script>
 
 <script>
@@ -618,6 +619,12 @@
     const action = actionEl && actionEl.dataset.action;
 
     if (action === 'call') {
+      // Credits-pause master switch: block click-to-call when spending is paused
+      if (window.fcAuth?.isCreditsPaused?.()) {
+        e.preventDefault();
+        alert('Spending is paused. Resume from the menu in the top-right to make calls.');
+        return;
+      }
       // tel: link still navigates; we log the call attempt
       await sb.from('leads').update({ last_called_at: new Date().toISOString() }).eq('id', lead.id);
       lead.last_called_at = new Date().toISOString();

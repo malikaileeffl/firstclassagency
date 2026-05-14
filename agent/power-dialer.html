@@ -366,6 +366,7 @@
 <script src="../assets/js/main.js"></script>
 <script src="../assets/js/ranks.js"></script>
 <script src="../assets/js/agent-auth.js"></script>
+<script src="../assets/js/credits-pause.js"></script>
 <script src="../assets/js/money-explosion.js"></script>
 
 <script>
@@ -552,6 +553,10 @@
 
   async function startSession() {
     if (!sb || !user) { alert('Not authenticated.'); return; }
+    if (window.fcAuth?.isCreditsPaused?.()) {
+      alert('Spending is paused. Resume from the menu in the top-right to start a dialing session.');
+      return;
+    }
     document.getElementById('pd-start').disabled = true;
     document.getElementById('pd-start').textContent = 'Loading…';
     const ok = await loadQueue();

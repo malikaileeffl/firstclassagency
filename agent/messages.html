@@ -229,6 +229,7 @@
 <script src="../assets/js/main.js"></script>
 <script src="../assets/js/ranks.js"></script>
 <script src="../assets/js/agent-auth.js"></script>
+<script src="../assets/js/credits-pause.js"></script>
 
 <script>
 /* Messages tab logic. Loads conversations and lets the agent read + reply.
@@ -422,6 +423,11 @@
   document.getElementById('msgs-compose-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!currentLead) return;
+    // Credits-pause master switch
+    if (window.fcAuth?.isCreditsPaused?.()) {
+      alert('Spending is paused. Resume from the menu in the top-right to send messages.');
+      return;
+    }
     const body = composeText.value.trim();
     if (!body) return;
     const segments = Math.max(1, Math.ceil(body.length / 160));

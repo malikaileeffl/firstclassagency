@@ -7041,6 +7041,96 @@ body.dialer-fullwidth .hub-main { padding-left: 8px; }
 }
 .pd-help-btn:hover { color: var(--accent-bright); }
 
+/* =============================================================================
+   Credits pause toggle — lives in user-menu dropdown
+   ============================================================================= */
+
+.credits-pause-row {
+  display: grid;
+  grid-template-columns: 18px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+  padding: 10px 14px;
+}
+.credits-pause-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-2);
+}
+.credits-pause-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.credits-pause-title {
+  font-size: 0.92rem;
+  color: var(--text);
+  font-weight: 500;
+}
+.credits-pause-sub {
+  font-size: 0.74rem;
+  color: var(--text-3);
+}
+
+/* iOS-style switch */
+.credits-pause-switch {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.credits-pause-switch input { position: absolute; opacity: 0; pointer-events: none; }
+.credits-pause-switch-track {
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  background: var(--border-strong);
+  border-radius: 999px;
+  position: relative;
+  transition: background var(--dur-1) var(--ease);
+}
+.credits-pause-switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform var(--dur-1) var(--ease);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+.credits-pause-switch input:checked + .credits-pause-switch-track {
+  background: #ef4444;
+}
+.credits-pause-switch input:checked + .credits-pause-switch-track .credits-pause-switch-thumb {
+  transform: translateX(16px);
+}
+
+/* When paused, color the row subtly red on hover and bump the title */
+.credits-pause-row:has(input:checked) .credits-pause-title {
+  color: #ef4444;
+}
+
+/* Red dot on the chip when paused */
+.user-chip.is-credits-paused {
+  position: relative;
+}
+.user-chip.is-credits-paused::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ef4444;
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.6);
+}
+
 /* Empty state before session starts */
 .pd-empty {
   text-align: center;
