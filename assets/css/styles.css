@@ -6718,13 +6718,17 @@ body.dialer-fullwidth .hub-main { padding-left: 8px; }
 .lr-disp-popover .disp-social-objection,
 .lr-disp-popover .disp-banking-objection,
 .lr-disp-popover .disp-policy-lapse,
-.lr-disp-popover .disp-missed-first-pmt  { color: var(--accent-bright); }
+.lr-disp-popover .disp-missed-first-pmt  { color: #f59e0b; }
 .lr-disp-popover .disp-bad-number,
-.lr-disp-popover .disp-dnc               { color: #ef4444; }
-.lr-disp-popover .disp-exclude-drips     { color: #f59e0b; }
+.lr-disp-popover .disp-dnc,
+.lr-disp-popover .disp-exclude-drips     { color: #ef4444; }
 .lr-disp-popover .disp-talk-to-spouse,
 .lr-disp-popover .disp-pick-up-hang-up,
 .lr-disp-popover .disp-busy              { color: var(--text-2); }
+
+/* If the active lead is already in the Sold stage, "Exclude From All Drips"
+   is just stopping post-sale marketing — soften it to neutral instead of red. */
+.lr-disp-popover.is-sold-lead .disp-exclude-drips { color: var(--text-2); }
 
 /* =============================================================================
    Dialer — Settings modal

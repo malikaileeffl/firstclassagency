@@ -1047,6 +1047,9 @@
   const dispPopover = document.getElementById('lr-disp-popover');
   function openDispPopover(anchorBtn) {
     dispPopover.hidden = false;
+    // If the lead is already Sold, soften "Exclude From All Drips" from red to neutral
+    const isSoldLead = dispositionTargetLead && dispositionTargetLead.stage === 'sold';
+    dispPopover.classList.toggle('is-sold-lead', !!isSoldLead);
     const rect = anchorBtn.getBoundingClientRect();
     // Position the popover below the button, right-aligned
     dispPopover.style.top = (rect.bottom + window.scrollY + 6) + 'px';
