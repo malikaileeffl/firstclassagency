@@ -209,20 +209,152 @@
       </div>
     </div>
 
-    <!-- Subscribed state (locked until subscription is active) -->
+    <!-- Subscribed state — the actual Power Dialer interface -->
     <div class="pd-active" id="pd-active" hidden>
-      <div class="hub-head" style="margin-bottom:18px;">
-        <div>
-          <span class="eyebrow">Power Dialer</span>
-          <h1 class="mt-8">Auto-dial mode</h1>
+
+      <!-- Top control bar: campaign picker + session stats + start/pause/stop -->
+      <header class="pd-topbar">
+        <div class="pd-topbar-left">
+          <div class="pd-field">
+            <span class="pd-field-label">Campaign</span>
+            <select class="input" id="pd-campaign">
+              <option value="all">All my leads</option>
+              <option value="new">New leads only</option>
+              <option value="callbacks">Callbacks due today</option>
+              <option value="trucker_iul">Trucker IUL</option>
+              <option value="gen_life_iul">Gen Life IUL</option>
+              <option value="gen_life">Gen Life</option>
+              <option value="veteran">Veteran</option>
+            </select>
+          </div>
+          <div class="pd-field">
+            <span class="pd-field-label">Pace</span>
+            <select class="input" id="pd-pace">
+              <option value="1">1 line · normal</option>
+              <option value="2">2 lines · fast</option>
+              <option value="3">3 lines · power</option>
+            </select>
+          </div>
         </div>
-        <div class="dialer-head-actions">
-          <button class="btn btn--ghost" id="pd-start-btn" type="button">Start dialing →</button>
+        <div class="pd-topbar-stats" id="pd-session-stats">
+          <div class="pd-stat"><span class="pd-stat-label">Dials</span><span class="pd-stat-val" id="pd-stat-dials">0</span></div>
+          <div class="pd-stat"><span class="pd-stat-label">Contacts</span><span class="pd-stat-val" id="pd-stat-contacts">0</span></div>
+          <div class="pd-stat"><span class="pd-stat-label">Sold</span><span class="pd-stat-val" id="pd-stat-sold">0</span></div>
+          <div class="pd-stat"><span class="pd-stat-label">Talk time</span><span class="pd-stat-val" id="pd-stat-talk">0:00</span></div>
+        </div>
+        <div class="pd-topbar-controls">
+          <button class="btn btn--primary pd-control pd-start-btn" id="pd-start" type="button">▶ Start dialing</button>
+          <button class="btn btn--ghost pd-control pd-pause-btn" id="pd-pause" type="button" hidden>⏸ Pause</button>
+          <button class="btn btn--ghost pd-control pd-stop-btn" id="pd-stop" type="button" hidden>⏹ End session</button>
+        </div>
+      </header>
+
+      <!-- Empty state before a session starts -->
+      <div class="pd-empty" id="pd-empty">
+        <div class="pd-empty-icon">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <h2>Ready when you are</h2>
+        <p>Pick a campaign above and hit Start dialing. The system queues your leads and walks you through one at a time. Disposition with the keyboard, drop voicemails with one tap, never lose your place.</p>
+        <div class="pd-shortcuts-card">
+          <span class="pd-shortcuts-title">Keyboard shortcuts</span>
+          <div class="pd-shortcuts-grid">
+            <div><kbd>1</kbd>–<kbd>9</kbd> Disposition</div>
+            <div><kbd>Space</kbd> Hangup</div>
+            <div><kbd>V</kbd> Drop voicemail</div>
+            <div><kbd>M</kbd> Mute</div>
+            <div><kbd>N</kbd> Skip to next</div>
+            <div><kbd>Esc</kbd> Pause</div>
+          </div>
         </div>
       </div>
-      <div class="pd-active-placeholder">
-        <p>Power Dialer engine will live here. Build pending Twilio Voice integration (Phase 4).</p>
+
+      <!-- Active session -->
+      <div class="pd-session" id="pd-session" hidden>
+
+        <!-- Main call panel -->
+        <section class="pd-call-panel">
+
+          <!-- Call state indicator -->
+          <div class="pd-call-state" id="pd-call-state-bar" data-state="idle">
+            <span class="pd-call-state-dot"></span>
+            <span class="pd-call-state-label" id="pd-call-state-label">Connecting…</span>
+            <span class="pd-call-timer" id="pd-call-timer">0:00</span>
+          </div>
+
+          <!-- Active lead -->
+          <div class="pd-lead-card">
+            <div class="pd-lead-header">
+              <div>
+                <h2 class="pd-lead-name" id="pd-lead-name">—</h2>
+                <p class="pd-lead-phone" id="pd-lead-phone">—</p>
+              </div>
+              <span class="pd-lead-type-pill" id="pd-lead-type">—</span>
+            </div>
+            <div class="pd-lead-grid">
+              <div class="pd-lead-row"><span class="pd-lead-label">Email</span><span class="pd-lead-val" id="pd-lead-email">—</span></div>
+              <div class="pd-lead-row"><span class="pd-lead-label">State</span><span class="pd-lead-val" id="pd-lead-state">—</span></div>
+              <div class="pd-lead-row"><span class="pd-lead-label">DOB</span><span class="pd-lead-val" id="pd-lead-dob">—</span></div>
+              <div class="pd-lead-row"><span class="pd-lead-label">Local time</span><span class="pd-lead-val" id="pd-lead-localtime">—</span></div>
+              <div class="pd-lead-row"><span class="pd-lead-label">Coverage goal</span><span class="pd-lead-val" id="pd-lead-goal">—</span></div>
+              <div class="pd-lead-row"><span class="pd-lead-label">Sale amount</span><span class="pd-lead-val" id="pd-lead-sale">—</span></div>
+            </div>
+            <div class="pd-lead-notes">
+              <label class="pd-lead-label" for="pd-notes-text">Call notes</label>
+              <textarea class="pd-notes-text" id="pd-notes-text" rows="3" placeholder="Type during the call. Notes save when you disposition."></textarea>
+            </div>
+          </div>
+
+          <!-- Disposition grid -->
+          <div class="pd-disp-grid" id="pd-disp-grid">
+            <button class="pd-disp pd-disp-sold"               data-disp="sold"                type="button"><span class="pd-disp-key">1</span><span class="pd-disp-label">Sold</span><span class="pd-disp-sms">✉</span></button>
+            <button class="pd-disp pd-disp-appt"               data-disp="scheduled_appt"      type="button"><span class="pd-disp-key">2</span><span class="pd-disp-label">Sched Appt</span><span class="pd-disp-sms">✉</span></button>
+            <button class="pd-disp pd-disp-think"              data-disp="think_about_it"      type="button"><span class="pd-disp-key">3</span><span class="pd-disp-label">Think</span><span class="pd-disp-sms">✉</span></button>
+            <button class="pd-disp pd-disp-social-obj"         data-disp="social_objection"    type="button"><span class="pd-disp-key">4</span><span class="pd-disp-label">Social Obj</span><span class="pd-disp-sms">✉</span></button>
+            <button class="pd-disp pd-disp-bank-obj"           data-disp="banking_objection"   type="button"><span class="pd-disp-key">5</span><span class="pd-disp-label">Bank Obj</span><span class="pd-disp-sms">✉</span></button>
+            <button class="pd-disp pd-disp-lapse"              data-disp="policy_lapse"        type="button"><span class="pd-disp-key">6</span><span class="pd-disp-label">Lapse</span><span class="pd-disp-sms">✉</span></button>
+            <button class="pd-disp pd-disp-missed"             data-disp="missed_first_payment" type="button"><span class="pd-disp-key">7</span><span class="pd-disp-label">Missed Pmt</span><span class="pd-disp-sms">✉</span></button>
+            <button class="pd-disp pd-disp-spouse"             data-disp="talk_to_spouse"      type="button"><span class="pd-disp-key">8</span><span class="pd-disp-label">Spouse</span></button>
+            <button class="pd-disp pd-disp-pickhang"           data-disp="pick_up_hang_up"     type="button"><span class="pd-disp-key">9</span><span class="pd-disp-label">Pick/Hang</span></button>
+            <button class="pd-disp pd-disp-busy"               data-disp="busy"                type="button"><span class="pd-disp-key">0</span><span class="pd-disp-label">Busy</span></button>
+            <button class="pd-disp pd-disp-exclude"            data-disp="exclude_all_drips"   type="button"><span class="pd-disp-label">Excl. Drips</span></button>
+            <button class="pd-disp pd-disp-bad"                data-disp="bad_number"          type="button"><span class="pd-disp-label">Bad Num</span></button>
+            <button class="pd-disp pd-disp-dnc"                data-disp="dnc"                 type="button"><span class="pd-disp-label">DNC</span></button>
+          </div>
+
+          <!-- Audio controls -->
+          <div class="pd-audio-bar">
+            <button class="pd-audio-btn" id="pd-mute" type="button" title="Mute (M)">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+              <span>Mute</span>
+            </button>
+            <button class="pd-audio-btn" id="pd-hold" type="button" title="Hold (H)">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+              <span>Hold</span>
+            </button>
+            <button class="pd-audio-btn pd-vm-drop" id="pd-vm-drop" type="button" title="Drop voicemail (V)">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="14" r="4"/><circle cx="18" cy="14" r="4"/><line x1="6" y1="18" x2="18" y2="18"/></svg>
+              <span>Drop VM</span>
+            </button>
+            <button class="pd-audio-btn pd-hangup-btn" id="pd-hangup" type="button" title="End call (Space)">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91"/><line x1="23" y1="1" x2="1" y2="23"/></svg>
+              <span>End call</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Side queue: next-up leads -->
+        <aside class="pd-queue">
+          <div class="pd-queue-head">
+            <span class="pd-queue-title">Up next</span>
+            <span class="pd-queue-count" id="pd-queue-count">0</span>
+          </div>
+          <div class="pd-queue-list" id="pd-queue-list">
+            <p class="pd-queue-empty">Queue is loading…</p>
+          </div>
+        </aside>
       </div>
+
     </div>
 
   </section>
@@ -232,6 +364,7 @@
 <script src="../assets/js/main.js"></script>
 <script src="../assets/js/ranks.js"></script>
 <script src="../assets/js/agent-auth.js"></script>
+<script src="../assets/js/money-explosion.js"></script>
 
 <script>
 (() => {
@@ -266,13 +399,386 @@
   });
 
   // Super admin preview — swap views without touching the DB.
-  // Just a visual toggle so admins can see what the unlocked page looks like.
   document.getElementById('pd-super-preview').addEventListener('click', () => {
     const paywall = document.getElementById('pd-paywall');
     const active  = document.getElementById('pd-active');
     paywall.hidden = !paywall.hidden;
     active.hidden  = !active.hidden;
   });
+
+  // =========================================================================
+  // POWER DIALER ENGINE (mock for now — wires to Twilio Voice in Phase 4)
+  // =========================================================================
+  //
+  // Session lifecycle:
+  //   idle    → user picks campaign + clicks Start
+  //   dialing → mock "connecting…" period (2s)
+  //   live    → connected, agent talks (timer ticks)
+  //   ending  → disposition recorded, advance to next lead
+  //
+  // All telephony actions (dial, hangup, mute, vm-drop) are stubbed with
+  // setTimeout — the UI flows exactly as it will once Twilio is wired,
+  // just without real audio. Disposition writes to call_attempts the same
+  // way as the manual dialer.
+  // =========================================================================
+
+  let queue = [];          // upcoming leads
+  let activeLead = null;
+  let sessionStartedAt = null;
+  let totalTalkSeconds = 0;
+  let currentCallStartedAt = null;
+  let callTimerInterval = null;
+  let sessionStats = { dials: 0, contacts: 0, sold: 0 };
+  let pendingAdvanceTimer = null;
+  let muted = false;
+  let onHold = false;
+
+  const SMS_TRIGGER_DISPOSITIONS = new Set([
+    'sold','scheduled_appt','think_about_it','social_objection',
+    'banking_objection','policy_lapse','missed_first_payment',
+  ]);
+
+  function setCallState(state, label) {
+    const bar = document.getElementById('pd-call-state-bar');
+    bar.dataset.state = state;
+    document.getElementById('pd-call-state-label').textContent = label;
+  }
+
+  function fmtTime(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${String(s).padStart(2, '0')}`;
+  }
+
+  function tickCallTimer() {
+    if (!currentCallStartedAt) return;
+    const elapsed = Math.floor((Date.now() - currentCallStartedAt) / 1000);
+    document.getElementById('pd-call-timer').textContent = fmtTime(elapsed);
+  }
+
+  function tickSessionTalkTime() {
+    let total = totalTalkSeconds;
+    if (currentCallStartedAt) total += Math.floor((Date.now() - currentCallStartedAt) / 1000);
+    document.getElementById('pd-stat-talk').textContent = fmtTime(total);
+  }
+
+  function renderStats() {
+    document.getElementById('pd-stat-dials').textContent    = sessionStats.dials;
+    document.getElementById('pd-stat-contacts').textContent = sessionStats.contacts;
+    document.getElementById('pd-stat-sold').textContent     = sessionStats.sold;
+    tickSessionTalkTime();
+  }
+
+  function renderActiveLead() {
+    if (!activeLead) return;
+    const l = activeLead;
+    document.getElementById('pd-lead-name').textContent      = l.full_name || '—';
+    document.getElementById('pd-lead-phone').textContent     = formatPhone(l.phone || '');
+    document.getElementById('pd-lead-type').textContent      = l.lead_type || 'No type';
+    document.getElementById('pd-lead-email').textContent     = l.email || '—';
+    document.getElementById('pd-lead-state').textContent     = l.state || '—';
+    document.getElementById('pd-lead-dob').textContent       = l.date_of_birth || '—';
+    document.getElementById('pd-lead-goal').textContent      = l.coverage_goal || '—';
+    document.getElementById('pd-lead-sale').textContent      = l.sale_amount != null ? '$' + Number(l.sale_amount).toLocaleString() : '—';
+    document.getElementById('pd-lead-localtime').textContent = l.state ? formatStateLocalTime(l.state) : '—';
+    document.getElementById('pd-notes-text').value = '';
+  }
+
+  function renderQueue() {
+    const listEl = document.getElementById('pd-queue-list');
+    document.getElementById('pd-queue-count').textContent = queue.length;
+    if (!queue.length) {
+      listEl.innerHTML = '<p class="pd-queue-empty">Queue empty. End session and start a new one.</p>';
+      return;
+    }
+    listEl.innerHTML = queue.slice(0, 12).map((l, i) => `
+      <div class="pd-queue-row">
+        <span class="pd-queue-idx">${i + 1}</span>
+        <div class="pd-queue-info">
+          <div class="pd-queue-name">${escapeHtml(l.full_name || '—')}</div>
+          <div class="pd-queue-meta">${escapeHtml(formatPhone(l.phone))} · ${escapeHtml(l.lead_type || 'No type')}</div>
+        </div>
+        <button class="pd-queue-skip" data-skip="${l.id}" title="Remove from this session">✕</button>
+      </div>
+    `).join('');
+  }
+
+  // ---------- LOADING THE QUEUE ----------------------------------------------
+
+  async function loadQueue() {
+    const campaign = document.getElementById('pd-campaign').value;
+    let q = sb.from('leads').select('*').eq('agent_id', user.id);
+    if (campaign === 'new')        q = q.eq('stage', 'new');
+    if (campaign === 'callbacks')  q = q.not('callback_at', 'is', null).lte('callback_at', new Date().toISOString());
+    if (campaign === 'trucker_iul') q = q.eq('lead_type', 'Trucker IUL');
+    if (campaign === 'gen_life_iul') q = q.eq('lead_type', 'Gen Life IUL');
+    if (campaign === 'gen_life')   q = q.eq('lead_type', 'Gen Life');
+    if (campaign === 'veteran')    q = q.eq('lead_type', 'Veteran');
+    // Exclude already-closed leads + opt-outs
+    q = q.not('stage', 'in', '(sold,dead)');
+    q = q.order('created_at', { ascending: false }).limit(200);
+    const { data, error } = await q;
+    if (error) { alert('Could not load queue: ' + error.message); return false; }
+    queue = data || [];
+    if (!queue.length) {
+      alert('No leads match this campaign. Pick a different one or add leads in the Leads tab.');
+      return false;
+    }
+    renderQueue();
+    return true;
+  }
+
+  // ---------- SESSION LIFECYCLE ---------------------------------------------
+
+  document.getElementById('pd-start').addEventListener('click', startSession);
+  document.getElementById('pd-pause').addEventListener('click', pauseSession);
+  document.getElementById('pd-stop').addEventListener('click', stopSession);
+
+  async function startSession() {
+    if (!sb || !user) { alert('Not authenticated.'); return; }
+    document.getElementById('pd-start').disabled = true;
+    document.getElementById('pd-start').textContent = 'Loading…';
+    const ok = await loadQueue();
+    document.getElementById('pd-start').disabled = false;
+    document.getElementById('pd-start').textContent = '▶ Start dialing';
+    if (!ok) return;
+
+    sessionStartedAt = Date.now();
+    totalTalkSeconds = 0;
+    sessionStats = { dials: 0, contacts: 0, sold: 0 };
+    renderStats();
+
+    document.getElementById('pd-empty').hidden   = true;
+    document.getElementById('pd-session').hidden = false;
+    document.getElementById('pd-start').hidden   = true;
+    document.getElementById('pd-pause').hidden   = false;
+    document.getElementById('pd-stop').hidden    = false;
+
+    dialNext();
+  }
+
+  function pauseSession() {
+    // Cancel any pending auto-advance and freeze the current call without
+    // recording a disposition. Agent can resume by hitting Start again.
+    if (pendingAdvanceTimer) { clearTimeout(pendingAdvanceTimer); pendingAdvanceTimer = null; }
+    if (callTimerInterval)    { clearInterval(callTimerInterval); callTimerInterval = null; }
+    setCallState('paused', 'Paused');
+    document.getElementById('pd-pause').hidden = true;
+    document.getElementById('pd-start').hidden = false;
+    document.getElementById('pd-start').textContent = '▶ Resume';
+  }
+
+  function stopSession() {
+    if (pendingAdvanceTimer) { clearTimeout(pendingAdvanceTimer); pendingAdvanceTimer = null; }
+    if (callTimerInterval)    { clearInterval(callTimerInterval); callTimerInterval = null; }
+    queue = [];
+    activeLead = null;
+    currentCallStartedAt = null;
+    document.getElementById('pd-session').hidden = true;
+    document.getElementById('pd-empty').hidden   = false;
+    document.getElementById('pd-start').hidden   = false;
+    document.getElementById('pd-pause').hidden   = true;
+    document.getElementById('pd-stop').hidden    = true;
+    document.getElementById('pd-start').textContent = '▶ Start dialing';
+  }
+
+  function dialNext() {
+    if (!queue.length) {
+      setCallState('done', 'Session complete');
+      stopSession();
+      alert(`Session complete.\n\nDials: ${sessionStats.dials}\nContacts: ${sessionStats.contacts}\nSold: ${sessionStats.sold}\nTalk time: ${fmtTime(totalTalkSeconds)}`);
+      return;
+    }
+    activeLead = queue.shift();
+    renderActiveLead();
+    renderQueue();
+    sessionStats.dials += 1;
+    renderStats();
+
+    setCallState('dialing', 'Connecting…');
+    document.getElementById('pd-call-timer').textContent = '0:00';
+
+    // Mock the connecting-then-answered flow. Real Twilio wiring would call
+    // Device.connect() here and listen for 'accept' / 'disconnect' / 'reject'.
+    pendingAdvanceTimer = setTimeout(() => {
+      // 50% answer rate in mock world
+      if (Math.random() < 0.5) {
+        connectCall();
+      } else {
+        // No answer — auto-advance after a short pause
+        setCallState('no-answer', 'No answer');
+        pendingAdvanceTimer = setTimeout(dialNext, 1200);
+      }
+    }, 1500);
+  }
+
+  function connectCall() {
+    setCallState('live', 'Connected');
+    sessionStats.contacts += 1;
+    renderStats();
+    currentCallStartedAt = Date.now();
+    callTimerInterval = setInterval(() => {
+      tickCallTimer();
+      tickSessionTalkTime();
+    }, 1000);
+  }
+
+  function endActiveCall() {
+    if (currentCallStartedAt) {
+      totalTalkSeconds += Math.floor((Date.now() - currentCallStartedAt) / 1000);
+      currentCallStartedAt = null;
+    }
+    if (callTimerInterval) { clearInterval(callTimerInterval); callTimerInterval = null; }
+  }
+
+  // ---------- DISPOSITIONS --------------------------------------------------
+
+  document.getElementById('pd-disp-grid').addEventListener('click', async (e) => {
+    const btn = e.target.closest('.pd-disp');
+    if (!btn || !activeLead) return;
+    await dispositionAndAdvance(btn.dataset.disp);
+  });
+
+  async function dispositionAndAdvance(disp) {
+    if (!activeLead) return;
+    endActiveCall();
+    setCallState('logging', 'Logging…');
+
+    // Fire green money explosion on sold — same trigger as the manual dialer
+    if (disp === 'sold' && typeof window.fcaMoneyExplosion === 'function') {
+      window.fcaMoneyExplosion({ variant: 'sold' });
+    }
+
+    // Write the call_attempts row + lead stage update in parallel
+    const notes = document.getElementById('pd-notes-text').value.trim() || null;
+    const updates = { last_called_at: new Date().toISOString() };
+    if (disp === 'sold')           updates.stage = 'sold';
+    if (disp === 'bad_number')     updates.stage = 'dead';
+    if (disp === 'dnc')            updates.stage = 'dead';
+    if (disp === 'exclude_all_drips') updates.sms_drip_enabled = false;
+    if (['think_about_it','talk_to_spouse','social_objection','banking_objection','policy_lapse','missed_first_payment'].includes(disp)) {
+      updates.stage = 'quoted';
+    }
+    if (disp === 'scheduled_appt') updates.stage = 'callback';
+
+    sessionStats.sold += (disp === 'sold' ? 1 : 0);
+    renderStats();
+
+    const leadId = activeLead.id;
+    Promise.all([
+      sb.from('call_attempts').insert({ lead_id: leadId, agent_id: user.id, disposition: disp, notes }),
+      sb.from('leads').update(updates).eq('id', leadId),
+    ]).catch(err => console.warn('[power-dialer] log failed:', err));
+
+    // Brief beat to acknowledge the action, then dial the next lead
+    pendingAdvanceTimer = setTimeout(dialNext, 600);
+  }
+
+  // ---------- AUDIO CONTROLS (mock) -----------------------------------------
+
+  document.getElementById('pd-mute').addEventListener('click', () => {
+    muted = !muted;
+    document.getElementById('pd-mute').classList.toggle('is-on', muted);
+  });
+  document.getElementById('pd-hold').addEventListener('click', () => {
+    onHold = !onHold;
+    document.getElementById('pd-hold').classList.toggle('is-on', onHold);
+  });
+  document.getElementById('pd-vm-drop').addEventListener('click', () => {
+    if (!activeLead) return;
+    setCallState('vm-drop', 'Dropping voicemail…');
+    endActiveCall();
+    // Mock voicemail playback duration — Twilio TwiML would actually play
+    // the agent's pre-recorded VM here.
+    pendingAdvanceTimer = setTimeout(() => {
+      dispositionAndAdvance('pick_up_hang_up');
+    }, 1500);
+  });
+  document.getElementById('pd-hangup').addEventListener('click', () => {
+    if (!activeLead) return;
+    endActiveCall();
+    setCallState('hangup', 'Call ended');
+    // Wait for agent to disposition before advancing
+  });
+
+  // ---------- QUEUE SKIP ----------------------------------------------------
+
+  document.getElementById('pd-queue-list').addEventListener('click', (e) => {
+    const btn = e.target.closest('.pd-queue-skip');
+    if (!btn) return;
+    const id = btn.dataset.skip;
+    queue = queue.filter(l => l.id !== id);
+    renderQueue();
+  });
+
+  // ---------- KEYBOARD SHORTCUTS --------------------------------------------
+
+  document.addEventListener('keydown', (e) => {
+    // Only fire shortcuts when the active dialer session is visible
+    if (document.getElementById('pd-session').hidden) return;
+    // Don't intercept while typing in the notes field
+    if (e.target.matches('textarea, input, select')) return;
+
+    if (e.key >= '1' && e.key <= '9') {
+      e.preventDefault();
+      const idx = Number(e.key) - 1;
+      const btn = document.querySelectorAll('.pd-disp[data-disp]')[idx];
+      if (btn) btn.click();
+    } else if (e.key === '0') {
+      e.preventDefault();
+      const btn = document.querySelectorAll('.pd-disp[data-disp]')[9];
+      if (btn) btn.click();
+    } else if (e.key === ' ') {
+      e.preventDefault();
+      document.getElementById('pd-hangup').click();
+    } else if (e.key.toLowerCase() === 'v') {
+      e.preventDefault();
+      document.getElementById('pd-vm-drop').click();
+    } else if (e.key.toLowerCase() === 'm') {
+      e.preventDefault();
+      document.getElementById('pd-mute').click();
+    } else if (e.key.toLowerCase() === 'n') {
+      e.preventDefault();
+      dispositionAndAdvance('pick_up_hang_up');
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      pauseSession();
+    }
+  });
+
+  // ---------- HELPERS -------------------------------------------------------
+
+  function formatPhone(p) {
+    if (!p) return '';
+    const d = p.replace(/[^0-9]/g, '');
+    if (d.length === 10) return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
+    if (d.length === 11 && d[0] === '1') return `+1 (${d.slice(1,4)}) ${d.slice(4,7)}-${d.slice(7)}`;
+    return p;
+  }
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[c]);
+  }
+  function formatStateLocalTime(state) {
+    const ZONES = {
+      AL:'America/Chicago',AK:'America/Anchorage',AZ:'America/Phoenix',AR:'America/Chicago',
+      CA:'America/Los_Angeles',CO:'America/Denver',CT:'America/New_York',DE:'America/New_York',
+      FL:'America/New_York',GA:'America/New_York',HI:'Pacific/Honolulu',ID:'America/Boise',
+      IL:'America/Chicago',IN:'America/Indiana/Indianapolis',IA:'America/Chicago',KS:'America/Chicago',
+      KY:'America/New_York',LA:'America/Chicago',ME:'America/New_York',MD:'America/New_York',
+      MA:'America/New_York',MI:'America/Detroit',MN:'America/Chicago',MS:'America/Chicago',
+      MO:'America/Chicago',MT:'America/Denver',NE:'America/Chicago',NV:'America/Los_Angeles',
+      NH:'America/New_York',NJ:'America/New_York',NM:'America/Denver',NY:'America/New_York',
+      NC:'America/New_York',ND:'America/Chicago',OH:'America/New_York',OK:'America/Chicago',
+      OR:'America/Los_Angeles',PA:'America/New_York',RI:'America/New_York',SC:'America/New_York',
+      SD:'America/Chicago',TN:'America/Chicago',TX:'America/Chicago',UT:'America/Denver',
+      VT:'America/New_York',VA:'America/New_York',WA:'America/Los_Angeles',WV:'America/New_York',
+      WI:'America/Chicago',WY:'America/Denver',DC:'America/New_York',
+    };
+    const tz = ZONES[String(state).toUpperCase()];
+    if (!tz) return '';
+    try { return new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit' }).format(new Date()); }
+    catch (_) { return ''; }
+  }
 })();
 </script>
 
