@@ -201,6 +201,11 @@
           <summary>When does it launch?</summary>
           <p>We're building the engine now. It needs Twilio Voice plus a 1-2 week A2P 10DLC approval. We won't charge you until launch and you'll get an email the moment it goes live.</p>
         </details>
+
+        <p class="pd-super-print" data-super-admin-only style="display:none;">
+          Super admin only ·
+          <button type="button" class="pd-super-btn" id="pd-super-preview">Preview unlocked page</button>
+        </p>
       </div>
     </div>
 
@@ -232,11 +237,19 @@
 (() => {
   let sb = null;
   let user = null;
+  let isSuperAdmin = false;
 
   document.addEventListener('fca:auth-ready', async (e) => {
     sb = window.fcaSupabase;
     user = e.detail && e.detail.user;
+    isSuperAdmin = !!(e.detail && e.detail.isSuperAdmin);
     if (!sb || !user) return;
+
+    // Reveal the super-admin preview link only for super admins
+    document.querySelectorAll('[data-super-admin-only]').forEach(el => {
+      el.style.display = isSuperAdmin ? '' : 'none';
+    });
+
     await checkSubscription();
   });
 
@@ -256,6 +269,15 @@
     // existing create-payment-intent edge function once we add a
     // create-subscription endpoint.
     alert('Stripe subscription checkout opens here. Wiring this is the next build step — alongside Twilio Voice integration.');
+  });
+
+  // Super admin preview — swap views without touching the DB.
+  // Just a visual toggle so admins can see what the unlocked page looks like.
+  document.getElementById('pd-super-preview').addEventListener('click', () => {
+    const paywall = document.getElementById('pd-paywall');
+    const active  = document.getElementById('pd-active');
+    paywall.hidden = !paywall.hidden;
+    active.hidden  = !active.hidden;
   });
 })();
 </script>
