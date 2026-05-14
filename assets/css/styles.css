@@ -6741,22 +6741,27 @@ body.dialer-fullwidth .hub-main { padding-left: 8px; }
   pointer-events: none;
   overflow: hidden;
   perspective: 1200px;
-  transform-style: preserve-3d;
+  /* contain: layout style paint shields the rest of the page from this
+     overlay's repaints — keeps the lead list under it from being invalidated
+     on every animation frame. */
+  contain: layout style paint;
 }
 .money-bill {
   position: absolute;
   user-select: none;
   will-change: transform, opacity;
   transform-origin: center;
-  transform-style: preserve-3d;
   backface-visibility: visible;
   line-height: 0;
-  filter: drop-shadow(0 6px 14px rgba(0, 120, 171, 0.5));
 }
 .money-bill svg {
   display: block;
   width: 100%;
   height: auto;
+  /* Box-shadow on the SVG itself — cheaper than a filter drop-shadow because
+     the browser doesn't have to re-render the alpha mask each frame. */
+  border-radius: 4px;
+  box-shadow: 0 4px 10px var(--bill-glow, rgba(0, 120, 171, 0.45));
 }
 
 /* =============================================================================

@@ -775,6 +775,11 @@
   });
 
   async function logDisposition(lead, disp, callbackAt) {
+    // Visual feedback first — fires before any network call so the click
+    // feels instant. The agent can edit sale_amount inline on the row after.
+    if (disp === 'sold' && typeof window.fcaMoneyExplosion === 'function') {
+      window.fcaMoneyExplosion({ variant: 'sold' });
+    }
     const newStage = stageFromDisposition(disp, lead.stage);
     const { error: callErr } = await sb.from('call_attempts').insert({
       lead_id: lead.id, agent_id: user.id, disposition: disp, notes: null,
@@ -790,18 +795,8 @@
       updates.email_drip_enabled = false;
     }
 
-    // Sold prompts for sale amount if not already set.
-    if (disp === 'sold' && lead.sale_amount == null) {
-      const v = prompt('Sale amount? (leave blank to skip)');
-      if (v) { const n = Number(v); if (!isNaN(n)) updates.sale_amount = n; }
-    }
     await sb.from('leads').update(updates).eq('id', lead.id);
     Object.assign(lead, updates);
-    // Fire the green money explosion on a sold disposition. Visual hit lands
-    // immediately, the data refresh runs underneath the animation.
-    if (disp === 'sold' && typeof window.fcaMoneyExplosion === 'function') {
-      window.fcaMoneyExplosion({ variant: 'sold' });
-    }
     await Promise.all([refreshLeads(), refreshStats()]);
   }
 

@@ -52,21 +52,30 @@
 
     const overlay = document.createElement('div');
     overlay.className = 'money-explosion';
-    document.body.appendChild(overlay);
+    // Per-variant glow as a CSS var so the .money-bill rule can use it once
+    // instead of every particle having its own filter style.
+    overlay.style.setProperty('--bill-glow', colors.glow);
 
-    const COUNT = opts.count || 150;
+    const COUNT = opts.count || 130;
     const DURATION_MS = opts.duration || 3200;
     const particles = [];
 
+    // Build one template and clone it instead of parsing innerHTML N times —
+    // cloneNode is dramatically faster than re-parsing the same SVG markup.
+    const template = document.createElement('div');
+    template.className = 'money-bill';
+    template.innerHTML = billSvg;
+
+    // Batch every particle into a DocumentFragment so we only hit the layout
+    // engine once instead of N times.
+    const frag = document.createDocumentFragment();
+
     for (let i = 0; i < COUNT; i++) {
-      const el = document.createElement('div');
-      el.className = 'money-bill';
-      el.innerHTML = billSvg;
+      const el = template.cloneNode(true);
       el.style.left = '50%';
       el.style.top  = '50%';
       el.style.width = (54 + Math.random() * 70) + 'px';
-      el.style.filter = `drop-shadow(0 6px 14px ${colors.glow})`;
-      overlay.appendChild(el);
+      frag.appendChild(el);
 
       const startOffsetX = (Math.random() - 0.5) * 80;
       const startOffsetY = (Math.random() - 0.5) * 80;
@@ -90,6 +99,8 @@
         rotStart, rotSpeed, flipSpeed,
       });
     }
+    overlay.appendChild(frag);
+    document.body.appendChild(overlay);
 
     const start = performance.now();
     const gravity = 520;
@@ -109,8 +120,10 @@
         const y = p.startOffsetY + p.vy * t + 0.5 * gravity * t * t;
         const rotZ = p.rotStart + p.rotSpeed * t;
         const rotY = p.flipSpeed * t;
+        // translate3d forces the element onto its own GPU layer, which is
+        // dramatically faster than 2D translate when animating many elements.
         p.el.style.transform =
-          `translate(-50%, -50%) translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) rotateY(${rotY.toFixed(1)}deg) rotateZ(${rotZ.toFixed(1)}deg)`;
+          `translate3d(-50%, -50%, 0) translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) rotateY(${rotY.toFixed(1)}deg) rotateZ(${rotZ.toFixed(1)}deg)`;
         if (t > fadeStart) {
           p.el.style.opacity = String(Math.max(0, 1 - (t - fadeStart) / (durSec * 0.3)));
         }
