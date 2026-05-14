@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Messages — Agent portal</title>
+<meta name="robots" content="noindex,nofollow" />
+<meta name="theme-color" content="#0d0d0e" />
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="First Class" />
+<meta name="mobile-web-app-capable" content="yes" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/styles.css" />
+<script src="../assets/js/theme.js"></script>
+</head>
+<body class="dialer-fullwidth">
+
+<header class="site-header">
+  <a href="dashboard.html" class="brand">
+    <img class="brand-logo" src="../assets/img/logo.png" alt="First Class Agency" />
+    <span>First Class · Agent</span>
+  </a>
+  <div class="nav-cta">
+    <div class="user-menu" data-user-chip style="display:none;">
+      <button class="user-chip" data-user-chip-trigger type="button">
+        <span class="user-avatar" data-user-initial>—</span>
+        <span class="user-name">Hi, <strong data-user-name>—</strong></span>
+        <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="user-menu-dropdown" role="menu">
+        <a href="account.html" class="user-menu-item" role="menuitem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 14 0v1"/></svg>
+          Account
+        </a>
+        <div class="user-menu-divider"></div>
+        <button class="user-menu-item" data-logout type="button" role="menuitem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign out
+        </button>
+      </div>
+    </div>
+    <button class="nav-toggle" aria-label="Open menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</header>
+
+<nav class="mobile-nav" aria-label="Mobile">
+  <a href="dashboard.html">Dashboard</a>
+  <a href="training.html">Training</a>
+  <a href="dialer.html" data-dialer-only style="display:none;">Dialer</a>
+  <a href="quick-links.html">Quick Links</a>
+  <a href="portals.html">E-apps & Portals</a>
+  <a class="leads-soon"><span class="leads-text">Leads Center</span><span class="soon-pill">Soon</span></a>
+  <a href="promotion.html">Promotion & Comp</a>
+  <a href="carriers.html">Carrier Contacts</a>
+  <a href="resources.html">Agent Resources</a>
+  <a href="leaderboard.html">Leaderboard</a>
+  <a href="https://ww3.familyfirstlife.com/login" target="_blank" class="ip-report-link" rel="noopener noreferrer">IP Report</a>
+  <a href="builders.html" data-admin-only style="display:none;">Builders</a>
+  <a href="admin.html" data-admin-only style="display:none;">Admin</a>
+  <a href="account.html">Account</a>
+  <a href="#" data-logout class="btn btn--ghost mt-16">Sign out</a>
+</nav>
+
+<main class="container hub-shell">
+  <aside class="hub-side" aria-label="Agent navigation">
+    <a href="dashboard.html" aria-label="Dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>
+      Dashboard
+    </a>
+    <a href="training.html" aria-label="Training">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      Training
+    </a>
+    <a href="dialer.html" class="active" data-dialer-only style="display:none;" aria-label="Dialer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      Dialer
+    </a>
+    <a href="quick-links.html" aria-label="Quick Links">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      Quick Links
+    </a>
+    <a href="portals.html" aria-label="E-apps & Portals">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20"/><path d="M6 7h.01"/></svg>
+      E-apps & Portals
+    </a>
+    <a class="leads-soon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="20" r="1.3"/><circle cx="16" cy="20" r="1.3"/><path d="M3 3h2l2.5 12.5a1.5 1.5 0 0 0 1.5 1.5h9a1.5 1.5 0 0 0 1.5-1.5L20 7H6"/></svg>
+      <span class="leads-text">Leads Center</span>
+      <span class="soon-pill">Soon</span>
+    </a>
+    <a href="promotion.html" aria-label="Promotion & Comp">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+      Promotion & Comp
+    </a>
+    <a href="carriers.html" aria-label="Carrier Contacts">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Carrier Contacts
+    </a>
+    <a href="resources.html" aria-label="Agent Resources">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      Agent Resources
+    </a>
+    <a href="leaderboard.html" aria-label="Leaderboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="6" width="6" height="14" rx="1"/><rect x="2" y="12" width="6" height="8" rx="1"/><rect x="16" y="9" width="6" height="11" rx="1"/></svg>
+      Leaderboard
+    </a>
+    <a href="https://ww3.familyfirstlife.com/login" target="_blank" rel="noopener noreferrer" class="ip-report-link" aria-label="IP Report">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      IP Report
+    </a>
+    <a href="builders.html" data-admin-only style="display:none;" aria-label="Builders">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><circle cx="5.5" cy="19" r="2.5"/><circle cx="18.5" cy="19" r="2.5"/><path d="M12 7.5 V14 M5.5 14 H18.5 M5.5 14 V16.5 M18.5 14 V16.5"/></svg>
+      Builders
+    </a>
+    <a href="admin.html" data-admin-only style="display:none;" aria-label="Admin">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9.5-8 10-4.5-.5-8-5-8-10V6l8-4z"/><path d="m9 12 2 2 4-4"/></svg>
+      Admin
+    </a>
+  </aside>
+
+  <section class="hub-main dialer-main">
+    <!-- Tab bar shared with dialer.html -->
+    <div class="crm-tabs">
+      <a class="crm-tab" href="dialer.html">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Leads
+      </a>
+      <a class="crm-tab is-active" href="messages.html">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Messages
+        <span class="crm-tab-badge" id="crm-tab-unread" hidden>0</span>
+      </a>
+    </div>
+
+    <!-- Two-pane messenger -->
+    <div class="msgs-shell">
+      <!-- Left pane: conversation list -->
+      <aside class="msgs-list" aria-label="Conversations">
+        <div class="msgs-list-head">
+          <input class="dialer-search msgs-search" id="msgs-search" type="search" placeholder="Search name or phone…" />
+          <div class="msgs-filter">
+            <button class="msgs-filter-btn is-active" type="button" data-filter="all">All</button>
+            <button class="msgs-filter-btn"            type="button" data-filter="unread">Unread <span class="msgs-filter-count" id="msgs-unread-count" hidden>0</span></button>
+          </div>
+        </div>
+        <div class="msgs-list-body" id="msgs-list-body">
+          <div class="msgs-list-empty">Loading conversations…</div>
+        </div>
+      </aside>
+
+      <!-- Center pane: active thread -->
+      <section class="msgs-thread" aria-label="Conversation">
+        <div class="msgs-thread-empty" id="msgs-thread-empty">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <h3>Pick a conversation</h3>
+          <p>Select a lead on the left to read and reply. Inbound replies appear here as your leads respond to drips and your manual sends.</p>
+        </div>
+
+        <div class="msgs-thread-active" id="msgs-thread-active" hidden>
+          <header class="msgs-thread-head">
+            <div class="msgs-thread-head-main">
+              <div>
+                <h3 class="msgs-thread-name" id="msgs-thread-name">—</h3>
+                <p class="msgs-thread-phone" id="msgs-thread-phone">—</p>
+              </div>
+            </div>
+            <div class="msgs-thread-head-actions">
+              <button class="btn btn--ghost btn--sm" type="button" id="msgs-toggle-panel" title="Lead details">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Details
+              </button>
+            </div>
+          </header>
+
+          <div class="msgs-thread-body" id="msgs-thread-body">
+            <!-- Bubbles rendered here -->
+          </div>
+
+          <form class="msgs-thread-compose" id="msgs-compose-form" autocomplete="off">
+            <textarea class="msgs-thread-textarea" id="msgs-compose-text" rows="2" placeholder="Type a message…" maxlength="1600"></textarea>
+            <div class="msgs-thread-compose-row">
+              <span class="msgs-compose-meta" id="msgs-compose-meta">0 chars · 1 segment · $0.02</span>
+              <button class="btn btn--primary btn--sm" id="msgs-compose-send" type="submit" disabled>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                Send
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Right pane: collapsible lead details -->
+      <aside class="msgs-panel" id="msgs-panel" hidden aria-label="Lead details">
+        <header class="msgs-panel-head">
+          <h3>Lead details</h3>
+          <button class="msgs-panel-close" type="button" id="msgs-panel-close" aria-label="Close">×</button>
+        </header>
+        <div class="msgs-panel-body" id="msgs-panel-body">
+          <p class="field-help">Pick a conversation to see lead info here.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/main.js"></script>
+<script src="../assets/js/ranks.js"></script>
+<script src="../assets/js/agent-auth.js"></script>
+
+<script>
+/* Messages tab logic. Loads conversations and lets the agent read + reply.
+   Actual SMS sending is wired through Twilio in a later phase; for now this
+   page inserts the outbound message as a 'queued' row in sms_messages and
+   shows the bubble immediately. */
+(() => {
+  let sb = null;
+  let user = null;
+  let conversations = [];
+  let currentLead = null;       // {id, full_name, phone, ...}
+  let currentMessages = [];     // active thread bubbles
+  let filter = 'all';
+  let search = '';
+
+  const SMS_RATE_CENTS = 2;
+
+  document.addEventListener('fca:auth-ready', async (e) => {
+    sb = window.fcaSupabase;
+    user = e.detail && e.detail.user;
+    if (!sb || !user) return;
+    await refreshConversations();
+  });
+
+  // ---------- DATA ----------------------------------------------------------
+
+  async function refreshConversations() {
+    const { data, error } = await sb.from('sms_conversations')
+      .select('*')
+      .eq('agent_id', user.id)
+      .order('last_at', { ascending: false });
+    if (error) { console.error('[msgs] load conv failed:', error); return; }
+    conversations = data || [];
+    renderConversations();
+    renderUnreadBadge();
+  }
+
+  async function loadThread(leadId) {
+    const { data, error } = await sb.from('sms_messages')
+      .select('*')
+      .eq('lead_id', leadId)
+      .order('created_at', { ascending: true });
+    if (error) { console.error('[msgs] load thread failed:', error); return; }
+    currentMessages = data || [];
+    renderThread();
+    // Mark inbound as read
+    await sb.rpc('mark_thread_read', { p_lead_id: leadId });
+    refreshConversations();
+  }
+
+  async function loadLeadDetails(leadId) {
+    const { data, error } = await sb.from('leads')
+      .select('*')
+      .eq('id', leadId)
+      .maybeSingle();
+    if (error) { console.error('[msgs] load lead failed:', error); return; }
+    return data;
+  }
+
+  // ---------- RENDER --------------------------------------------------------
+
+  function renderConversations() {
+    const list = filteredConversations();
+    const el = document.getElementById('msgs-list-body');
+    if (!list.length) {
+      el.innerHTML = `<div class="msgs-list-empty">${conversations.length ? 'No conversations match.' : 'No conversations yet. Send your first text from a lead to start one.'}</div>`;
+      return;
+    }
+    el.innerHTML = list.map(c => {
+      const initial = (c.lead_name || '?').trim().charAt(0).toUpperCase();
+      const time = relTime(c.last_at);
+      const isActive = currentLead && currentLead.id === c.lead_id;
+      const dirArrow = c.last_direction === 'in' ? '↙' : '↗';
+      return `
+        <button class="msgs-list-row ${isActive ? 'is-active' : ''} ${c.unread_count ? 'has-unread' : ''}" data-lead="${c.lead_id}" type="button">
+          <span class="msgs-list-avatar">${escapeHtml(initial)}</span>
+          <span class="msgs-list-mid">
+            <span class="msgs-list-name">${escapeHtml(c.lead_name)}</span>
+            <span class="msgs-list-preview"><span class="msgs-list-dir">${dirArrow}</span> ${escapeHtml(truncate(c.last_message, 60))}</span>
+          </span>
+          <span class="msgs-list-right">
+            <span class="msgs-list-time">${escapeHtml(time)}</span>
+            ${c.unread_count ? `<span class="msgs-list-unread">${c.unread_count}</span>` : ''}
+          </span>
+        </button>`;
+    }).join('');
+  }
+
+  function renderThread() {
+    if (!currentLead) {
+      document.getElementById('msgs-thread-empty').hidden = false;
+      document.getElementById('msgs-thread-active').hidden = true;
+      return;
+    }
+    document.getElementById('msgs-thread-empty').hidden  = true;
+    document.getElementById('msgs-thread-active').hidden = false;
+    document.getElementById('msgs-thread-name').textContent  = currentLead.full_name || '—';
+    document.getElementById('msgs-thread-phone').textContent = formatPhone(currentLead.phone || '');
+    const body = document.getElementById('msgs-thread-body');
+    if (!currentMessages.length) {
+      body.innerHTML = '<div class="msgs-thread-empty-msgs">No messages yet. Type below to start the conversation.</div>';
+      return;
+    }
+    body.innerHTML = currentMessages.map(renderBubble).join('');
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function renderBubble(m) {
+    const isOut = m.direction === 'out';
+    const time  = new Date(m.created_at).toLocaleString('en-US', { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    const meta  = isOut ? (m.status === 'failed' ? '⚠ Failed' : m.status === 'delivered' ? '✓ Delivered' : '✓ Sent') : '';
+    return `
+      <div class="msgs-bubble ${isOut ? 'is-out' : 'is-in'}">
+        <div class="msgs-bubble-body">${escapeHtml(m.body)}</div>
+        <div class="msgs-bubble-meta">${meta ? `<span>${meta}</span> · ` : ''}<span>${time}</span></div>
+      </div>`;
+  }
+
+  function renderUnreadBadge() {
+    const total = conversations.reduce((s, c) => s + (c.unread_count || 0), 0);
+    const badge = document.getElementById('crm-tab-unread');
+    const fcount = document.getElementById('msgs-unread-count');
+    if (total > 0) {
+      badge.hidden = false;
+      badge.textContent = total > 99 ? '99+' : String(total);
+      fcount.hidden = false;
+      fcount.textContent = String(total);
+    } else {
+      badge.hidden = true;
+      fcount.hidden = true;
+    }
+  }
+
+  function filteredConversations() {
+    let list = conversations;
+    if (filter === 'unread') list = list.filter(c => (c.unread_count || 0) > 0);
+    if (search) {
+      const q = search.toLowerCase();
+      list = list.filter(c =>
+        (c.lead_name || '').toLowerCase().includes(q) ||
+        (c.lead_phone || '').toLowerCase().includes(q)
+      );
+    }
+    return list;
+  }
+
+  // ---------- EVENTS --------------------------------------------------------
+
+  document.getElementById('msgs-list-body').addEventListener('click', async (e) => {
+    const row = e.target.closest('.msgs-list-row');
+    if (!row) return;
+    const leadId = row.dataset.lead;
+    const lead = await loadLeadDetails(leadId);
+    if (!lead) return;
+    currentLead = lead;
+    await loadThread(leadId);
+    renderConversations();
+    renderPanel();
+  });
+
+  document.querySelectorAll('.msgs-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      filter = btn.dataset.filter;
+      document.querySelectorAll('.msgs-filter-btn').forEach(b => b.classList.toggle('is-active', b === btn));
+      renderConversations();
+    });
+  });
+
+  let searchTimer;
+  document.getElementById('msgs-search').addEventListener('input', (e) => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => {
+      search = e.target.value.trim();
+      renderConversations();
+    }, 250);
+  });
+
+  // Composer
+  const composeText = document.getElementById('msgs-compose-text');
+  const composeSend = document.getElementById('msgs-compose-send');
+  composeText.addEventListener('input', () => {
+    const text = composeText.value;
+    const chars = text.length;
+    const segments = Math.max(1, Math.ceil(chars / 160));
+    const cost = segments * SMS_RATE_CENTS;
+    document.getElementById('msgs-compose-meta').textContent =
+      `${chars} chars · ${segments} segment${segments === 1 ? '' : 's'} · $${(cost/100).toFixed(2)}`;
+    composeSend.disabled = !text.trim();
+  });
+
+  document.getElementById('msgs-compose-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!currentLead) return;
+    const body = composeText.value.trim();
+    if (!body) return;
+    const segments = Math.max(1, Math.ceil(body.length / 160));
+    composeSend.disabled = true;
+    composeSend.textContent = 'Sending…';
+
+    // Insert as 'queued' — the Twilio send edge function (Phase 3) flips it to 'sent'/'delivered'.
+    const { error } = await sb.from('sms_messages').insert({
+      lead_id:        currentLead.id,
+      agent_id:       user.id,
+      direction:      'out',
+      body:           body,
+      status:         'queued',
+      segment_count:  segments,
+      cost_cents:     segments * SMS_RATE_CENTS,
+    });
+    composeSend.disabled = false;
+    composeSend.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send';
+    if (error) {
+      alert('Could not send: ' + error.message);
+      return;
+    }
+    composeText.value = '';
+    composeText.dispatchEvent(new Event('input'));
+    await loadThread(currentLead.id);
+    await refreshConversations();
+  });
+
+  // Lead detail panel
+  const panel     = document.getElementById('msgs-panel');
+  document.getElementById('msgs-toggle-panel').addEventListener('click', () => {
+    panel.hidden = !panel.hidden;
+    renderPanel();
+  });
+  document.getElementById('msgs-panel-close').addEventListener('click', () => {
+    panel.hidden = true;
+  });
+
+  function renderPanel() {
+    if (panel.hidden || !currentLead) return;
+    const l = currentLead;
+    const body = document.getElementById('msgs-panel-body');
+    const dial = 'tel:' + (l.phone || '').replace(/[^0-9+]/g, '');
+    const fmtMoney = (v) => v != null ? '$' + Number(v).toLocaleString() : '—';
+    body.innerHTML = `
+      <div class="panel-row">
+        <span class="panel-label">Name</span>
+        <span class="panel-value">${escapeHtml(l.full_name || '—')}</span>
+      </div>
+      <div class="panel-row">
+        <span class="panel-label">Phone</span>
+        <span class="panel-value"><a href="${dial}">${escapeHtml(formatPhone(l.phone || ''))}</a></span>
+      </div>
+      <div class="panel-row">
+        <span class="panel-label">Email</span>
+        <span class="panel-value">${escapeHtml(l.email || '—')}</span>
+      </div>
+      <div class="panel-row">
+        <span class="panel-label">State</span>
+        <span class="panel-value">${escapeHtml(l.state || '—')}</span>
+      </div>
+      <div class="panel-row">
+        <span class="panel-label">Stage</span>
+        <span class="panel-value"><span class="panel-stage stage-${escapeHtml(l.stage || 'new')}">${escapeHtml(formatStage(l.stage))}</span></span>
+      </div>
+      <div class="panel-row">
+        <span class="panel-label">Sale</span>
+        <span class="panel-value">${fmtMoney(l.sale_amount)}</span>
+      </div>
+      <div class="panel-row">
+        <span class="panel-label">Commission</span>
+        <span class="panel-value">${fmtMoney(l.commission)}</span>
+      </div>
+      <div class="panel-row">
+        <span class="panel-label">Coverage goal</span>
+        <span class="panel-value">${escapeHtml(l.coverage_goal || '—')}</span>
+      </div>
+      <div class="panel-actions">
+        <a class="btn btn--ghost btn--sm" href="dialer.html?lead=${l.id}">Open in Leads →</a>
+      </div>
+    `;
+  }
+
+  // ---------- HELPERS -------------------------------------------------------
+
+  function relTime(iso) {
+    const d = new Date(iso);
+    const diff = (Date.now() - d.getTime()) / 1000;
+    if (diff < 60) return 'just now';
+    if (diff < 3600) return Math.floor(diff / 60) + 'm';
+    if (diff < 86400) return Math.floor(diff / 3600) + 'h';
+    if (diff < 604800) return Math.floor(diff / 86400) + 'd';
+    return d.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
+  }
+  function truncate(s, n) { return s && s.length > n ? s.slice(0, n - 1) + '…' : (s || ''); }
+  function formatPhone(p) {
+    if (!p) return '';
+    const d = p.replace(/[^0-9]/g, '');
+    if (d.length === 10) return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
+    if (d.length === 11 && d[0] === '1') return `+1 (${d.slice(1,4)}) ${d.slice(4,7)}-${d.slice(7)}`;
+    return p;
+  }
+  function formatStage(s) {
+    return { new:'New', contacted:'Contacted', callback:'Callback', quoted:'Quoted', sold:'Sold', dead:'Dead' }[s] || s || '—';
+  }
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[c]);
+  }
+})();
+</script>
+
+</body>
+</html>
