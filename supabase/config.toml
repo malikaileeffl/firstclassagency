@@ -1,0 +1,14 @@
+# Supabase project config — only the function-level settings we need.
+# This file is checked in alongside the migrations so deploys are reproducible.
+
+project_id = "bfctxiwllbiekfxkupjb"
+
+# Both edge functions handle their own auth inside the handler. We disable
+# Supabase's JWT middleware so it doesn't reject the CORS preflight (which
+# browsers send without an Authorization header).
+
+[functions.create-payment-intent]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
