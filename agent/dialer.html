@@ -843,7 +843,6 @@
     const lastSms = l.last_sms_sent_at ? new Date(l.last_sms_sent_at).toLocaleString('en-US', { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '—';
     const notCalled = !l.last_called_at;
     const noSmsDrip = !l.sms_drip_enabled;
-    const noEmailDrip = !l.email_drip_enabled;
     return `
     <div class="lead-row stage-${escapeAttr(l.stage)}" data-id="${l.id}">
       <div class="lr-col-identity">
@@ -869,7 +868,6 @@
         </a>
         <button class="lr-disp-btn" type="button" data-action="open-disp">⋮ DISPOSITION</button>
         ${noSmsDrip ? `<button class="lr-pill lr-pill-warn" type="button" data-action="toggle-sms">⚠ No SMS drips ✕</button>` : ''}
-        ${noEmailDrip ? `<button class="lr-pill lr-pill-warn" type="button" data-action="toggle-email">✉ No email drips ✕</button>` : ''}
       </div>
       <div class="lr-col-details">
         <div class="lr-last-sms">Last sent SMS: ${escapeHtml(lastSms)}</div>
@@ -936,14 +934,6 @@
       const newVal = !lead.sms_drip_enabled;
       await sb.from('leads').update({ sms_drip_enabled: newVal }).eq('id', lead.id);
       lead.sms_drip_enabled = newVal;
-      row.outerHTML = renderLeadRow(lead);
-      return;
-    }
-    if (action === 'toggle-email') {
-      e.preventDefault();
-      const newVal = !lead.email_drip_enabled;
-      await sb.from('leads').update({ email_drip_enabled: newVal }).eq('id', lead.id);
-      lead.email_drip_enabled = newVal;
       row.outerHTML = renderLeadRow(lead);
       return;
     }
