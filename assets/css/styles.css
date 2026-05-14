@@ -6642,6 +6642,11 @@ body.dialer-fullwidth .hub-main { padding-left: 8px; }
   gap: 16px;
   padding: 18px 0 8px;
 }
+.dialer-pagination-top {
+  padding: 4px 0 14px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 14px;
+}
 .pagi-btn {
   background: var(--surface);
   border: 1px solid var(--border);

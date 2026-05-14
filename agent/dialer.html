@@ -248,16 +248,23 @@
       </div>
     </div>
 
+    <!-- Pagination (top) -->
+    <div class="dialer-pagination dialer-pagination-top" hidden>
+      <button class="pagi-btn pagi-prev" type="button">← Previous</button>
+      <span class="pagi-info">Page 1 of 1</span>
+      <button class="pagi-btn pagi-next" type="button">Next →</button>
+    </div>
+
     <!-- Leads list (rendered by JS) -->
     <div class="dialer-list" id="dialer-list">
       <div class="dialer-list-empty">Loading…</div>
     </div>
 
-    <!-- Pagination -->
-    <div class="dialer-pagination" id="dialer-pagination" hidden>
-      <button class="pagi-btn" id="pagi-prev" type="button">← Previous</button>
-      <span class="pagi-info" id="pagi-info">Page 1 of 1</span>
-      <button class="pagi-btn" id="pagi-next" type="button">Next →</button>
+    <!-- Pagination (bottom) -->
+    <div class="dialer-pagination dialer-pagination-bottom" hidden>
+      <button class="pagi-btn pagi-prev" type="button">← Previous</button>
+      <span class="pagi-info">Page 1 of 1</span>
+      <button class="pagi-btn pagi-next" type="button">Next →</button>
     </div>
   </section>
 </main>
@@ -586,12 +593,18 @@
 
   function renderPagination() {
     const totalPages = Math.max(1, Math.ceil(totalLeads / PAGE_SIZE));
-    const pag = document.getElementById('dialer-pagination');
-    if (totalLeads <= PAGE_SIZE) { pag.hidden = true; return; }
-    pag.hidden = false;
-    document.getElementById('pagi-info').textContent = `Page ${currentPage} of ${totalPages} · ${totalLeads} leads`;
-    document.getElementById('pagi-prev').disabled = currentPage <= 1;
-    document.getElementById('pagi-next').disabled = currentPage >= totalPages;
+    const pagBars = document.querySelectorAll('.dialer-pagination');
+    if (totalLeads <= PAGE_SIZE) {
+      pagBars.forEach(p => { p.hidden = true; });
+      return;
+    }
+    const infoText = `Page ${currentPage} of ${totalPages} · ${totalLeads} leads`;
+    pagBars.forEach(p => {
+      p.hidden = false;
+      p.querySelector('.pagi-info').textContent = infoText;
+      p.querySelector('.pagi-prev').disabled = currentPage <= 1;
+      p.querySelector('.pagi-next').disabled = currentPage >= totalPages;
+    });
   }
 
   // ---------- EVENT DELEGATION ----------------------------------------------
@@ -895,12 +908,16 @@
     refreshLeads();
     updateFilterCount();
   });
-  document.getElementById('pagi-prev').addEventListener('click', () => {
-    if (currentPage > 1) { currentPage--; refreshLeads(); window.scrollTo(0, 0); }
+  document.querySelectorAll('.pagi-prev').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (currentPage > 1) { currentPage--; refreshLeads(); window.scrollTo(0, 0); }
+    });
   });
-  document.getElementById('pagi-next').addEventListener('click', () => {
-    const totalPages = Math.ceil(totalLeads / PAGE_SIZE);
-    if (currentPage < totalPages) { currentPage++; refreshLeads(); window.scrollTo(0, 0); }
+  document.querySelectorAll('.pagi-next').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const totalPages = Math.ceil(totalLeads / PAGE_SIZE);
+      if (currentPage < totalPages) { currentPage++; refreshLeads(); window.scrollTo(0, 0); }
+    });
   });
 
   // Per-state → IANA timezone for the local-time line
