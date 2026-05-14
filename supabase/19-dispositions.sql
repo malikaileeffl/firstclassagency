@@ -2,17 +2,26 @@
 -- First Class Agency — Disposition list update
 -- Run AFTER 18-lead-type.sql.
 -- Replaces the old call_attempts.disposition CHECK constraint with the new
--- 13-disposition list, and updates get_dialer_today_stats so the "contacts"
--- count reflects the new dispositions.
+-- 13-disposition list, migrates existing rows from the old values to the
+-- closest new equivalent, and updates get_dialer_today_stats so the
+-- "contacts" count reflects the new dispositions.
 -- Idempotent — safe to re-run.
 -- =============================================================================
 
--- Drop the original check constraint (named by Postgres convention)
+-- 1) Migrate existing rows from old dispositions → new analogs.
+--    Old values were: no_answer, voicemail, callback, not_interested, quoted, sold, bad_number
+update public.call_attempts set disposition = 'scheduled_appt'   where disposition = 'callback';
+update public.call_attempts set disposition = 'dnc'              where disposition = 'not_interested';
+update public.call_attempts set disposition = 'think_about_it'   where disposition = 'quoted';
+-- 'no_answer' and 'voicemail' don't have direct analogs. Map them to
+-- 'pick_up_hang_up' since both imply the agent failed to engage the lead.
+update public.call_attempts set disposition = 'pick_up_hang_up'  where disposition in ('no_answer','voicemail');
+
+-- 2) Drop the original check constraint
 alter table public.call_attempts
   drop constraint if exists call_attempts_disposition_check;
 
--- Add the new constraint allowing all 13 dispositions.
--- Order matches the popover top→bottom.
+-- 3) Add the new constraint allowing the 13 current dispositions.
 alter table public.call_attempts
   add constraint call_attempts_disposition_check
   check (disposition in (
@@ -31,12 +40,11 @@ alter table public.call_attempts
     'dnc'
   ));
 
--- Update the today-stats RPC.
--- New definitions:
---   dials    = every call_attempts row
---   contacts = any disposition where the agent actually engaged a person
---              (excludes bad_number, dnc, busy, pick_up_hang_up, exclude_all_drips)
---   sold     = disposition = 'sold'
+-- 4) Update the today-stats RPC.
+--    dials    = every call_attempts row today
+--    contacts = any disposition where the agent actually engaged a person
+--               (excludes bad_number, dnc, busy, pick_up_hang_up, exclude_all_drips)
+--    sold     = disposition = 'sold'
 drop function if exists public.get_dialer_today_stats();
 
 create or replace function public.get_dialer_today_stats()
