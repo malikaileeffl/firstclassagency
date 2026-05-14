@@ -1,65 +1,88 @@
-/* Money explosion — fires on dialer page load.
-   Spawns ~150 brand-blue dollar bills from screen center. After the initial
-   burst, gravity is weak and each bill flutters side-to-side and tumbles in 3D
-   so they fall like real currency rather than dropping like rocks. */
+/* Money explosion — brand-blue on dialer page load, green when a lead is sold.
+   Exposes window.fcaMoneyExplosion(opts?) so other scripts (the disposition
+   handler) can fire it on demand. */
 (() => {
   // Respect reduced-motion preference
-  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    window.fcaMoneyExplosion = function () { /* noop in reduced-motion */ };
+    return;
+  }
 
-  // Inline SVG — stylized dollar bill in brand colors. One copy per particle.
-  const BILL_SVG = `<svg viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <defs>
-      <linearGradient id="mbGrad" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#1aa3df"/>
-        <stop offset="100%" stop-color="#0078ab"/>
-      </linearGradient>
-    </defs>
-    <rect x="1" y="1" width="58" height="28" rx="3" fill="url(#mbGrad)" stroke="rgba(255,255,255,0.18)" stroke-width="0.6"/>
-    <circle cx="30" cy="15" r="9" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="0.6"/>
-    <text x="30" y="20.5" font-family="Georgia, serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">$</text>
-    <text x="6" y="9" font-family="Inter, sans-serif" font-size="4" font-weight="700" fill="rgba(255,255,255,0.7)">FC</text>
-    <text x="48" y="26" font-family="Inter, sans-serif" font-size="4" font-weight="700" fill="rgba(255,255,255,0.7)">FC</text>
-  </svg>`;
+  // Color palettes per variant
+  const VARIANTS = {
+    brand: {
+      grad1: '#1aa3df',
+      grad2: '#0078ab',
+      glow:  'rgba(0, 120, 171, 0.55)',
+      label: 'FC',
+    },
+    sold: {
+      grad1: '#4ade80',
+      grad2: '#16a34a',
+      glow:  'rgba(74, 222, 128, 0.6)',
+      label: '$',
+    },
+  };
 
-  function explode() {
+  function buildBillSvg(c, gradId) {
+    return `<svg viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="${gradId}" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="${c.grad1}"/>
+          <stop offset="100%" stop-color="${c.grad2}"/>
+        </linearGradient>
+      </defs>
+      <rect x="1" y="1" width="58" height="28" rx="3" fill="url(#${gradId})" stroke="rgba(255,255,255,0.18)" stroke-width="0.6"/>
+      <circle cx="30" cy="15" r="9" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="0.6"/>
+      <text x="30" y="20.5" font-family="Georgia, serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">$</text>
+      <text x="6" y="9" font-family="Inter, sans-serif" font-size="4" font-weight="700" fill="rgba(255,255,255,0.7)">${c.label}</text>
+      <text x="48" y="26" font-family="Inter, sans-serif" font-size="4" font-weight="700" fill="rgba(255,255,255,0.7)">${c.label}</text>
+    </svg>`;
+  }
+
+  // Run a single explosion. Multiple can be in flight at once — each appends
+  // its own overlay and removes it when done.
+  function explode(opts) {
+    opts = opts || {};
+    const variant = VARIANTS[opts.variant] ? opts.variant : 'brand';
+    const colors = VARIANTS[variant];
+    // Unique gradient ID per run so concurrent overlays don't conflict
+    const gradId = 'mbGrad-' + Math.random().toString(36).slice(2, 9);
+    const billSvg = buildBillSvg(colors, gradId);
+
     const overlay = document.createElement('div');
     overlay.className = 'money-explosion';
     document.body.appendChild(overlay);
 
-    const COUNT = 150;
-    const DURATION_MS = 3200;
+    const COUNT = opts.count || 150;
+    const DURATION_MS = opts.duration || 3200;
     const particles = [];
 
     for (let i = 0; i < COUNT; i++) {
       const el = document.createElement('div');
       el.className = 'money-bill';
-      el.innerHTML = BILL_SVG;
+      el.innerHTML = billSvg;
       el.style.left = '50%';
       el.style.top  = '50%';
-      el.style.width = (54 + Math.random() * 70) + 'px';     // 54-124px wide
+      el.style.width = (54 + Math.random() * 70) + 'px';
+      el.style.filter = `drop-shadow(0 6px 14px ${colors.glow})`;
       overlay.appendChild(el);
 
-      // Small initial scatter from center so they don't all overlap at t=0
       const startOffsetX = (Math.random() - 0.5) * 80;
       const startOffsetY = (Math.random() - 0.5) * 80;
 
-      // Outward burst — slower than v1 so the falling phase feels longer
       const angle = Math.random() * Math.PI * 2;
-      const speed = 380 + Math.random() * 520;               // 380-900 px/sec
+      const speed = 380 + Math.random() * 520;
       const vx = Math.cos(angle) * speed;
-      const vy = Math.sin(angle) * speed - 220;              // slight upward boost (fountain feel)
+      const vy = Math.sin(angle) * speed - 220;
 
-      // Horizontal flutter — each bill sways side to side as it falls
-      const fluttFreq  = 1.5 + Math.random() * 2.5;           // 1.5-4 Hz
-      const fluttAmp   = 18 + Math.random() * 36;             // 18-54 px sway amplitude
+      const fluttFreq  = 1.5 + Math.random() * 2.5;
+      const fluttAmp   = 18 + Math.random() * 36;
       const fluttPhase = Math.random() * Math.PI * 2;
 
-      // In-plane spin (z-axis rotation)
       const rotStart = (Math.random() - 0.5) * 180;
-      const rotSpeed = (Math.random() - 0.5) * 540;          // slower than v1 — bills tumble, not blur
-
-      // 3D face-flip (y-axis rotation) so some bills flip face-back-face as they fall
-      const flipSpeed = (Math.random() - 0.5) * 540;          // deg/sec
+      const rotSpeed = (Math.random() - 0.5) * 540;
+      const flipSpeed = (Math.random() - 0.5) * 540;
 
       particles.push({
         el, startOffsetX, startOffsetY, vx, vy,
@@ -69,7 +92,7 @@
     }
 
     const start = performance.now();
-    const gravity = 520;                                      // much weaker than v1 — paper falls slowly
+    const gravity = 520;
     const durSec = DURATION_MS / 1000;
     const fadeStart = durSec * 0.7;
 
@@ -97,9 +120,14 @@
     requestAnimationFrame(frame);
   }
 
+  // Public — let other scripts trigger explosions on demand
+  window.fcaMoneyExplosion = explode;
+
+  // Auto-fire the brand-blue burst when the dialer page mounts
+  function autoFire() { explode({ variant: 'brand' }); }
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', explode);
+    document.addEventListener('DOMContentLoaded', autoFire);
   } else {
-    explode();
+    autoFire();
   }
 })();

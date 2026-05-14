@@ -797,6 +797,11 @@
     }
     await sb.from('leads').update(updates).eq('id', lead.id);
     Object.assign(lead, updates);
+    // Fire the green money explosion on a sold disposition. Visual hit lands
+    // immediately, the data refresh runs underneath the animation.
+    if (disp === 'sold' && typeof window.fcaMoneyExplosion === 'function') {
+      window.fcaMoneyExplosion({ variant: 'sold' });
+    }
     await Promise.all([refreshLeads(), refreshStats()]);
   }
 
