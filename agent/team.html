@@ -288,6 +288,18 @@
 
     <!-- Step 1.5: column mapping -->
     <div class="distribute-step" id="dist-step-mapping" hidden>
+      <div class="field" style="margin-bottom:18px;">
+        <label for="dist-lead-type">Lead type for this batch <span class="req">*</span></label>
+        <select class="input" id="dist-lead-type">
+          <option value="">(none — leave blank)</option>
+          <option>Trucker IUL</option>
+          <option>Gen Life IUL</option>
+          <option>Gen Life</option>
+          <option>Veteran</option>
+        </select>
+        <p class="field-help">Every lead in this file will be tagged with this type. Locking this in up front keeps the wrong leads off the wrong drip campaigns.</p>
+      </div>
+
       <h3 class="distribute-section-title">Map your CSV columns</h3>
       <p class="field-help">Tell us which column in your file matches each lead field. We've guessed where we can — adjust anything that's wrong, then continue.</p>
 
@@ -333,18 +345,6 @@
         <div class="distribute-agents" id="dist-agents-list">
           <p class="field-help">Loading agents…</p>
         </div>
-      </div>
-
-      <div class="field" style="margin-top:18px;">
-        <label for="dist-lead-type">Lead type for this batch</label>
-        <select class="input" id="dist-lead-type">
-          <option value="">(none — leave blank)</option>
-          <option>Trucker IUL</option>
-          <option>Gen Life IUL</option>
-          <option>Gen Life</option>
-          <option>Veteran</option>
-        </select>
-        <p class="field-help">All leads in this distribution will be tagged with this type. Agents can change individual leads later.</p>
       </div>
 
       <div class="lead-form-actions">

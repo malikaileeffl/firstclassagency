@@ -663,26 +663,13 @@
 
     <!-- Step 2: column mapping -->
     <div class="csv-step" id="csv-step-mapping" hidden>
-      <div class="csv-preview-head" style="margin-bottom:12px;">
+      <div class="csv-preview-head" style="margin-bottom:14px;">
         <span class="csv-preview-count" id="csv-mapping-count">—</span>
         <span class="csv-preview-sub" id="csv-mapping-sub">—</span>
       </div>
-      <p class="field-help">Pick the column in your CSV that matches each lead field. We've guessed where we can.</p>
-      <div class="csv-mapper" id="csv-mapper"></div>
-      <p class="csv-preview-warn" id="csv-mapping-warn" hidden></p>
-    </div>
 
-    <!-- Step 3: preview + lead-type picker that applies to ALL imported rows -->
-    <div class="csv-preview" id="csv-preview" hidden>
-      <div class="csv-preview-head">
-        <span class="csv-preview-count" id="csv-preview-count">—</span>
-        <span class="csv-preview-sub" id="csv-preview-sub">—</span>
-      </div>
-      <div class="csv-preview-table-wrap">
-        <table class="csv-preview-table" id="csv-preview-table"></table>
-      </div>
-      <div class="field" style="margin-top:14px;">
-        <label for="csv-lead-type">Lead type for these leads</label>
+      <div class="field" style="margin-bottom:16px;">
+        <label for="csv-lead-type">Lead type for this batch <span class="req">*</span></label>
         <select class="input" id="csv-lead-type">
           <option value="">(none — leave blank)</option>
           <option>Trucker IUL</option>
@@ -690,7 +677,22 @@
           <option>Gen Life</option>
           <option>Veteran</option>
         </select>
-        <p class="field-help">All leads in this CSV will be tagged with this type. You can change individual leads later.</p>
+        <p class="field-help">Every lead in this CSV will be tagged with this type. Pick the right one so drip campaigns target correctly.</p>
+      </div>
+
+      <p class="field-help">Pick the column in your CSV that matches each lead field. We've guessed where we can.</p>
+      <div class="csv-mapper" id="csv-mapper"></div>
+      <p class="csv-preview-warn" id="csv-mapping-warn" hidden></p>
+    </div>
+
+    <!-- Step 3: preview -->
+    <div class="csv-preview" id="csv-preview" hidden>
+      <div class="csv-preview-head">
+        <span class="csv-preview-count" id="csv-preview-count">—</span>
+        <span class="csv-preview-sub" id="csv-preview-sub">—</span>
+      </div>
+      <div class="csv-preview-table-wrap">
+        <table class="csv-preview-table" id="csv-preview-table"></table>
       </div>
     </div>
 
