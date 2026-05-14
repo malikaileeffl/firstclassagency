@@ -616,6 +616,16 @@
         </div>
       </div>
       <div class="field">
+        <label for="lf-lead-type">Lead type</label>
+        <select class="input" id="lf-lead-type">
+          <option value="">(none)</option>
+          <option>Trucker IUL</option>
+          <option>Gen Life IUL</option>
+          <option>Gen Life</option>
+          <option>Veteran IUL</option>
+        </select>
+      </div>
+      <div class="field">
         <label for="lf-notes">Notes</label>
         <textarea class="input" id="lf-notes" rows="3"></textarea>
       </div>
@@ -662,7 +672,7 @@
       <p class="csv-preview-warn" id="csv-mapping-warn" hidden></p>
     </div>
 
-    <!-- Step 3: preview -->
+    <!-- Step 3: preview + lead-type picker that applies to ALL imported rows -->
     <div class="csv-preview" id="csv-preview" hidden>
       <div class="csv-preview-head">
         <span class="csv-preview-count" id="csv-preview-count">—</span>
@@ -670,6 +680,17 @@
       </div>
       <div class="csv-preview-table-wrap">
         <table class="csv-preview-table" id="csv-preview-table"></table>
+      </div>
+      <div class="field" style="margin-top:14px;">
+        <label for="csv-lead-type">Lead type for these leads</label>
+        <select class="input" id="csv-lead-type">
+          <option value="">(none — leave blank)</option>
+          <option>Trucker IUL</option>
+          <option>Gen Life IUL</option>
+          <option>Gen Life</option>
+          <option>Veteran IUL</option>
+        </select>
+        <p class="field-help">All leads in this CSV will be tagged with this type. You can change individual leads later.</p>
       </div>
     </div>
 
@@ -806,7 +827,7 @@
     const sale = l.sale_amount != null ? '$' + Number(l.sale_amount).toLocaleString() : 'Not set';
     const commission = l.commission != null ? '$' + Number(l.commission).toLocaleString() : 'Not set';
     const cost = l.cost_for_lead != null ? '$' + Number(l.cost_for_lead).toLocaleString() : 'Not set';
-    const quote = l.quote_amount != null ? '$' + Number(l.quote_amount).toLocaleString() : 'Not set';
+    const leadType = l.lead_type || 'Not set';
     const receivedAt = l.received_at ? new Date(l.received_at).toLocaleString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'Not set';
     const vendor = l.lead_vendor || 'No lead vendor';
     const lastSms = l.last_sms_sent_at ? new Date(l.last_sms_sent_at).toLocaleString('en-US', { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '—';
@@ -824,7 +845,7 @@
         ${l.email ? `<div class="lr-email">${escapeHtml(l.email)}</div>` : ''}
         ${l.state ? `<div class="lr-state">${escapeHtml(l.state)} <span class="lr-pin">📍</span></div>` : ''}
         ${dobTxt ? `<div class="lr-dob"><span class="lr-tag">BIRTHDAY</span> ${escapeHtml(dobTxt)} 🎂</div>` : ''}
-        <div class="lr-quote">Quote: <span class="lr-editable" data-field="quote_amount" data-format="money">${quote}</span></div>
+        <div class="lr-quote">Type: <span class="lr-editable" data-field="lead_type" data-format="select" data-options="lead_type">${escapeHtml(leadType)}</span></div>
         ${localTime ? `<div class="lr-time">Local time: ${escapeHtml(localTime)}</div>` : ''}
       </div>
       <div class="lr-col-notes">
@@ -954,23 +975,43 @@
     }, 700));
   });
 
+  // Lead-type options for the inline-edit + lead modal + CSV import.
+  const LEAD_TYPES = ['Trucker IUL', 'Gen Life IUL', 'Gen Life', 'Veteran IUL'];
+
   function startInlineEdit(span, lead) {
-    const field = span.dataset.field;
-    const isMoney = span.dataset.format === 'money';
+    const field   = span.dataset.field;
+    const format  = span.dataset.format;     // 'money' | 'select' | undefined
+    const optKey  = span.dataset.options;    // 'lead_type' or undefined
     const current = lead[field];
-    const input = document.createElement('input');
-    input.type = isMoney ? 'number' : 'text';
-    if (isMoney) input.step = '0.01';
-    input.value = current != null ? current : '';
-    input.className = 'lr-inline-input';
+
+    let input;
+    if (format === 'select') {
+      input = document.createElement('select');
+      input.className = 'lr-inline-input';
+      const options = optKey === 'lead_type' ? LEAD_TYPES : [];
+      input.innerHTML = '<option value="">(clear)</option>' +
+        options.map(o => `<option value="${escapeAttr(o)}"${o === current ? ' selected' : ''}>${escapeHtml(o)}</option>`).join('');
+    } else {
+      input = document.createElement('input');
+      input.type = format === 'money' ? 'number' : 'text';
+      if (format === 'money') input.step = '0.01';
+      input.value = current != null ? current : '';
+      input.className = 'lr-inline-input';
+    }
     span.replaceWith(input);
     input.focus();
-    input.select();
+    if (input.select) try { input.select(); } catch(_) {}
+
     let cancelled = false;
     const save = async () => {
       if (cancelled) return;
-      const raw = input.value.trim();
-      const newVal = raw === '' ? null : (isMoney ? Number(raw) : raw);
+      let newVal;
+      if (format === 'select') {
+        newVal = input.value || null;
+      } else {
+        const raw = input.value.trim();
+        newVal = raw === '' ? null : (format === 'money' ? Number(raw) : raw);
+      }
       const { error } = await sb.from('leads').update({ [field]: newVal }).eq('id', lead.id);
       if (error) alert('Save failed: ' + error.message);
       else lead[field] = newVal;
@@ -978,6 +1019,9 @@
       if (row) row.outerHTML = renderLeadRow(lead);
     };
     input.addEventListener('blur', save);
+    // For selects, change should also commit (since blur is unreliable on some
+    // mobile browsers when picking an option).
+    if (format === 'select') input.addEventListener('change', () => input.blur());
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
       if (e.key === 'Escape') {
@@ -1173,6 +1217,7 @@
     document.getElementById('lf-state').value     = lead ? (lead.state || '')     : '';
     document.getElementById('lf-address').value   = lead ? (lead.address || '')   : '';
     document.getElementById('lf-dob').value       = lead ? (lead.date_of_birth || '') : '';
+    document.getElementById('lf-lead-type').value = lead ? (lead.lead_type || '')     : '';
     document.getElementById('lf-notes').value     = lead ? (lead.notes || '')     : '';
     document.getElementById('lf-delete').hidden   = !lead;
     leadModal.hidden = false;
@@ -1194,6 +1239,7 @@
       state:         document.getElementById('lf-state').value.trim().toUpperCase() || null,
       address:       document.getElementById('lf-address').value.trim() || null,
       date_of_birth: document.getElementById('lf-dob').value || null,
+      lead_type:     document.getElementById('lf-lead-type').value || null,
       notes:         document.getElementById('lf-notes').value.trim() || null,
     };
     const saveBtn = document.getElementById('lf-save');
@@ -1560,10 +1606,15 @@
     if (!csvParsedRows.length) return;
     csvImportBtn.disabled = true;
     csvImportBtn.textContent = 'Importing…';
+    const bulkLeadType = document.getElementById('csv-lead-type').value || null;
     const BATCH = 200;
     let inserted = 0, failed = 0;
     for (let i = 0; i < csvParsedRows.length; i += BATCH) {
-      const slice = csvParsedRows.slice(i, i + BATCH).map(l => ({ ...l, agent_id: user.id }));
+      const slice = csvParsedRows.slice(i, i + BATCH).map(l => ({
+        ...l,
+        agent_id: user.id,
+        lead_type: bulkLeadType,
+      }));
       const { error } = await sb.from('leads').insert(slice);
       if (error) {
         console.error('[dialer] csv batch failed:', error);

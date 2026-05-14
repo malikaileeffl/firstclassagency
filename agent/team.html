@@ -335,6 +335,18 @@
         </div>
       </div>
 
+      <div class="field" style="margin-top:18px;">
+        <label for="dist-lead-type">Lead type for this batch</label>
+        <select class="input" id="dist-lead-type">
+          <option value="">(none — leave blank)</option>
+          <option>Trucker IUL</option>
+          <option>Gen Life IUL</option>
+          <option>Gen Life</option>
+          <option>Veteran IUL</option>
+        </select>
+        <p class="field-help">All leads in this distribution will be tagged with this type. Agents can change individual leads later.</p>
+      </div>
+
       <div class="lead-form-actions">
         <button type="button" class="btn btn--ghost" data-close-distribute>Cancel</button>
         <button type="button" class="btn btn--primary" id="dist-confirm" disabled>Distribute leads</button>
@@ -798,7 +810,10 @@
     const btn = document.getElementById('dist-confirm');
     btn.disabled = true; btn.textContent = 'Distributing…';
 
-    let payload = { p_rows: distParsedRows, p_mode: mode, p_target_agent: null, p_agent_ids: null };
+    // Stamp the batch lead-type onto every row before sending to the RPC
+    const bulkLeadType = document.getElementById('dist-lead-type').value || null;
+    const rowsWithType = distParsedRows.map(r => ({ ...r, lead_type: bulkLeadType }));
+    let payload = { p_rows: rowsWithType, p_mode: mode, p_target_agent: null, p_agent_ids: null };
     if (mode === 'single') {
       const target = document.getElementById('dist-target-agent').value;
       if (!target) { alert('Pick an agent.'); btn.disabled = false; btn.textContent = 'Distribute leads'; return; }
