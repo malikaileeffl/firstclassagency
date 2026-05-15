@@ -20,6 +20,7 @@ const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
     },
   });
   window.fcaSupabase = sb;
+  window.fcaSupabaseUrl = SUPABASE_URL;
 
   const path = window.location.pathname;
   const isGate =

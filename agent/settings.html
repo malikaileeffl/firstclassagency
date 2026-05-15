@@ -164,9 +164,10 @@
       </div>
 
     <nav class="settings-tabs" role="tablist">
-      <button class="settings-tab is-active" type="button" data-tab="general" role="tab" aria-selected="true">General settings</button>
-      <button class="settings-tab"           type="button" data-tab="phone"   role="tab" aria-selected="false">Phone Setup</button>
-      <button class="settings-tab"           type="button" data-tab="billing" role="tab" aria-selected="false">Billing</button>
+      <button class="settings-tab is-active" type="button" data-tab="general"   role="tab" aria-selected="true">General settings</button>
+      <button class="settings-tab"           type="button" data-tab="phone"     role="tab" aria-selected="false">Phone Setup</button>
+      <button class="settings-tab"           type="button" data-tab="auto-sync" role="tab" aria-selected="false">Auto-sync leads</button>
+      <button class="settings-tab"           type="button" data-tab="billing"   role="tab" aria-selected="false">Billing</button>
       <!-- More tabs (Drip campaigns, SMS templates, etc.) will be added here. -->
     </nav>
 
@@ -361,6 +362,86 @@
           <p class="field-help" style="margin-top:14px;" id="phone-pick-warn" hidden>
             You need at least $4.00 in credits to claim a number ($2 first month + $2 reserve).
           </p>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ===== AUTO-SYNC LEADS TAB ===== -->
+    <div class="settings-pane" data-pane="auto-sync" hidden>
+
+      <!-- Your webhook URL -->
+      <section class="phone-card">
+        <div class="phone-card-head">
+          <span class="phone-card-eyebrow">Your unique lead webhook URL</span>
+          <span class="phone-status-pill" id="sync-status-pill" data-state="active">Active</span>
+        </div>
+        <div class="phone-card-body">
+          <p class="field-help" style="margin:0 0 12px;">Anything that can POST JSON can push leads into your CRM in real time — Facebook Lead Ads, Google Sheets, a ClickFunnels webhook, or a custom lead vendor. Each new lead lands instantly with no CSV upload.</p>
+          <div class="sync-url-row">
+            <input class="input sync-url-input" id="sync-webhook-url" type="text" readonly />
+            <button type="button" class="btn btn--ghost" id="sync-copy-url">Copy URL</button>
+          </div>
+          <p class="field-help" style="margin-top:10px;">
+            Keep this URL private — anyone with it can push leads into your pipeline.
+            <button type="button" class="sync-rotate-link" id="sync-rotate-btn">Rotate token →</button>
+          </p>
+        </div>
+      </section>
+
+      <!-- Google Sheets / Apps Script -->
+      <section class="phone-card">
+        <div class="phone-card-head">
+          <span class="phone-card-eyebrow">Google Sheets — Apps Script auto-sync</span>
+        </div>
+        <div class="phone-card-body">
+          <p class="field-help" style="margin:0 0 14px;">If your leads land in a Google Sheet (most ad platforms can dump there), paste this script into the sheet's Apps Script editor. Every new row gets pushed to your CRM within 1-2 seconds.</p>
+
+          <ol class="sync-steps">
+            <li>Open your leads Google Sheet → <strong>Extensions → Apps Script</strong></li>
+            <li>Delete the boilerplate <code>function myFunction()</code></li>
+            <li>Paste the script below (your token is already filled in)</li>
+            <li>Hit save, then <strong>Triggers</strong> (clock icon) → <strong>Add Trigger</strong> → choose <code>onChange</code>, event source <strong>From spreadsheet</strong>, event type <strong>On change</strong></li>
+            <li>Authorize when prompted. Done — add a test row in the sheet to confirm.</li>
+          </ol>
+
+          <div class="sync-code-wrap">
+            <pre class="sync-code" id="sync-script-code">// generating…</pre>
+            <button type="button" class="btn btn--primary sync-copy-code" id="sync-copy-code">Copy script</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Direct vendor / Facebook Lead Ads -->
+      <section class="phone-card">
+        <div class="phone-card-head">
+          <span class="phone-card-eyebrow">Direct lead vendor / Facebook Lead Ads</span>
+        </div>
+        <div class="phone-card-body">
+          <p class="field-help" style="margin:0 0 12px;">If your vendor lets you configure a webhook URL, give them your URL above. The endpoint accepts JSON like this:</p>
+          <pre class="sync-code">{
+  "full_name":     "Jane Doe",
+  "phone":         "+15551234567",
+  "email":         "jane@example.com",
+  "state":         "TN",
+  "date_of_birth": "1962-04-15",
+  "lead_type":     "Trucker IUL",
+  "notes":         "Came in from FB ad #42",
+  "source":        "facebook_ads"
+}</pre>
+          <p class="field-help" style="margin-top:10px;"><code>phone</code> is required. Everything else is optional. Duplicates against your existing leads (same phone) are detected and skipped — your CRM won't get spammed.</p>
+        </div>
+      </section>
+
+      <!-- Recent webhook activity -->
+      <section class="phone-card">
+        <div class="phone-card-head">
+          <span class="phone-card-eyebrow">Recent webhook leads</span>
+        </div>
+        <div class="phone-card-body">
+          <div id="sync-recent-list">
+            <p class="field-help" style="margin:0;">Leads that come in via webhook will appear here. None yet.</p>
+          </div>
         </div>
       </section>
 
@@ -724,8 +805,9 @@
     document.querySelectorAll('.settings-pane').forEach(p => {
       p.hidden = p.dataset.pane !== target;
     });
-    if (target === 'billing' && !billingLoaded) loadBilling();
-    if (target === 'phone'   && !phoneLoaded)   loadPhone();
+    if (target === 'billing'   && !billingLoaded)  loadBilling();
+    if (target === 'phone'     && !phoneLoaded)    loadPhone();
+    if (target === 'auto-sync' && !autoSyncLoaded) loadAutoSync();
   }
   document.querySelectorAll('.settings-tab').forEach(tab => {
     tab.addEventListener('click', () => activateTab(tab.dataset.tab));
@@ -1164,6 +1246,114 @@
     phoneProfile.twilio_phone_number = null;
     phoneProfile.twilio_number_purchased_at = null;
     renderPhone();
+  });
+
+  // ---------- AUTO-SYNC TAB ----------------------------------------------
+  // Loads the agent's lead webhook token, renders the unique URL + a
+  // pre-baked Apps Script snippet, and lists recent webhook-sourced leads.
+
+  let autoSyncLoaded = false;
+  let leadToken      = null;
+
+  function webhookBase() {
+    // Edge function URL pattern. The token is the LAST path segment.
+    // We read the project ref from the supabase URL the page is already using.
+    const sbUrl = (window.fcaSupabaseUrl || '').replace(/\/$/, '');
+    return sbUrl ? `${sbUrl}/functions/v1/leads-webhook-ingest` : '';
+  }
+
+  async function loadAutoSync() {
+    const { data, error } = await sb.from('profiles')
+      .select('agent_lead_token').eq('id', user.id).maybeSingle();
+    if (error) { console.warn('[auto-sync] load failed:', error); return; }
+    leadToken = (data && data.agent_lead_token) || null;
+    renderAutoSync();
+    await loadRecentWebhookLeads();
+    autoSyncLoaded = true;
+  }
+
+  function renderAutoSync() {
+    const base = webhookBase();
+    const fullUrl = leadToken ? `${base}/${leadToken}` : '(no token — run migration 24)';
+    document.getElementById('sync-webhook-url').value = fullUrl;
+
+    const pill = document.getElementById('sync-status-pill');
+    if (leadToken) { pill.dataset.state = 'active'; pill.textContent = 'Active'; }
+    else           { pill.dataset.state = 'none';   pill.textContent = 'Not configured'; }
+
+    document.getElementById('sync-script-code').textContent = buildAppsScript(fullUrl);
+  }
+
+  function buildAppsScript(fullUrl) {
+    return [
+      'function onChange(e) {',
+      '  const sheet = SpreadsheetApp.getActiveSheet();',
+      '  const lastRow = sheet.getLastRow();',
+      '  const props = PropertiesService.getDocumentProperties();',
+      '  const lastProcessed = Number(props.getProperty(\'lastRow\') || 1);',
+      '  if (lastRow <= lastProcessed) return;',
+      '  for (let r = lastProcessed + 1; r <= lastRow; r++) {',
+      '    const row = sheet.getRange(r, 1, 1, sheet.getLastColumn()).getValues()[0];',
+      `    UrlFetchApp.fetch('${fullUrl}', {`,
+      '      method: \'post\',',
+      '      contentType: \'application/json\',',
+      '      payload: JSON.stringify({ row }),',
+      '      muteHttpExceptions: true',
+      '    });',
+      '  }',
+      '  props.setProperty(\'lastRow\', String(lastRow));',
+      '}',
+    ].join('\n');
+  }
+
+  async function loadRecentWebhookLeads() {
+    const { data } = await sb.from('leads')
+      .select('id, full_name, phone, source, created_at')
+      .eq('agent_id', user.id)
+      .eq('source', 'webhook')
+      .order('created_at', { ascending: false })
+      .limit(5);
+    const host = document.getElementById('sync-recent-list');
+    if (!data || data.length === 0) {
+      host.innerHTML = '<p class="field-help" style="margin:0;">Leads that come in via webhook will appear here. None yet.</p>';
+      return;
+    }
+    host.innerHTML = data.map(l => `
+      <div class="sync-recent-row">
+        <span class="sync-recent-name">${escapeHtml(l.full_name || '—')}</span>
+        <span class="sync-recent-phone">${escapeHtml(formatPhone(l.phone))}</span>
+        <span class="sync-recent-time">${new Date(l.created_at).toLocaleString()}</span>
+      </div>
+    `).join('');
+  }
+
+  document.getElementById('sync-copy-url').addEventListener('click', async () => {
+    const btn = document.getElementById('sync-copy-url');
+    try {
+      await navigator.clipboard.writeText(document.getElementById('sync-webhook-url').value);
+      const orig = btn.textContent;
+      btn.textContent = 'Copied ✓';
+      setTimeout(() => { btn.textContent = orig; }, 1400);
+    } catch { btn.textContent = 'Copy failed'; }
+  });
+
+  document.getElementById('sync-copy-code').addEventListener('click', async () => {
+    const btn = document.getElementById('sync-copy-code');
+    try {
+      await navigator.clipboard.writeText(document.getElementById('sync-script-code').textContent);
+      const orig = btn.textContent;
+      btn.textContent = 'Copied ✓';
+      setTimeout(() => { btn.textContent = orig; }, 1400);
+    } catch { btn.textContent = 'Copy failed'; }
+  });
+
+  document.getElementById('sync-rotate-btn').addEventListener('click', async () => {
+    if (!confirm('Rotate your token? The old URL will stop working immediately. Anything currently pointing at it (Apps Script, Facebook, etc.) needs to be updated.')) return;
+    const { data, error } = await sb.rpc('rotate_my_lead_token');
+    if (error) { alert('Rotate failed: ' + error.message); return; }
+    leadToken = data;
+    renderAutoSync();
+    alert('New token generated. Update any scripts or vendor webhooks with the new URL.');
   });
 
   // Save routing (forwarding number + on/off)

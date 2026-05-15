@@ -7734,6 +7734,91 @@ body.dialer-fullwidth .hub-main { padding-left: 8px; }
   .phone-routing-row > .field { flex: 1 1 100%; }
 }
 
+/* =====================================================================
+   AUTO-SYNC LEADS TAB
+   ===================================================================== */
+.sync-url-row {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+.sync-url-input {
+  flex: 1;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 13px;
+  background: var(--surface-2, var(--surface));
+}
+.sync-rotate-link {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--accent-bright);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  margin-left: 6px;
+}
+.sync-rotate-link:hover { text-decoration: underline; }
+
+.sync-steps {
+  margin: 0 0 14px;
+  padding-left: 22px;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.65;
+}
+.sync-steps li { margin-bottom: 4px; }
+.sync-steps code {
+  background: var(--surface-2, var(--surface));
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 12.5px;
+}
+
+.sync-code-wrap {
+  position: relative;
+}
+.sync-code {
+  background: var(--surface-2, #111);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12.5px;
+  line-height: 1.55;
+  overflow-x: auto;
+  margin: 0 0 8px;
+  white-space: pre;
+}
+.sync-copy-code {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.sync-recent-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+.sync-recent-row:last-child { border-bottom: 0; }
+.sync-recent-name  { color: var(--text); font-weight: 500; }
+.sync-recent-phone { color: var(--text-muted); font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; }
+.sync-recent-time  { color: var(--text-muted); font-size: 12.5px; text-align: right; }
+
+@media (max-width: 640px) {
+  .sync-recent-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .sync-recent-time { text-align: left; }
+  .sync-url-row { flex-direction: column; }
+}
+
 /* Two-column grid */
 .settings-grid {
   display: grid;
