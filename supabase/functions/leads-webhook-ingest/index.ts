@@ -60,10 +60,55 @@ function normPhone(raw: string | null | undefined): string | null {
   return null;
 }
 
+// Forgiving DOB parser — accepts every common US date format and normalizes
+// to ISO YYYY-MM-DD. Returns null if it can't make sense of the input.
+function pad2(n: number) { return String(n).padStart(2, '0'); }
+function validDate(y: number, m: number, d: number) {
+  if (y < 1900 || y > 2100) return false;
+  if (m < 1 || m > 12) return false;
+  if (d < 1 || d > 31) return false;
+  return true;
+}
+function parseDob(raw: any): string | null {
+  if (raw == null) return null;
+  const s = String(raw).trim();
+  if (!s) return null;
+
+  // ISO date or datetime: 1967-12-03 or 1967-12-03T00:00:00.000Z
+  let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[T ].*)?$/);
+  if (m) {
+    const y = +m[1], mo = +m[2], d = +m[3];
+    if (validDate(y, mo, d)) return `${y}-${pad2(mo)}-${pad2(d)}`;
+  }
+
+  // US format with separators: M/D/YYYY, MM/DD/YYYY, M-D-YYYY, MM.DD.YYYY
+  m = s.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4})$/);
+  if (m) {
+    const mo = +m[1], d = +m[2], y = +m[3];
+    if (validDate(y, mo, d)) return `${y}-${pad2(mo)}-${pad2(d)}`;
+  }
+
+  // Compact 8 digits: MMDDYYYY (e.g., 12031987)
+  m = s.match(/^(\d{2})(\d{2})(\d{4})$/);
+  if (m) {
+    const mo = +m[1], d = +m[2], y = +m[3];
+    if (validDate(y, mo, d)) return `${y}-${pad2(mo)}-${pad2(d)}`;
+  }
+
+  // Compact 7 digits: MDDYYYY (single-digit month, e.g., 8091967)
+  m = s.match(/^(\d)(\d{2})(\d{4})$/);
+  if (m) {
+    const mo = +m[1], d = +m[2], y = +m[3];
+    if (validDate(y, mo, d)) return `${y}-${pad2(mo)}-${pad2(d)}`;
+  }
+
+  return null;
+}
+
 function looksLikePhone(s: string)  { return PHONE_RE.test(s.trim()); }
 function looksLikeEmail(s: string)  { return EMAIL_RE.test(s.trim()); }
 function looksLikeState(s: string)  { return STATE_RE.test(s.trim()); }
-function looksLikeDob(s: string)    { return DOB_RE.test(s.trim()); }
+function looksLikeDob(s: string)    { return parseDob(s) !== null; }
 
 // Sniff a generic row of arbitrary columns into our lead shape.
 // Used as a fallback when no headers are provided (or all headers are unknown).
@@ -224,8 +269,9 @@ Deno.serve(async (req) => {
     const leadType = ALLOWED_LEAD_TYPES.has(rawType) ? rawType : null;
 
     // DOB — only accept ISO YYYY-MM-DD, otherwise drop.
-    const dobRaw = String(mapped.date_of_birth || mapped.dob || '').trim();
-    const dob = looksLikeDob(dobRaw) ? dobRaw : null;
+    // Accept any common date format (MM/DD/YYYY, MMDDYYYY, 1967-12-03, etc.)
+    // and normalize to ISO. Drops cleanly if it can't parse.
+    const dob = parseDob(mapped.date_of_birth || mapped.dob);
 
     // Deduplicate — if this agent already has a lead with this phone,
     // attach a note and bail rather than creating a duplicate row.
