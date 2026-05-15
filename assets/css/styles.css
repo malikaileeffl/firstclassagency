@@ -7834,6 +7834,51 @@ body.dialer-fullwidth .hub-main { padding-left: 8px; }
   padding: 22px 14px !important;
 }
 
+/* Header reference (which column names are recognized) */
+.sync-header-help {
+  margin-top: 18px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+.sync-header-help summary {
+  cursor: pointer;
+  color: var(--accent-bright);
+  font-weight: 600;
+  font-size: 13px;
+  user-select: none;
+  outline: none;
+}
+.sync-header-help summary:hover { text-decoration: underline; }
+.sync-header-help[open] summary { margin-bottom: 6px; }
+.sync-header-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 6px 0;
+}
+.sync-header-table th,
+.sync-header-table td {
+  text-align: left;
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.sync-header-table thead th {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--text-muted);
+  background: var(--surface-2, var(--surface));
+}
+.sync-header-table tbody tr:last-child td { border-bottom: 0; }
+.sync-header-table code {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  background: var(--surface-2, var(--surface));
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
 /* Team-wide recent webhook leads */
 .sync-recent-row {
   display: grid;

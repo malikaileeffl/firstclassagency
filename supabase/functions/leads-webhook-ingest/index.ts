@@ -66,6 +66,7 @@ function looksLikeState(s: string)  { return STATE_RE.test(s.trim()); }
 function looksLikeDob(s: string)    { return DOB_RE.test(s.trim()); }
 
 // Sniff a generic row of arbitrary columns into our lead shape.
+// Used as a fallback when no headers are provided (or all headers are unknown).
 function sniffRow(row: any[]): Record<string, any> {
   const out: Record<string, any> = {};
   const remaining: string[] = [];
@@ -85,6 +86,63 @@ function sniffRow(row: any[]): Record<string, any> {
     out.full_name = named || remaining[0];
   }
   return out;
+}
+
+// Map a free-form header (sheet column label) to one of our canonical fields.
+// Accepts a wide variety of common spellings/casings. Returns null when the
+// header doesn't look like anything we recognize (so we don't accidentally
+// stuff random data into the wrong field).
+function canonicalField(rawHeader: string): string | null {
+  const h = String(rawHeader || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  if (!h) return null;
+
+  // First/last name — check BEFORE generic "name" so they win
+  if (/(first ?name|first|given ?name|fname|f name)/.test(h)) return 'first_name';
+  if (/(last ?name|last|sur ?name|surname|family name|lname|l name)/.test(h)) return 'last_name';
+
+  // Full name (any of these patterns, but only if not first/last)
+  if (/\b(full name|customer name|lead name|name)\b/.test(h)) return 'full_name';
+
+  // Phone variants
+  if (/\b(phone|cell|mobile|tel|contact number|primary number|phone number)\b/.test(h)) return 'phone';
+
+  // Email
+  if (/\b(e ?mail|email address)\b/.test(h)) return 'email';
+
+  // Date of birth
+  if (/(date of birth|birth ?date|dob|birthday)/.test(h)) return 'date_of_birth';
+
+  // State / address
+  if (/\bstate\b/.test(h)) return 'state';
+  if (/(street|address|addr|mailing|city)/.test(h)) return 'address';
+
+  // Lead type / product
+  if (/(lead ?type|product|policy ?type)/.test(h)) return 'lead_type';
+
+  // Notes / comments
+  if (/(note|comment|details?|message)/.test(h)) return 'notes';
+
+  // Source
+  if (/(source|origin|campaign|utm|funnel)/.test(h)) return 'source';
+
+  return null;
+}
+
+// Build the field bag from { headers, row } by mapping by header name.
+// Returns the mapped fields PLUS a count of recognized headers so the
+// handler can fall back to sniff if nothing matched.
+function mapByHeaders(headers: any[], row: any[]): { mapped: Record<string, any>; recognized: number } {
+  const out: Record<string, any> = {};
+  let recognized = 0;
+  headers.forEach((h, i) => {
+    const field = canonicalField(String(h || ''));
+    if (!field) return;
+    const v = String(row[i] ?? '').trim();
+    if (!v) return;
+    out[field] = v;
+    recognized++;
+  });
+  return { mapped: out, recognized };
 }
 
 function json(body: any, status = 200) {
@@ -129,9 +187,21 @@ Deno.serve(async (req) => {
       return json({ error: 'invalid_json' }, 400);
     }
 
-    // Apps Script row mode → sniff into fields
+    // Three payload modes, in priority order:
+    //   1) { headers: [...], row: [...] } — header-mapped (preferred for sheets)
+    //   2) { row: [...] }                 — sniff by value pattern (fallback)
+    //   3) { full_name: ..., phone: ... } — direct named fields (real vendors)
     let mapped: Record<string, any> = {};
-    if (Array.isArray(body.row)) {
+    if (Array.isArray(body.headers) && Array.isArray(body.row)) {
+      const result = mapByHeaders(body.headers, body.row);
+      mapped = result.mapped;
+      // If NONE of the headers were recognized, the sheet probably starts at
+      // row 1 with data (no header row). Fall back to sniffing so we still
+      // get phone/email/state from the values themselves.
+      if (result.recognized === 0) {
+        mapped = sniffRow(body.row);
+      }
+    } else if (Array.isArray(body.row)) {
       mapped = sniffRow(body.row);
     } else if (body && typeof body === 'object') {
       mapped = body;

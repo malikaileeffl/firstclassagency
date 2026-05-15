@@ -407,6 +407,7 @@
         </div>
         <div class="phone-card-body">
           <ol class="sync-steps">
+            <li>Make sure <strong>row 1 of the sheet has column headers</strong> (Phone, First Name, etc). The script reads them so the CRM maps each column to the right field.</li>
             <li>Find the agent in the table above and click <strong>Copy script</strong>. Their token is baked in.</li>
             <li>Open the Google Sheet where their leads land → <strong>Extensions → Apps Script</strong>.</li>
             <li>Delete the boilerplate <code>function myFunction()</code>. Paste the script.</li>
@@ -414,6 +415,28 @@
             <li>Authorize when Google prompts. Add a test row in the sheet — it should land in that agent's CRM within 1-2 seconds.</li>
           </ol>
           <p class="field-help" style="margin:14px 0 0;">One sheet → one agent. If the same sheet should feed multiple agents (e.g. round-robin distribution), use the Team page's lead-distribution rules instead and point one webhook at the agency-level URL.</p>
+
+          <details class="sync-header-help">
+            <summary>Which column headers are recognized?</summary>
+            <p class="field-help" style="margin:10px 0;">Case and spacing don't matter — "First Name", "first_name", "FName", "F Name" all map to the same field. Headers that don't match any of these are ignored (the data won't land in the CRM — but the row still gets inserted with whatever did match).</p>
+            <table class="sync-header-table">
+              <thead><tr><th>CRM field</th><th>Accepted header variants</th></tr></thead>
+              <tbody>
+                <tr><td><code>phone</code></td><td>Phone, Cell, Mobile, Tel, Contact Number, Primary Number, Phone Number</td></tr>
+                <tr><td><code>first_name</code></td><td>First Name, First, Given Name, FName</td></tr>
+                <tr><td><code>last_name</code></td><td>Last Name, Last, Surname, Sur Name, Family Name, LName</td></tr>
+                <tr><td><code>full_name</code></td><td>Full Name, Customer Name, Lead Name, Name</td></tr>
+                <tr><td><code>email</code></td><td>Email, E-mail, Email Address</td></tr>
+                <tr><td><code>state</code></td><td>State</td></tr>
+                <tr><td><code>address</code></td><td>Address, Street, Mailing, City</td></tr>
+                <tr><td><code>date_of_birth</code></td><td>DOB, Date of Birth, Birth Date, Birthday</td></tr>
+                <tr><td><code>lead_type</code></td><td>Lead Type, Product, Policy Type</td></tr>
+                <tr><td><code>notes</code></td><td>Notes, Comments, Details, Message</td></tr>
+                <tr><td><code>source</code></td><td>Source, Origin, Campaign, UTM, Funnel</td></tr>
+              </tbody>
+            </table>
+            <p class="field-help" style="margin:10px 0 0;">If you need a column that isn't in this list, let me know — I'll add it to the mapper. If a sheet has no headers (data starts at row 1), the script still works via pattern-sniff fallback for phone, email, and state.</p>
+          </details>
         </div>
       </section>
 
@@ -1275,15 +1298,19 @@
       'function onChange(e) {',
       '  const sheet = SpreadsheetApp.getActiveSheet();',
       '  const lastRow = sheet.getLastRow();',
+      '  const lastCol = sheet.getLastColumn();',
       '  const props = PropertiesService.getDocumentProperties();',
       '  const lastProcessed = Number(props.getProperty(\'lastRow\') || 1);',
       '  if (lastRow <= lastProcessed) return;',
+      '  // Row 1 = column headers. We send them so the CRM maps by header',
+      '  // name instead of guessing which column is which.',
+      '  const headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];',
       '  for (let r = lastProcessed + 1; r <= lastRow; r++) {',
-      '    const row = sheet.getRange(r, 1, 1, sheet.getLastColumn()).getValues()[0];',
+      '    const row = sheet.getRange(r, 1, 1, lastCol).getValues()[0];',
       `    UrlFetchApp.fetch('${fullUrl}', {`,
       '      method: \'post\',',
       '      contentType: \'application/json\',',
-      '      payload: JSON.stringify({ row }),',
+      '      payload: JSON.stringify({ headers, row }),',
       '      muteHttpExceptions: true',
       '    });',
       '  }',
