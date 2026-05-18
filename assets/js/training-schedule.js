@@ -9,9 +9,9 @@
      host  — host name shown to agents
 */
 window.FCA_SCHEDULE = [
-  { day: 'Mon', topic: 'Team Call',           host: 'Drew Smith & Wylie Hawkins' },
-  { day: 'Tue', topic: 'Lead Flow',           host: 'Garrett Sekelsky' },
-  { day: 'Wed', topic: 'Financial Inventory', host: 'Hayden Keltner' },
-  { day: 'Thu', topic: 'Setting/Hitting Goals', host: 'Colby Whittaker' },
-  { day: 'Fri', topic: 'Get the Smoke',       host: 'Drew Smith' },
+  { day: 'Mon', topic: 'Team Call',         host: 'Drew Smith & Jace Jensin' },
+  { day: 'Tue', topic: 'Mastering the IUL', host: 'Garrett Sekelsky' },
+  { day: 'Wed', topic: 'Instagram: Edits',  host: 'Malikai Lee' },
+  { day: 'Thu', topic: 'Script Mastery',    host: 'Colby Whittaker' },
+  { day: 'Fri', topic: 'Get the Smoke',     host: 'Drew Smith' },
 ];
