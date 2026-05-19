@@ -10,7 +10,7 @@
 */
 window.FCA_SCHEDULE = [
   { day: 'Mon', topic: 'Team Call',         host: 'Drew Smith & Jace Jensin' },
-  { day: 'Tue', topic: 'Mastering the IUL', host: 'Garrett Sekelsky' },
+  { day: 'Tue', topic: 'Mastering the IUL', host: 'Hayden Keltner' },
   { day: 'Wed', topic: 'Instagram: Edits',  host: 'Malikai Lee' },
   { day: 'Thu', topic: 'Script Mastery',    host: 'Colby Whittaker' },
   { day: 'Fri', topic: 'Get the Smoke',     host: 'Drew Smith' },
