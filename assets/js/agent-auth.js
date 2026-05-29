@@ -7,18 +7,6 @@ const SUPABASE_URL = 'https://bfctxiwllbiekfxkupjb.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_VhnuqTPUZwTIMVeNxhP17Q_TxS54DsR';
 
 (async () => {
-  // ---- MAINTENANCE LOCKDOWN ----------------------------------------------
-  // Set to false to bring the portal back online. While true, every page
-  // (gate + hub) redirects to maintenance.html. Catches logged-in agents
-  // deep-linking straight to inner pages. Fully reversible — flip this flag.
-  const MAINTENANCE_MODE = true;
-  if (MAINTENANCE_MODE && !/maintenance\.html$/.test(window.location.pathname)) {
-    const prefix = window.location.pathname.includes('/agent/') ? '../' : '';
-    window.location.replace(prefix + 'maintenance.html');
-    return;
-  }
-  // ------------------------------------------------------------------------
-
   if (!window.supabase) {
     console.error('[FCA] Supabase SDK failed to load.');
     return;
