@@ -341,8 +341,126 @@
       </div>
 
     </div>
+
+    <!-- ===== APPLICATION TUTORIALS — horizontal video rail ===== -->
+    <section class="video-rail-section" aria-labelledby="vid-rail-head">
+      <div class="video-rail-head">
+        <div>
+          <span class="eyebrow">Application tutorials</span>
+          <h2 id="vid-rail-head" class="mt-8">Walkthroughs for every carrier.</h2>
+          <p class="video-rail-sub">Step-by-step videos for writing apps with each carrier. Scroll left and right.</p>
+        </div>
+        <div class="video-rail-nav" role="group" aria-label="Scroll videos">
+          <button type="button" class="video-rail-btn" data-rail-dir="prev" aria-label="Scroll left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button type="button" class="video-rail-btn" data-rail-dir="next" aria-label="Scroll right">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="video-rail" id="video-rail" tabindex="0" aria-label="Video tutorials">
+        <!-- Cards injected from window.VIDEO_TUTORIALS so the list is easy to edit -->
+      </div>
+    </section>
+
   </section>
 </main>
+
+<!-- Video modal -->
+<div class="video-modal" id="video-modal" hidden>
+  <div class="video-modal-backdrop" data-close-video></div>
+  <div class="video-modal-content" role="dialog" aria-modal="true" aria-labelledby="video-modal-title">
+    <div class="video-modal-head">
+      <span class="video-modal-title" id="video-modal-title">—</span>
+      <button class="video-modal-close" type="button" data-close-video aria-label="Close video">×</button>
+    </div>
+    <div class="video-modal-frame-wrap">
+      <iframe class="video-modal-frame" id="video-modal-frame"
+              src="" title="Tutorial"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Video tutorial list — edit / add / remove videos here ──────────────
+  window.VIDEO_TUTORIALS = [
+    { id: 'Pxe7EzpGCaA', title: 'How to buy states on NIPR',                duration: '5:14'  },
+    { id: '_kAe9H1f5Yw', title: 'How to write an app over the phone',       duration: '10:32' },
+    { id: 'wFnkP7q3Z30', title: 'Americo Select tutorial',                  duration: '8:06'  },
+    { id: 'TNSUZItqZdc', title: 'Aetna tutorial',                           duration: '6:48'  },
+    { id: 'SsoFh2Q1jyE', title: 'AmAm Senior Choice tutorial',              duration: '5:17'  },
+    { id: 'YAohLlfIw4Y', title: 'Transamerica Express tutorial',            duration: '11:19' },
+    { id: '8ghg5e2tHJw', title: 'Corebridge SIWL tutorial',                 duration: '12:25' },
+    { id: 'VGooA26D2OI', title: 'Ethos / TruStage tutorial',                duration: '9:12'  },
+    { id: 'E0Gt8rvM9RA', title: 'How to find commission statements',        duration: '9:46'  },
+    { id: '_qtyHIdC_U8', title: 'Americo IUL tutorial',                     duration: '9:29'  },
+    { id: 'yZSobJ99EmE', title: 'Mutual of Omaha IUL tutorial',             duration: '11:04' },
+    { id: 'qbRx73267vM', title: 'AmAm Intelligent Choice IUL — quote',      duration: '1:14'  },
+    { id: 'qTN4q3HAxv8', title: 'AmAm Intelligent Choice IUL — application',duration: '8:59'  },
+    { id: '6OZlTD698pQ', title: 'Chubb application tutorial',               duration: '5:44'  },
+  ];
+
+  (function () {
+    const rail = document.getElementById('video-rail');
+    const modal = document.getElementById('video-modal');
+    const frame = document.getElementById('video-modal-frame');
+    const modalTitle = document.getElementById('video-modal-title');
+    if (!rail || !modal) return;
+
+    function esc(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+    // Build cards from the data list
+    rail.innerHTML = window.VIDEO_TUTORIALS.map((v, i) => `
+      <button type="button" class="video-card" data-video-id="${esc(v.id)}" data-video-title="${esc(v.title)}">
+        <span class="video-card-thumb">
+          <img loading="lazy" src="https://i.ytimg.com/vi/${esc(v.id)}/mqdefault.jpg" alt="" />
+          <span class="video-card-play" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </span>
+          <span class="video-card-duration">${esc(v.duration)}</span>
+        </span>
+        <span class="video-card-meta">
+          <span class="video-card-num">${String(i+1).padStart(2,'0')}</span>
+          <span class="video-card-title">${esc(v.title)}</span>
+        </span>
+      </button>
+    `).join('');
+
+    // Rail scroll buttons
+    document.querySelectorAll('[data-rail-dir]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const dir = btn.dataset.railDir === 'next' ? 1 : -1;
+        rail.scrollBy({ left: dir * Math.max(320, rail.clientWidth * 0.8), behavior: 'smooth' });
+      });
+    });
+
+    // Open modal when a card is clicked
+    rail.addEventListener('click', (e) => {
+      const card = e.target.closest('.video-card');
+      if (!card) return;
+      const id = card.dataset.videoId;
+      const title = card.dataset.videoTitle || '';
+      modalTitle.textContent = title;
+      frame.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?autoplay=1&rel=0&modestbranding=1`;
+      modal.hidden = false;
+      document.body.style.overflow = 'hidden';
+    });
+
+    function closeVideo() {
+      modal.hidden = true;
+      frame.src = '';  // stop playback
+      document.body.style.overflow = '';
+    }
+    document.querySelectorAll('[data-close-video]').forEach(el => el.addEventListener('click', closeVideo));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) closeVideo(); });
+  })();
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/main.js"></script>

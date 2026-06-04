@@ -9100,3 +9100,249 @@ body.dialer-fullwidth .hub-main { padding-left: 8px; }
   padding: 8px 10px;
   font-size: 0.88rem;
 }
+
+/* =====================================================================
+   VIDEO RAIL — horizontal scrolling carousel (used on E-apps & Portals)
+   ===================================================================== */
+.video-rail-section {
+  margin-top: 36px;
+  padding-top: 26px;
+  border-top: 1px solid var(--line, rgba(255,255,255,0.08));
+}
+.video-rail-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding-right: var(--gutter, 0);
+}
+.video-rail-head h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
+.video-rail-sub {
+  color: var(--text-3, rgba(255,255,255,0.6));
+  font-size: 0.92rem;
+  margin: 6px 0 0;
+  max-width: 56ch;
+}
+.video-rail-nav {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.video-rail-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--line, rgba(255,255,255,0.14));
+  background: var(--surface, rgba(28,28,34,0.6));
+  color: var(--text, #fff);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s ease, border-color .15s ease, transform .15s ease;
+}
+.video-rail-btn:hover {
+  background: var(--surface-hover, rgba(38,38,46,0.78));
+  border-color: var(--accent, #0078ab);
+}
+.video-rail-btn:active { transform: scale(0.96); }
+
+.video-rail {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 4px 4px 22px;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent, #0078ab) transparent;
+}
+.video-rail::-webkit-scrollbar { height: 8px; }
+.video-rail::-webkit-scrollbar-track { background: transparent; }
+.video-rail::-webkit-scrollbar-thumb {
+  background: var(--accent-soft, rgba(0,120,171,0.35));
+  border-radius: 4px;
+}
+.video-rail::-webkit-scrollbar-thumb:hover {
+  background: var(--accent, #0078ab);
+}
+.video-rail:focus { outline: none; }
+
+.video-card {
+  flex: 0 0 280px;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text, #fff);
+  font: inherit;
+  transition: transform .18s ease;
+}
+.video-card:hover { transform: translateY(-2px); }
+.video-card:focus-visible {
+  outline: 2px solid var(--accent-bright, #1aa3df);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+.video-card-thumb {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid var(--line, rgba(255,255,255,0.08));
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+}
+.video-card-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .35s ease, filter .25s ease;
+  filter: brightness(0.9);
+}
+.video-card:hover .video-card-thumb img {
+  transform: scale(1.04);
+  filter: brightness(1);
+}
+.video-card-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+.video-card-play svg {
+  width: 54px;
+  height: 54px;
+  color: #fff;
+  filter: drop-shadow(0 4px 14px rgba(0,0,0,0.6));
+  background: rgba(0,120,171,0.85);
+  border-radius: 50%;
+  padding: 12px;
+}
+.video-card:hover .video-card-play { opacity: 1; }
+.video-card-duration {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0,0,0,0.78);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.02em;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+.video-card-meta {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 0 2px;
+}
+.video-card-num {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  color: var(--accent-bright, #1aa3df);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding-top: 2px;
+  flex-shrink: 0;
+}
+.video-card-title {
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--text-2, rgba(255,255,255,0.85));
+}
+
+/* ---- Video modal ----------------------------------------------------- */
+.video-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.video-modal[hidden] { display: none !important; }
+.video-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.78);
+  backdrop-filter: blur(6px);
+  cursor: zoom-out;
+}
+.video-modal-content {
+  position: relative;
+  width: min(100%, 1080px);
+  background: var(--bg-1, #1e1e1e);
+  border: 1px solid var(--line, rgba(255,255,255,0.1));
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+}
+.video-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line, rgba(255,255,255,0.08));
+}
+.video-modal-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text, #fff);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.video-modal-close {
+  background: none;
+  border: 0;
+  color: var(--text-3, rgba(255,255,255,0.6));
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 6px;
+  transition: color .15s ease;
+}
+.video-modal-close:hover { color: var(--text, #fff); }
+.video-modal-frame-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+}
+.video-modal-frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+@media (max-width: 720px) {
+  .video-card { flex-basis: 240px; }
+  .video-rail-head { flex-direction: column; align-items: flex-start; }
+  .video-rail-nav { align-self: flex-end; }
+}
