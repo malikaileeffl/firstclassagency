@@ -9108,6 +9108,12 @@ body.dialer-fullwidth .hub-main { padding-left: 8px; }
   margin-top: 36px;
   padding-top: 26px;
   border-top: 1px solid var(--line, rgba(255,255,255,0.08));
+  /* Critical: stop the rail's contents from forcing the parent wider
+     than the viewport. min-width:0 lets a flex/grid child shrink
+     below its intrinsic content width so overflow-x can kick in. */
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 .video-rail-head {
   display: flex;
@@ -9162,6 +9168,10 @@ body.dialer-fullwidth .hub-main { padding-left: 8px; }
   scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: var(--accent, #0078ab) transparent;
+  /* Constrain to parent width so overflow-x scroll actually engages */
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 .video-rail::-webkit-scrollbar { height: 8px; }
 .video-rail::-webkit-scrollbar-track { background: transparent; }
