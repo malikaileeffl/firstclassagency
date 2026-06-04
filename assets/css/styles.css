@@ -9104,13 +9104,19 @@ body.dialer-fullwidth .hub-main { padding-left: 8px; }
 /* =====================================================================
    VIDEO RAIL — horizontal scrolling carousel (used on E-apps & Portals)
    ===================================================================== */
+/* The hub-shell is a CSS grid (sidebar + main). Grid children default to
+   min-width:auto, which makes them refuse to shrink below their content's
+   intrinsic width. Without this, any wide content inside .hub-main (like
+   a 14-card horizontal video rail) would stretch the whole page past the
+   viewport. min-width:0 lets the grid track constrain the column, which
+   then lets overflow-x scrolling actually engage on children. */
+.hub-shell, .hub-main { min-width: 0; }
+.hub-main { max-width: 100%; }
+
 .video-rail-section {
   margin-top: 36px;
   padding-top: 26px;
   border-top: 1px solid var(--line, rgba(255,255,255,0.08));
-  /* Critical: stop the rail's contents from forcing the parent wider
-     than the viewport. min-width:0 lets a flex/grid child shrink
-     below its intrinsic content width so overflow-x can kick in. */
   min-width: 0;
   max-width: 100%;
   overflow: hidden;
